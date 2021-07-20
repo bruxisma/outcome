@@ -20,19 +20,19 @@ jobs:
         with:
           token: ${{github.token}}
           args: --all-features
-          name: all
+          name: Clippy (all)
       - name: Lint (No Standard)
         uses: actions-rs/clippy-check@v1
         with:
           token: ${{github.token}}
           args: --no-default-features
-          name: no-std
+          name: Clippy (no-std)
       - name: Lint (Report)
         uses: actions-rs/clippy-check@v1
         with:
           token: ${{github.token}}
           args: --features report
-          name: report
+          name: Clippy (report)
   test:
     name: Test Suite
     runs-on: ${{matrix.os}}-latest
