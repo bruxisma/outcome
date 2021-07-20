@@ -10,6 +10,7 @@ readme = "README.md"
 keywords = ["outcome", "result", "failure", "eyre"]
 categories = ["no-std", "rust-patterns"]
 resolver = "2"
+include = ["src", "Cargo.toml", "LICENSE.md"]
 
 [dependencies]
 eyre = { version = "0.6.5", optional = true }
