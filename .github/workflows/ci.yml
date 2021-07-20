@@ -31,7 +31,7 @@ jobs:
         uses: actions-rs/clippy-check@v1
         with:
           token: ${{github.token}}
-          args: --feature report
+          args: --features report
           name: report
   test:
     name: Test Suite
