@@ -1,0 +1,149 @@
+use crate::*;
+use core::iter::FusedIterator;
+
+/// An iterator over the value in a [`Success`] variant of an [`Outcome`].
+///
+/// The iterator yields one value if the result is [`Success`], otherwise none.
+///
+/// This struct is created by the [`into_iter`] method on [`Outcome`] (provided
+/// by the [`IntoIterator`] trait).
+///
+/// [`Success`]: crate::Success
+/// [`Outcome`]: crate::Outcome
+/// [`into_iter`]: IntoIterator::into_iter
+#[derive(Clone, Debug)]
+pub struct IntoIter<T> {
+  pub(crate) inner: Option<T>,
+}
+
+/// An iterator over a mutable reference to the [`Success`] variant of an
+/// [`Outcome`].
+///
+/// Created by [`Outcome::iter_mut`]
+///
+/// [`Success`]: crate::Success
+/// [`Outcome`]: crate::Outcome
+/// [`Outcome::iter_mut`]: crate::Outcome::iter_mut
+#[derive(Debug)]
+pub struct IterMut<'a, T: 'a> {
+  pub(crate) inner: Option<&'a mut T>,
+}
+
+/// An iterator over a reference to the [`Success`] variant of an [`Outcome`].
+///
+/// The iterator yields one value if the result is [`Success`], otherwise none.
+///
+/// Created by [`Outcome::iter`].
+///
+/// [`Success`]: crate::Success
+/// [`Outcome`]: crate::Outcome
+/// [`Outcome::iter`]: crate::Outcome::iter
+#[derive(Debug)]
+pub struct Iter<'a, T: 'a> {
+  pub(crate) inner: Option<&'a T>,
+}
+
+impl<'a, S, M, F> IntoIterator for &'a mut Outcome<S, M, F> {
+  type IntoIter = IterMut<'a, S>;
+  type Item = &'a mut S;
+
+  fn into_iter(self) -> Self::IntoIter {
+    self.iter_mut()
+  }
+}
+
+impl<'a, S, M, F> IntoIterator for &'a Outcome<S, M, F> {
+  type IntoIter = Iter<'a, S>;
+  type Item = &'a S;
+
+  fn into_iter(self) -> Self::IntoIter {
+    self.iter()
+  }
+}
+
+impl<S, M, F> IntoIterator for Outcome<S, M, F> {
+  type IntoIter = IntoIter<S>;
+  type Item = S;
+
+  #[inline]
+  fn into_iter(self) -> Self::IntoIter {
+    IntoIter {
+      inner: self.success(),
+    }
+  }
+}
+
+/* Iterator Trait Implementations */
+impl<T> Iterator for IntoIter<T> {
+  type Item = T;
+
+  #[inline]
+  fn next(&mut self) -> Option<T> {
+    self.inner.take()
+  }
+
+  #[inline]
+  fn size_hint(&self) -> (usize, Option<usize>) {
+    let n = if self.inner.is_some() { 1 } else { 0 };
+    (n, Some(n))
+  }
+}
+
+impl<'a, T> Iterator for IterMut<'a, T> {
+  type Item = &'a mut T;
+
+  #[inline]
+  fn next(&mut self) -> Option<&'a mut T> {
+    self.inner.take()
+  }
+
+  #[inline]
+  fn size_hint(&self) -> (usize, Option<usize>) {
+    let n = if self.inner.is_some() { 1 } else { 0 };
+    (n, Some(n))
+  }
+}
+
+impl<'a, T> Iterator for Iter<'a, T> {
+  type Item = &'a T;
+
+  #[inline]
+  fn next(&mut self) -> Option<&'a T> {
+    self.inner.take()
+  }
+
+  #[inline]
+  fn size_hint(&self) -> (usize, Option<usize>) {
+    let n = if self.inner.is_some() { 1 } else { 0 };
+    (n, Some(n))
+  }
+}
+
+impl<T> DoubleEndedIterator for IntoIter<T> {
+  #[inline]
+  fn next_back(&mut self) -> Option<T> {
+    self.inner.take()
+  }
+}
+
+impl<'a, T> DoubleEndedIterator for IterMut<'a, T> {
+  #[inline]
+  fn next_back(&mut self) -> Option<&'a mut T> {
+    self.inner.take()
+  }
+}
+
+impl<'a, T> DoubleEndedIterator for Iter<'a, T> {
+  #[inline]
+  fn next_back(&mut self) -> Option<&'a T> {
+    self.inner.take()
+  }
+}
+
+impl<T> ExactSizeIterator for IntoIter<T> {}
+impl<T> ExactSizeIterator for IterMut<'_, T> {}
+impl<T> ExactSizeIterator for Iter<'_, T> {}
+
+impl<T> FusedIterator for IntoIter<T> {}
+impl<T> FusedIterator for IterMut<'_, T> {}
+impl<T> FusedIterator for Iter<'_, T> {}

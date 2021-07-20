@@ -1,0 +1,117 @@
+name: Continuous Integration
+on: [push, pull_request]
+jobs:
+  lint:
+    name: Lint Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          components: clippy
+          toolchain: ${{matrix.toolchain}}
+          override: true
+          profile: minimal
+      # Unfortunate that we can't use all three in a matrix. Would be faster
+      - name: Lint (All Features)
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{github.token}}
+          args: --all-features
+          name: all
+      - name: Lint (No Standard)
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{github.token}}
+          args: --no-default-features
+          name: no-std
+      - name: Lint (Report)
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{github.token}}
+          args: --feature report
+          name: report
+  test:
+    name: Test Suite
+    runs-on: ${{matrix.os}}-latest
+    strategy:
+      matrix:
+        toolchain: [stable, beta, nightly]
+        profile: [release, dev]
+        os: [ubuntu, windows, macos]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{matrix.toolchain}}
+          override: true
+          profile: minimal
+#      - name: Restore Cargo Cache
+#        uses: actions/cache@v2
+#        with:
+#          path: |
+#            ${{github.workspace}}/target/
+#            ~/.cargo/bin/
+#            ~/.cargo/registry/index/
+#            ~/.cargo/registry/cache/
+#            ~/.cargo/git/db/
+#          key: ${{runner.os}}-cargo-${{hashFiles('**/Cargo.lock')}}
+      - name: Install Cargo Hack
+        uses: actions-rs/install@v0.1
+        with:
+          crate: cargo-hack
+          version: latest
+      # profile is not available on all versions of cargo, so we cannot use
+      # `--profile` in the build matrix
+      - name: Run Tests (release)
+        if: matrix.profile == 'release'
+        uses: actions-rs/cargo@v1
+        with:
+          command: hack
+          args: test --release --locked --each-feature
+      - name: Run Tests (dev)
+        if: matrix.profile != 'release'
+        uses: actions-rs/cargo@v1
+        with:
+          command: hack
+          args: test --locked --each-feature
+#        env:
+#          CARGO_INCREMENTAL: 0
+#          RUSTDOCFLAGS: >-
+#            -Zprofile -Ccodegen-units=1 -Cinline-threshold=0
+#            -Clink-dead-code -Coverflow-checks=off -Cpanic=abort
+#            -Zpanic_abort_tests
+#          RUSTFLAGS: >- 
+#            -Zprofile -Ccodegen-units=1 -Cinline-threshold=0
+#            -Clink-dead-code -Coverflow-checks=off -Cpanic=abort
+#            -Zpanic_abort_tests
+#      - name: Collect Coverage
+#        uses: actions-rs/grcov@v0.1
+#      - name: Upload Code Coverage
+#        uses: codecov/codecov-action@v2
+#        with:
+#          fail_ci_if_error: true
+#          directory: ${{github.workspace}}
+#          dry_run: true
+  format:
+    name: Formatting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          components: rustfmt
+          toolchain: stable
+          override: true
+          profile: minimal
+      - name: Check Formatting
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: -- --check

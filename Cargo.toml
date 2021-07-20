@@ -1,0 +1,23 @@
+[package]
+name = "outcome"
+version = "0.1.0"
+edition = "2018"
+description = "Augmentations for error propagation"
+documentation = "https://docs.rs/outcome"
+repository = "https://github.com/slurps-mad-rips/outcome"
+license = "MIT"
+readme = "README.md"
+keywords = ["outcome", "result", "failure", "eyre"]
+categories = ["no-std", "rust-patterns"]
+resolver = "2"
+
+[dependencies]
+eyre = { version = "0.6.5", optional = true }
+
+[features]
+default = ["std"]
+report = ["eyre", "std"]
+std = []
+
+[package.metadata.docs.rs]
+features = ["report"]
