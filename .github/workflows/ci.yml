@@ -11,7 +11,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           components: clippy
-          toolchain: ${{matrix.toolchain}}
+          toolchain: stable
           override: true
           profile: minimal
       # Unfortunate that we can't use all three in a matrix. Would be faster
