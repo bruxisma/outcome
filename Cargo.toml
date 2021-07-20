@@ -1,5 +1,5 @@
 [package]
-name = "outcome"
+name = "outcome-46f94afc-026f-5511-9d7e-7d1fd495fb5c"
 version = "0.0.0"
 edition = "2018"
 description = "Augmentations for error propagation"
@@ -10,6 +10,10 @@ keywords = ["outcome", "result", "failure", "eyre"]
 categories = ["no-std", "rust-patterns"]
 resolver = "2"
 include = ["src", "Cargo.toml", "LICENSE.md"]
+
+[lib]
+name = "outcome"
+path = "src/lib.rs"
 
 [dependencies]
 eyre = { version = "0.6.5", optional = true }
