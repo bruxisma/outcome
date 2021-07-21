@@ -51,7 +51,7 @@
 //! At this time, the `outcome` crate is already taken on [crates.io]. As
 //! [crates.io] does not yet support namespaces or collections, we've had to
 //! take a *unique* approach to still publish the crate. To do this, we've
-//! generated a UUIDv5 string via python:
+//! generated a `UUIDv5` string via python:
 //!
 //! ```python
 //! from uuid import *
