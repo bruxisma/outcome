@@ -17,11 +17,15 @@ path = "src/lib.rs"
 
 [dependencies]
 eyre = { version = "0.6.5", optional = true }
+rustversion = { version = "1.0.5", optional = true }
 
 [features]
 default = ["std"]
+nightly = ["rustversion", "unstable"]
 report = ["eyre", "std"]
 std = []
+unstable = []
 
 [package.metadata.docs.rs]
-features = ["report"]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]

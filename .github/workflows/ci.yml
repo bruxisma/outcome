@@ -1,9 +1,39 @@
 name: Continuous Integration
-on: [push, pull_request]
+on:
+  pull_request:
+    paths-ignore: [Justfile, '*.md']
+  push:
+    paths-ignore: [Justfile, '*.md']
 jobs:
+  format:
+    name: Formatting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          components: rustfmt
+          toolchain: stable
+          override: true
+          profile: minimal
+      - name: Check Formatting
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: -- --check
   lint:
     name: Lint Checks
     runs-on: ubuntu-latest
+    matrix:
+      features:
+        - 
+        - --no-default-features
+        - --all-features
+        - --features report
+        - --features unstable
+        - --features nightly
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -14,28 +44,15 @@ jobs:
           toolchain: stable
           override: true
           profile: minimal
-      # Unfortunate that we can't use all three in a matrix. Would be faster
-      - name: Lint (All Features)
+      - name: Clippy
         uses: actions-rs/clippy-check@v1
         with:
           token: ${{github.token}}
-          args: --all-features
-          name: Clippy (all)
-      - name: Lint (No Standard)
-        uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{github.token}}
-          args: --no-default-features
-          name: Clippy (no-std)
-      - name: Lint (Report)
-        uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{github.token}}
-          args: --features report
-          name: Clippy (report)
+          args: ${{matrix.features.args}} -- -D warnings
   test:
     name: Test Suite
     runs-on: ${{matrix.os}}-latest
+    needs: [lint, format]
     strategy:
       matrix:
         toolchain: [stable, beta, nightly]
@@ -82,13 +99,13 @@ jobs:
 #        env:
 #          CARGO_INCREMENTAL: 0
 #          RUSTDOCFLAGS: >-
-#            -Zprofile -Ccodegen-units=1 -Cinline-threshold=0
+#            -Ccodegen-units=1 -Cinline-threshold=0
 #            -Clink-dead-code -Coverflow-checks=off -Cpanic=abort
-#            -Zpanic_abort_tests
+#            -Zprofile -Zpanic_abort_tests
 #          RUSTFLAGS: >- 
-#            -Zprofile -Ccodegen-units=1 -Cinline-threshold=0
+#            -Ccodegen-units=1 -Cinline-threshold=0
 #            -Clink-dead-code -Coverflow-checks=off -Cpanic=abort
-#            -Zpanic_abort_tests
+#            -Zprofile -Zpanic_abort_tests
 #      - name: Collect Coverage
 #        uses: actions-rs/grcov@v0.1
 #      - name: Upload Code Coverage
@@ -97,21 +114,4 @@ jobs:
 #          fail_ci_if_error: true
 #          directory: ${{github.workspace}}
 #          dry_run: true
-  format:
-    name: Formatting
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Install Toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          components: rustfmt
-          toolchain: stable
-          override: true
-          profile: minimal
-      - name: Check Formatting
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: -- --check
+

@@ -189,11 +189,10 @@
 #![warn(clippy::missing_panics_doc)]
 #![warn(clippy::missing_safety_doc)]
 #![warn(missing_docs)]
-#![forbid(unsafe_code)]
+#![warn(unsafe_code)]
+
+#![cfg_attr(docsrs, feature(doc_cfg))]
 #![no_std]
-/* TODO: Support `const` functions when stable */
-/* TODO: Do not default F=Report unless it's feature is enabled! */
-/* TODO: Write examples for rustdoc tests */
 
 #[cfg(doc)]
 extern crate std;
@@ -203,8 +202,17 @@ use core::{
   ops::{Deref, DerefMut},
 };
 
-#[cfg(feature = "std")]
-mod ext;
+#[cfg_attr(docsrs, doc(cfg(feature = "report")))]
+#[cfg(feature = "report")]
+mod report;
+
+#[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
+#[cfg(feature = "unstable")]
+mod unstable;
+
+#[cfg_attr(docsrs, doc(cfg(feature = "nightly")))]
+#[cfg(feature = "nightly")]
+mod nightly;
 
 mod convert;
 mod iter;
@@ -486,6 +494,35 @@ impl<S, M, F> Outcome<S, M, F> {
     }
     None
   }
+
+  /// Calls `op` if the result is [`Success`], otherwise returns the
+  /// [`Mistake`] or [`Failure`] value of `self`.
+  ///
+  /// This function can be used for control flow based on `Outcome` values.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::*;
+  ///
+  /// fn square(x: u32) -> Outcome<u32, u32, u32> { Success(x * x) }
+  /// fn mistake(x: u32) -> Outcome<u32, u32, u32> { Mistake(x) }
+  /// fn failure(x: u32) -> Outcome<u32, u32, u32> { Failure(0) }
+  ///
+  /// assert_eq!(Success(2).and_then(square).and_then(square), Success(16));
+  /// assert_eq!(Success(2).and_then(square).and_then(failure), Failure(0));
+  /// assert_eq!(Success(2).and_then(square).and_then(mistake), Mistake(4));
+  /// assert_eq!(Failure(2).and_then(square).and_then(square), Failure(2));
+  /// ```
+  #[inline]
+  pub fn and_then<T, C>(self, callable: C) -> Outcome<T, M, F>
+    where C: FnOnce(S) -> Outcome<T, M, F> {
+      match self {
+        Success(value) => callable(value),
+        Mistake(value) => Mistake(value),
+        Failure(value) => Failure(value),
+      }
+    }
 
   /// Maps an `Outcome<S, M, F>` to `Outcome<T, M, F>` by applying a function
   /// to a contained [`Success`] value, leaving any [`Mistake`] or [`Failure`]
