@@ -190,7 +190,6 @@
 #![warn(clippy::missing_safety_doc)]
 #![warn(missing_docs)]
 #![warn(unsafe_code)]
-
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![no_std]
 
@@ -516,13 +515,15 @@ impl<S, M, F> Outcome<S, M, F> {
   /// ```
   #[inline]
   pub fn and_then<T, C>(self, callable: C) -> Outcome<T, M, F>
-    where C: FnOnce(S) -> Outcome<T, M, F> {
-      match self {
-        Success(value) => callable(value),
-        Mistake(value) => Mistake(value),
-        Failure(value) => Failure(value),
-      }
+  where
+    C: FnOnce(S) -> Outcome<T, M, F>,
+  {
+    match self {
+      Success(value) => callable(value),
+      Mistake(value) => Mistake(value),
+      Failure(value) => Failure(value),
     }
+  }
 
   /// Maps an `Outcome<S, M, F>` to `Outcome<T, M, F>` by applying a function
   /// to a contained [`Success`] value, leaving any [`Mistake`] or [`Failure`]

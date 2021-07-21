@@ -1,5 +1,5 @@
 use crate::*;
-use core::iter::{FusedIterator};
+use core::iter::FusedIterator;
 
 /// An iterator over the value in a [`Success`] variant of an [`Outcome`].
 ///

@@ -125,7 +125,9 @@ impl<S, M, F> Outcome<S, M, F> {
   #[allow(unsafe_code)]
   pub unsafe fn unwrap_unchecked(self) -> S {
     debug_assert!(self.is_success());
-    if let Success(value) = self { return value; }
+    if let Success(value) = self {
+      return value;
+    }
     core::hint::unreachable_unchecked();
   }
 
@@ -143,7 +145,9 @@ impl<S, M, F> Outcome<S, M, F> {
   #[allow(unsafe_code)]
   pub unsafe fn unwrap_mistake_unchecked(self) -> M {
     debug_assert!(self.is_mistake());
-    if let Mistake(value) = self { return value; }
+    if let Mistake(value) = self {
+      return value;
+    }
     core::hint::unreachable_unchecked();
   }
 
@@ -159,7 +163,9 @@ impl<S, M, F> Outcome<S, M, F> {
   #[allow(unsafe_code)]
   pub unsafe fn unwrap_failure_unchecked(self) -> F {
     debug_assert!(self.is_failure());
-    if let Failure(value) = self { return value; }
+    if let Failure(value) = self {
+      return value;
+    }
     core::hint::unreachable_unchecked();
   }
 }
