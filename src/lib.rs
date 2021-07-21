@@ -24,9 +24,84 @@
 //! forgetting to set a specific flag before calling a function), or busy
 //! resources (e.g., attempting to lock an audio, video, or database resource).
 //!
+//! ```
+//! # use outcome::*;
+//! # use std::error::Error;
+//! #[derive(Debug, PartialEq)]
+//! enum Version { V1, V2 }
+//!
+//! #[derive(Debug, PartialEq)]
+//! struct EmptyInput;
+//!
+//! fn parse_version(header: &[u8]) -> Outcome<Version, EmptyInput, &'static str> {
+//!   match header.get(0) {
+//!     None => Mistake(EmptyInput),
+//!     Some(&1) => Success(Version::V1),
+//!     Some(&2) => Success(Version::V2),
+//!     Some(_) => Failure("invalid or unknown version"),
+//!   }
+//! }
+//!
+//! let version = parse_version(&[]);
+//! assert_eq!(version, Mistake(EmptyInput));
+//! ```
+//!
+//! # Usage
+//!
+//! At this time, the `outcome` crate is already taken on [crates.io]. As
+//! [crates.io] does not yet support namespaces or collections, we've had to
+//! take a *unique* approach to still publish the crate. To do this, we've
+//! generated a `UUIDv5` string via python:
+//!
+//! ```python
+//! from uuid import *
+//! print(uuid5(uuid5(NAMESPACE_DNS, "occult.work"), "outcome"))
+//! ```
+//!
+//! This *should* generate the string `46f94afc-026f-5511-9d7e-7d1fd495fb5c`.
+//! Thus the dependency in your `Cargo.toml` will look something like:
+//!
+//! ```toml
+//! [dependencies]
+//! outcome-46f94afc-026f-5511-9d7e-7d1fd495fb5c = "*"
+//! ```
+//!
+//! Is this solution friendly to users? No, but neither is the lack of
+//! namespacing or a squatting policy on [crates.io]. If/when this problem is
+//! resolved, this crate's documentation (and name!) will be changed and all
+//! versions will be yanked.
+//!
+//! # Features
+//!
+//! There are several features available to the crate that are disabled by
+//! default. These include:
+//!
+//!  - `unstable` (Enable "unstable" functions that mirror unstable functions
+//!      found in [`Result`]. Unlike [`Result`], however, a nightly compiler is
+//!      not required.)
+//!  - `nightly` (Enable features that require the nightly rust compiler to be
+//!      used, such as [`TryV2`])
+//!  - `report` (Enable conversion from [`Aberration`] to an
+//!      [`eyre::Report`])
+//!
+//! Users can also enable `no_std` support by either setting `default-features`
+//! to `false` or simply not listing `std` in the list of features.
+//!
+//!  - `nightly` will enable `unstable`.
+//!  - `report` will enable `std`.
+//!
 //! # `no_std` support
 //!
-//! // TODO: ...
+//! Nearly every single feature in `outcome` supports working with `#![no_std]`
+//! support, however currently `eyre` *does* require `std` support (Attempts
+//! were made at making `no_std` work, but this was removed and has not been
+//! available for some time).
+//!
+//!
+//! ```toml
+//! [dependencies]
+//! outcome-46f94afc-026f-5511-9d7e-7d1fd495fb5c = { version = "...", features = ["nightly"] }
+//! ```
 //!
 //! # Why Augment `Result<T, E>`?
 //!
@@ -36,7 +111,7 @@
 //! provides the ability to quickly expand the surface area of consumed APIs
 //! with finer grained control over errors so that library writers can write
 //! *correct* behavior and then return at a later time to compose results,
-//! expand error definitions, or  to represent different error severities.
+//! expand error definitions, or to represent different error severities.
 //!
 //! As an example, the section [making unhandled errors unrepresentable][1] in
 //! the post *Error Handling in a Correctness-Critical Rust Project*, the
@@ -116,57 +191,10 @@
 //! [`TryV2`]: core::ops::TryV2
 //! [`Try`]: core::ops::Try
 //!
+//! [crates.io]: https://crates.io
+//!
 //! [1]: https://sled.rs/errors.html#making-unhandled-errors-unrepresentable
 //! [2]: https://crates.io/crates/nom
-//!
-//! # XXX: The section below is to be rewritten. Ignore it for now.
-//!
-//! This statement above is *exactly* what [`Outcome`] is written to *help*
-//! prevent.
-//!
-//! As
-//! an example, [`UnixDatagram::take_error`] returns a type that, once expanded
-//! looks something like much like `Result<Option<Error>, Error>`. Internally,
-//! this is calling a series of internal functions that eventually call into
-//! afunction that is part of the C FFI. However, there are two error states
-//! here. The actual *possible* error that users will care about (the
-//! `Option<Error>`) and the `Error` that might be returned for a variety of
-//! other reasons.
-//!
-//! In other words,
-//! [`Outcome`] is *not* for the average Rust developer to use, but for
-//! internal use within the confines of a crate.
-//!
-//! The idea behind an `Outcome` is that error handling cannot usually signify
-//! to the client of an API that a function *should* be retried. In some Rust
-//! libraries, the use of a `Result<T, Result<U, E>>` is used in these places
-//! and it makes consuming these APIs cumbersome, unnecessarily difficult,
-//! and promotes use of the WTF operator (`??`).
-//!
-//! ```
-//! # use outcome::*;
-//! # use std::error::Error;
-//! #[derive(Debug)]
-//! enum Version { V1, V2 }
-//!
-//! struct EmptyInput;
-//!
-//! fn parse_version(header: &[u8]) -> Outcome<Version, EmptyInput, &'static str> {
-//!   match header.get(0) {
-//!     None => Mistake(EmptyInput),
-//!     Some(&1) => Success(Version::V1),
-//!     Some(&2) => Success(Version::V2),
-//!     Some(_) => Failure("invalid or unknown version"),
-//!   }
-//! }
-//!
-//! let _version = parse_version(&[]);
-//! ```
-//!
-//! In other cases, such as the one found with [`TryLockError<T>`], the
-//! non-recoverable error is [`PoisonError<T>`], while the *retryable* error
-//! returned is [`WouldBlock`], which *can* be tried again, possibly with a
-//! pattern known as exponential back-off.
 
 #![warn(clippy::cargo_common_metadata)]
 #![warn(clippy::default_numeric_fallback)]
@@ -215,6 +243,7 @@ mod nightly;
 
 mod convert;
 mod iter;
+mod stable;
 
 /// `Outcome` is a type that can represet a [`Success`], [`Mistake`], or [`Failure`].
 ///
@@ -230,36 +259,11 @@ pub enum Outcome<S, M, F> {
   Failure(F),
 }
 
-/// `Aberration` is a type that can represet a [`Mistake`], or [`Failure`].
-///
-/// See the [module documentation](self) for details.
-#[must_use = "This Aberration might be a `Mistake`, which should be handled"]
-pub enum Aberration<M, F> {
-  /// Contains the mistake value
-  Mistake(M),
-  /// Contains the failure value
-  Failure(F),
-}
-
-/// (WIP Name) `Concern` is a type that can represent a [`Success`], or
-/// [`Mistake`].
-///
-/// This type is *currently* planned to be used for the unstable [`TryV2`]
-/// trait.
-///
-/// See the [module documentation](self) for details.
-///
-/// [`TryV2`]: core::ops::TryV2
-#[must_use = "This Concern might be a `Mistake`, which should be handled"]
-pub enum Concern<S, M> {
-  /// Contains the success value
-  Success(S),
-  /// Contains the mistake value
-  Mistake(M),
-}
-
 #[doc(inline)]
 pub use crate::{convert::*, iter::*};
+
+#[doc(inline)]
+pub use crate::stable::{Aberration, Concern};
 
 #[doc(hidden)]
 pub use Outcome::{Failure, Mistake, Success};
