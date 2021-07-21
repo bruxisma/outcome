@@ -26,14 +26,15 @@ jobs:
   lint:
     name: Lint Checks
     runs-on: ubuntu-latest
-    matrix:
-      features:
-        - ''
-        - --no-default-features
-        - --all-features
-        - --features report
-        - --features unstable
-        - --features nightly
+    strategy:
+      matrix:
+        features:
+          - ''
+          - --no-default-features
+          - --all-features
+          - --features report
+          - --features unstable
+          - --features nightly
     steps:
       - name: Checkout
         uses: actions/checkout@v2
