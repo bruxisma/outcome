@@ -90,7 +90,7 @@
 //!  - `nightly` will enable `unstable`.
 //!  - `report` will enable `std`.
 //!
-//! # `no_std` support
+//! ### `no_std` support
 //!
 //! Nearly every single feature in `outcome` supports working with `#![no_std]`
 //! support, however currently `eyre` *does* require `std` support (Attempts
@@ -107,7 +107,7 @@
 //!
 //! [`Outcome`] is *not* intended to fully replace [`Result`], especially at
 //! the API boundary (i.e., the API used by clients) when there is a clear
-//! success of failure state that can be transferred to users. Instead, it
+//! success or failure state that can be transferred to users. Instead, it
 //! provides the ability to quickly expand the surface area of consumed APIs
 //! with finer grained control over errors so that library writers can write
 //! *correct* behavior and then return at a later time to compose results,
