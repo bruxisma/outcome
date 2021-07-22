@@ -14,6 +14,55 @@ use crate::Outcome;
 ///      trying to treat a string as a filepath *without* having to convert it
 ///      to the underlying native storage format first)
 ///
+/// # Examples
+///
+/// ```
+/// # use outcome::*;
+///
+/// #[derive(Debug, PartialOrd, PartialEq, Ord, Eq, Hash)]
+/// enum Version { V1, V2 }
+///
+/// #[derive(Debug, PartialOrd, PartialEq, Ord, Eq, Hash)]
+/// struct EmptyInput;
+///
+/// #[derive(Debug, PartialOrd, PartialEq, Ord, Eq, Hash)]
+/// enum ParseError {
+///   InvalidVersion(u8),
+/// }
+///
+/// impl std::fmt::Display for ParseError {
+///   fn fmt (&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+///     match self {
+///       Self::InvalidVersion(v) => write!(f, "Expected a valid version, received: {:x?}", v)
+///     }
+///   }
+/// }
+///
+/// impl AttemptFrom<&[u8]> for Version {
+///   type Mistake = EmptyInput;
+///   type Failure = ParseError;
+///
+///   fn attempt_from (value: &[u8]) -> Outcome<Self, Self::Mistake, Self::Failure> {
+///     match value.get(0) {
+///       None => Mistake(EmptyInput),
+///       Some(&1) => Success(Version::V1),
+///       Some(&2) => Success(Version::V2),
+///       Some(&value) => Failure(ParseError::InvalidVersion(value)),
+///     }
+///   }
+/// }
+///
+/// let empty = Version::attempt_from(&[]);
+/// let v1 = Version::attempt_from(&[1u8]);
+/// let v2 = Version::attempt_from(&[2u8]);
+/// let v3 = Version::attempt_from(&[3u8]);
+/// assert_eq!(empty, Mistake(EmptyInput));
+/// assert_eq!(v1, Success(Version::V1));
+/// assert_eq!(v2, Success(Version::V2));
+/// assert_eq!(v3, Failure(ParseError::InvalidVersion(3)));
+///
+/// ```
+///
 /// [`TryFrom`]: core::convert::TryFrom
 /// [`TryInto`]: core::convert::TryInto
 /// [`Copy`]: core::marker::Copy
@@ -31,27 +80,18 @@ pub trait AttemptFrom<T>: Sized {
 /// expensive. Outcome's analogue to [`TryInto`].
 ///
 /// Library writers should *usually* not implement this trait directly, but
-/// should prefer implementing the `AttemptFrom` trait, which offers more
+/// should prefer implementing the [`AttemptFrom`] trait, which offers more
 /// flexibility and provides an equivalent `AttemptInto` implementation for
 /// free, thanks to the blanket implementation provided by the `outcome` crate.
 ///
 /// Unlike [`TryInto`], users are free to return a *retryable* error, which
 /// *should* return the data consumed.
 ///
-/// ```ignore
-/// # use outcome::*;
-/// let y = -1i8;
-/// let x: Outcome<u128, i8, Box<dyn std::error::Error>> = y.attempt_into();
-/// match x {
-///   // y's original value, which we can retrieve if desired.
-///   Mistake(y) => { return y; },
-///   _ => { /* ... */ }
-/// }
-/// ```
-///
 /// For more information on this, see the documentation for [`Into`].
 ///
+///
 /// [`TryInto`]: core::convert::TryInto
+/// [`Mutex`]: core::sync::Mutex
 /// [`Into`]: core::convert::Into
 pub trait AttemptInto<T>: Sized {
   /// The type returned in the event of a conversion error where the caller

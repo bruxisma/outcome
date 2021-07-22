@@ -1,31 +1,21 @@
-use crate::*;
+use crate::common::panic;
+use core::fmt::Debug;
 
 /// `Aberration` is a type that can represet a [`Mistake`], or [`Failure`].
 ///
 /// See the [module documentation](crate) for details.
+///
+/// [`Mistake`]: Aberration::Mistake
+/// [`Failure`]: Aberration::Failure
 #[must_use = "This Aberration might be a `Mistake`, which should be handled"]
+#[derive(Copy, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
 pub enum Aberration<M, F> {
-  /// Contains the mistake value
+  /// Contains the mistake value. Analagous to
+  /// [`Outcome::Mistake`](crate::Outcome::Mistake)
   Mistake(M),
-  /// Contains the failure value
+  /// Contains the failure value. Analagous to
+  /// [`Outcome::Failure`](crate::Outcome::Failure)
   Failure(F),
-}
-
-/// (WIP Name) `Concern` is a type that can represent a [`Success`], or
-/// [`Mistake`].
-///
-/// This type is *currently* planned to be used for the unstable [`TryV2`]
-/// trait.
-///
-/// See the [module documentation](crate) for details.
-///
-/// [`TryV2`]: core::ops::TryV2
-#[must_use = "This Concern might be a `Mistake`, which should be handled"]
-pub enum Concern<S, M> {
-  /// Contains the success value
-  Success(S),
-  /// Contains the mistake value
-  Mistake(M),
 }
 
 impl<M, F> Aberration<M, F> {
@@ -156,12 +146,7 @@ impl<M, F: Debug> Aberration<M, F> {
   pub fn unwrap_mistake(self) -> M {
     match self {
       Self::Mistake(m) => m,
-      Self::Failure(f) => {
-        panic!(
-          "Called `Aberration::unwrap_mistake()` on a `Failure` value: {:?}",
-          f
-        );
-      }
+      Self::Failure(f) => panic("Aberration::unwrap_mistake()", "Failure", &f),
     }
   }
 }
@@ -194,12 +179,7 @@ impl<M: Debug, F> Aberration<M, F> {
   #[inline]
   pub fn unwrap_failure(self) -> F {
     match self {
-      Self::Mistake(m) => {
-        panic!(
-          "Called `Aberration::unwrap_failure()` on a `Mistake` value: {:?}",
-          m
-        );
-      }
+      Self::Mistake(m) => panic("Aberration::unwrap_failure()", "Mistake", &m),
       Self::Failure(f) => f,
     }
   }
