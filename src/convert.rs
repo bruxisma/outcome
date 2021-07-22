@@ -17,7 +17,7 @@ use crate::Outcome;
 /// # Examples
 ///
 /// ```
-/// # use outcome::*;
+/// use outcome::{Outcome, Success, Failure, Mistake, AttemptFrom};
 ///
 /// #[derive(Debug, PartialOrd, PartialEq, Ord, Eq, Hash)]
 /// enum Version { V1, V2 }
@@ -60,7 +60,6 @@ use crate::Outcome;
 /// assert_eq!(v1, Success(Version::V1));
 /// assert_eq!(v2, Success(Version::V2));
 /// assert_eq!(v3, Failure(ParseError::InvalidVersion(3)));
-///
 /// ```
 ///
 /// [`TryFrom`]: core::convert::TryFrom
@@ -88,6 +87,59 @@ pub trait AttemptFrom<T>: Sized {
 /// *should* return the data consumed.
 ///
 /// For more information on this, see the documentation for [`Into`].
+///
+/// # Examples
+///
+/// The following example uses the same code from [`AttemptFrom`], but calls
+/// `attempt_into` on each object instead.
+///
+/// ```
+/// use outcome::{Outcome, Success, Failure, Mistake, AttemptFrom, AttemptInto};
+///
+/// #[derive(Debug, PartialOrd, PartialEq, Ord, Eq, Hash)]
+/// enum Version { V1, V2 }
+///
+/// #[derive(Debug, PartialOrd, PartialEq, Ord, Eq, Hash)]
+/// struct EmptyInput;
+///
+/// #[derive(Debug, PartialOrd, PartialEq, Ord, Eq, Hash)]
+/// enum ParseError {
+///   InvalidVersion(u8),
+/// }
+///
+/// impl std::fmt::Display for ParseError {
+///   fn fmt (&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+///     match self {
+///       Self::InvalidVersion(v) => write!(f, "Expected a valid version, received: {:x?}", v)
+///     }
+///   }
+/// }
+///
+/// impl<const N: usize> AttemptFrom<&[u8; N]> for Version {
+///   type Mistake = EmptyInput;
+///   type Failure = ParseError;
+///
+///   fn attempt_from (value: &[u8; N]) -> Outcome<Self, Self::Mistake, Self::Failure> {
+///     match value.get(0) {
+///       None => Mistake(EmptyInput),
+///       Some(&1) => Success(Version::V1),
+///       Some(&2) => Success(Version::V2),
+///       Some(&value) => Failure(ParseError::InvalidVersion(value)),
+///     }
+///   }
+/// }
+///
+/// type ParseOutcome = Outcome<Version, EmptyInput, ParseError>;
+///
+/// let empty: ParseOutcome = (&[]).attempt_into();
+/// let v1: ParseOutcome = (&[1u8]).attempt_into();
+/// let v2: ParseOutcome = (&[2u8]).attempt_into();
+/// let v3: ParseOutcome = (&[3u8]).attempt_into();
+/// assert_eq!(empty, Mistake(EmptyInput));
+/// assert_eq!(v1, Success(Version::V1));
+/// assert_eq!(v2, Success(Version::V2));
+/// assert_eq!(v3, Failure(ParseError::InvalidVersion(3)));
+/// ```
 ///
 ///
 /// [`TryInto`]: core::convert::TryInto

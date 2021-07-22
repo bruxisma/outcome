@@ -169,3 +169,10 @@ impl<S, M, F> Outcome<S, M, F> {
     core::hint::unreachable_unchecked();
   }
 }
+
+impl<S, M, F> Outcome<Outcome<S, M, F>, M, F> {
+  /// Converts from `Outcome<Outcome<S, M, F>, M, F>` to `Outcome<S, M, F>`
+  pub fn flatten(self) -> Outcome<S, M, F> {
+    self.and_then(core::convert::identity)
+  }
+}
