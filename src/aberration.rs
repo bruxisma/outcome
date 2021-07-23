@@ -128,13 +128,13 @@ impl<M, F: Debug> Aberration<M, F> {
   /// # Examples
   ///
   /// ```should_panic
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let x: Aberration<&str, i32> = Aberration::Failure(47);
   /// x.unwrap_mistake(); // panics with '47'
   /// ```
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let x: Aberration<&str, i32> = Aberration::Mistake("try again!");
   /// assert_eq!(x.unwrap_mistake(), "try again!");
   /// ```
@@ -162,13 +162,13 @@ impl<M: Debug, F> Aberration<M, F> {
   /// # Examples
   ///
   /// ```should_panic
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let x: Aberration<i32, &str> = Aberration::Mistake(47);
   /// x.unwrap_failure(); // panics with '47'
   /// ```
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let x: Aberration<i32, &str> = Aberration::Failure("error!");
   /// assert_eq!(x.unwrap_failure(), "error!");
   /// ```

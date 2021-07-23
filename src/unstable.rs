@@ -9,7 +9,7 @@ impl<S: Copy, M, F> Outcome<&S, M, F> {
   /// # Examples
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// ```
   pub fn copied(self) -> Outcome<S, M, F> {
     self.map(|&s| s)
@@ -23,7 +23,7 @@ impl<S: Copy, M, F> Outcome<&mut S, M, F> {
   /// # Examples
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// ```
   pub fn copied(self) -> Outcome<S, M, F> {
     self.map(|&mut s| s)
@@ -37,7 +37,7 @@ impl<S: Clone, M, F> Outcome<&S, M, F> {
   /// # Examples
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let val = 47;
   /// let x: Outcome<&i32, u32, f32> = Success(&val);
   /// assert_eq!(x, Success(&47));
@@ -56,7 +56,7 @@ impl<S: Clone, M, F> Outcome<&mut S, M, F> {
   /// # Examples
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let mut val = 47;
   /// let x: Outcome<&mut i32, u32, i32> = Success(&mut val);
   /// assert_eq!(x, Success(&mut 47));

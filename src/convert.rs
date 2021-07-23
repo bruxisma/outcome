@@ -1,4 +1,6 @@
-use crate::Outcome;
+use crate::{Failure, Outcome, Success};
+
+use core::convert::{Infallible, TryInto};
 
 /// Outcome's analogue to [`TryFrom`], and the reciprocal of [`TryInto`].
 ///
@@ -38,11 +40,11 @@ use crate::Outcome;
 ///   }
 /// }
 ///
-/// impl AttemptFrom<&[u8]> for Version {
+/// impl<const N: usize> AttemptFrom<&[u8; N]> for Version {
 ///   type Mistake = EmptyInput;
 ///   type Failure = ParseError;
 ///
-///   fn attempt_from (value: &[u8]) -> Outcome<Self, Self::Mistake, Self::Failure> {
+///   fn attempt_from (value: &[u8; N]) -> Outcome<Self, Self::Mistake, Self::Failure> {
 ///     match value.get(0) {
 ///       None => Mistake(EmptyInput),
 ///       Some(&1) => Success(Version::V1),
@@ -167,5 +169,35 @@ where
 
   fn attempt_into(self) -> Outcome<U, Self::Mistake, Self::Failure> {
     U::attempt_from(self)
+  }
+}
+
+/// Reflexive implementation for all [`TryInto`] implementations.
+///
+/// # Notes
+///
+/// If a [`TryInto`] implementation exists because of an [`Into`]
+/// implementation, the type returned by [`AttemptFrom`] will be an `Outcome<T,
+/// !, !>`. If the [`unstable` feature](crate#features) is enabled, users can
+/// then call [`Outcome::into_success`], which will never panic.
+///
+/// ```compile_fail
+/// # use outcome::prelude::*;
+/// # use core::convert::Infallible;
+/// let x: Outcome<u16, Infallible, Infallible> = 1u8.attempt_into();
+/// assert_eq!(x.into_success(), 1);
+/// ```
+impl<T, U> AttemptFrom<U> for T
+where
+  U: TryInto<Self>,
+{
+  type Mistake = Infallible;
+  type Failure = <U as TryInto<Self>>::Error;
+
+  fn attempt_from(value: U) -> Outcome<Self, Self::Mistake, Self::Failure> {
+    match value.try_into() {
+      Ok(s) => Success(s),
+      Err(f) => Failure(f),
+    }
   }
 }

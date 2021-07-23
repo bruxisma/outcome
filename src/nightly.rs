@@ -1,1 +1,244 @@
+#[cfg(feature = "std")]
+extern crate std;
+#[cfg(feature = "std")]
+use std::{
+  eprintln,
+  process::{ExitCode, Termination},
+};
 
+use crate::{Aberration, Concern, Failure, Mistake, Outcome, Success};
+use core::{
+  convert::Infallible,
+  fmt::Debug,
+  ops::{ControlFlow, FromResidual, Try},
+};
+
+/* feature(never_type) */
+impl<S, M: Into<!>, F: Into<!>> Outcome<S, M, F> {
+  /// Returns the contained [`Success`] value, but never panics.
+  ///
+  /// Unlike [`unwrap`], this method is known to never panic on the outcome
+  /// types it is implemented for. Therefore, it can be used instead of
+  /// `unwrap` as a maintainability safeguard that will fail to compile if the
+  /// mistake or failure type of the `Outcome` is later changed to mistake or
+  /// failure that can actuall occur.
+  ///
+  /// [`unwrap`]: crate::Outcome::unwrap
+  pub fn into_success(self) -> S {
+    match self {
+      Success(s) => s,
+      Mistake(m) => m.into(),
+      Failure(f) => f.into(),
+    }
+  }
+}
+
+impl<S: Into<!>, M, F: Into<!>> Outcome<S, M, F> {
+  /// Returns the contained [`Mistake`] value, but never panics.
+  pub fn into_mistake(self) -> M {
+    match self {
+      Success(s) => s.into(),
+      Mistake(m) => m,
+      Failure(f) => f.into(),
+    }
+  }
+}
+
+impl<S: Into<!>, M: Into<!>, F> Outcome<S, M, F> {
+  /// Returns the contained [`Failure`] value, but never panics.
+  pub fn into_failure(self) -> F {
+    match self {
+      Success(s) => s.into(),
+      Mistake(m) => m.into(),
+      Failure(f) => f,
+    }
+  }
+}
+
+/* feature(termination_trait_lib) */
+#[cfg(feature = "std")]
+impl<M: Debug, F: Debug> Termination for Outcome<(), M, F> {
+  #[inline]
+  fn report(self) -> i32 {
+    match self {
+      Success(()) => ().report(),
+      Mistake(m) => Mistake::<!, _, F>(m).report(),
+      Failure(f) => Failure::<!, M, _>(f).report(),
+    }
+  }
+}
+
+#[cfg(feature = "std")]
+impl<M: Debug, F: Debug> Termination for Outcome<!, M, F> {
+  fn report(self) -> i32 {
+    match self {
+      Mistake(m) => eprintln!("Mistake: {:?}", m),
+      Failure(f) => eprintln!("Failure: {:?}", f),
+    };
+    ExitCode::FAILURE.report()
+  }
+}
+
+#[cfg(feature = "std")]
+impl<M: Debug, F: Debug> Termination for Aberration<M, F> {
+  #[inline]
+  fn report(self) -> i32 {
+    match self {
+      Aberration::Mistake(m) => eprintln!("Mistake: {:?}", m),
+      Aberration::Failure(f) => eprintln!("Failure: {:?}", f),
+    };
+    ExitCode::FAILURE.report()
+  }
+}
+
+/* feature(try_trait_v2) */
+impl<S, M, F> Try for Outcome<S, M, F> {
+  type Output = Concern<S, M>;
+  type Residual = Outcome<Infallible, Infallible, F>;
+
+  #[inline]
+  fn from_output(output: Self::Output) -> Self {
+    match output {
+      Concern::Success(s) => Success(s),
+      Concern::Mistake(m) => Mistake(m),
+    }
+  }
+
+  #[inline]
+  fn branch(self) -> ControlFlow<Self::Residual, Self::Output> {
+    match self {
+      Success(s) => ControlFlow::Continue(Concern::Success(s)),
+      Mistake(m) => ControlFlow::Continue(Concern::Mistake(m)),
+      Failure(f) => ControlFlow::Break(Failure(f)),
+    }
+  }
+}
+
+impl<M, F> Try for Aberration<M, F> {
+  type Output = M;
+  type Residual = Result<Infallible, F>;
+
+  #[inline]
+  fn from_output(output: Self::Output) -> Self {
+    Self::Mistake(output)
+  }
+
+  #[inline]
+  fn branch(self) -> ControlFlow<Self::Residual, Self::Output> {
+    match self {
+      Self::Mistake(m) => ControlFlow::Continue(m),
+      Self::Failure(f) => ControlFlow::Break(Err(f)),
+    }
+  }
+}
+
+impl<S, M, F, G: From<F>> FromResidual<Outcome<Infallible, Infallible, F>>
+  for Outcome<S, M, G>
+{
+  #[inline]
+  fn from_residual(residual: Outcome<Infallible, Infallible, F>) -> Self {
+    match residual {
+      Failure(f) => Failure(From::from(f)),
+    }
+  }
+}
+
+impl<S, M, F, N: From<M>, G: From<F>> FromResidual<Aberration<M, F>>
+  for Outcome<S, N, G>
+{
+  #[inline]
+  fn from_residual(residual: Aberration<M, F>) -> Self {
+    match residual {
+      Aberration::Mistake(m) => Mistake(From::from(m)),
+      Aberration::Failure(f) => Failure(From::from(f)),
+    }
+  }
+}
+
+impl<T, F, E: From<F>> FromResidual<Outcome<Infallible, Infallible, F>>
+  for Result<T, E>
+{
+  #[inline]
+  fn from_residual(residual: Outcome<Infallible, Infallible, F>) -> Self {
+    match residual {
+      Failure(f) => Err(From::from(f)),
+    }
+  }
+}
+
+impl<S, M, E, F: From<E>> FromResidual<Result<Infallible, E>>
+  for Outcome<S, M, F>
+{
+  #[inline]
+  fn from_residual(residual: Result<Infallible, E>) -> Self {
+    match residual {
+      Err(e) => Failure(From::from(e)),
+    }
+  }
+}
+
+impl<M, E, F: From<E>> FromResidual<Result<Infallible, E>>
+  for Aberration<M, F>
+{
+  #[inline]
+  fn from_residual(residual: Result<Infallible, E>) -> Self {
+    match residual {
+      Err(e) => Self::Failure(From::from(e)),
+    }
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+  use crate::prelude::*;
+
+  mod try_trait {
+    use super::*;
+
+    #[test]
+    fn aberration() -> Result<(), &'static str> {
+      let aberration: Aberration<u32, &str> = Aberration::Mistake(0u32);
+      let value = aberration?;
+      assert_eq!(value, 0u32);
+      Ok(())
+    }
+
+    #[test]
+    fn outcome() -> Result<(), &'static str> {
+      let outcome: Outcome<f32, u32, &str> = Mistake(0u32);
+      let concern = outcome?;
+      assert_eq!(concern, Concern::Mistake(0u32));
+      Ok(())
+    }
+  }
+
+  #[cfg(feature = "std")]
+  mod process_termination_trait {
+    use super::*;
+
+    #[test]
+    fn aberration() -> Outcome<(), (), &'static str> {
+      let aberration: Aberration<u32, &str> = Aberration::Mistake(0u32);
+      let value = aberration?;
+      assert_eq!(value, 0u32);
+      Success(())
+    }
+
+    #[test]
+    fn outcome() -> Outcome<(), (), &'static str> {
+      let outcome: Outcome<f32, u32, &str> = Mistake(0u32);
+      let concern = outcome?;
+      assert_eq!(concern, Concern::Mistake(0u32));
+      Success(())
+    }
+
+    #[test]
+    fn result() -> Outcome<(), (), &'static str> {
+      let result: Result<u32, &str> = Ok(0u32);
+      let value = result?;
+      assert_eq!(value, 0u32);
+      Success(())
+    }
+  }
+}

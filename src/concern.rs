@@ -6,14 +6,14 @@ use core::{
 
 /// `Concern` is a type that can represent a [`Success`], or [`Mistake`].
 ///
-/// This type is *currently* planned to be returned from the unstable [`TryV2`]
+/// This type is *currently* planned to be returned from the unstable [`Try`]
 /// trait.
 ///
 /// See the [module documentation](crate) for more usage details.
 ///
 /// [`Success`]: Concern::Success
 /// [`Mistake`]: Concern::Mistake
-/// [`TryV2`]: core::ops::TryV2
+/// [`Try`]: core::ops::Try
 #[must_use = "This Concern might be a `Mistake`, which should be handled"]
 #[derive(Copy, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
 pub enum Concern<S, M> {
@@ -66,7 +66,7 @@ impl<S, M> Concern<S, M> {
   /// # Examples
   ///
   /// ```
-  /// use outcome::*;
+  /// # use outcome::prelude::*;
   /// let mut x: Concern<i32, &str> = Concern::Success(7);
   /// match x.iter_mut().next() {
   ///   Some(v) => *v += 40,
@@ -204,7 +204,7 @@ impl<S: Deref, M> Concern<S, M> {
   /// # Examples
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let x: Concern<String, u32> = Concern::Success("hello".to_string());
   /// let y: Concern<&str, &u32> = Concern::Success("hello");
   /// assert_eq!(x.as_deref(), y);
@@ -227,7 +227,7 @@ impl<S: DerefMut, M> Concern<S, M> {
   /// # Examples
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let mut s = "HELLO".to_string();
   /// let mut x: Concern<String, u32> = Concern::Success("hello".to_string());
   /// let y: Concern<&mut str, &mut u32> = Concern::Success(&mut s);

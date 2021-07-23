@@ -16,7 +16,7 @@ fmt:
   @cargo fmt
 
 docs *ARGS:
-  @cargo doc {{ARGS}} --all-features
+  @cargo +nightly doc {{ARGS}} --all-features
 
 check:
   @cargo clippy --all-features

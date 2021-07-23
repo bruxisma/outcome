@@ -20,7 +20,7 @@ use core::{
 /// [`Outcome`] can be used to make retryable APIs easier to work with.
 ///
 /// ```
-/// # use outcome::*;
+/// # use outcome::prelude::*;
 /// use std::sync::{Mutex, MutexGuard, PoisonError, LockResult, TryLockError};
 /// #[cfg(target_arch = "x86_64")]
 /// use std::arch::x86_64::_mm_pause;
@@ -140,7 +140,7 @@ impl<S, M, F> Outcome<S, M, F> {
   /// Basic usage:
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let x: Outcome<i32, f32, &str> = Success(47);
   /// assert_eq!(x.iter().next(), Some(&47));
   ///
@@ -165,7 +165,7 @@ impl<S, M, F> Outcome<S, M, F> {
   /// # Examples
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let mut x: Outcome<i32, f32, &str> = Success(7);
   /// match x.iter_mut().next() {
   ///   Some(v) => *v += 40,
@@ -187,7 +187,7 @@ impl<S, M, F> Outcome<S, M, F> {
   /// Basic usage:
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let x: Outcome<i32, (), &str> = Success(-1);
   /// assert_eq!(x.is_success(), true);
   ///
@@ -212,7 +212,7 @@ impl<S, M, F> Outcome<S, M, F> {
   /// # Examples
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let x: Outcome<(), i32, &str> = Mistake(-1);
   /// assert_eq!(x.is_mistake(), true);
   ///
@@ -236,7 +236,7 @@ impl<S, M, F> Outcome<S, M, F> {
   /// # Examples
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let x: Outcome<i32, f32, &str> = Failure("some failure message");
   /// assert_eq!(x.is_failure(), true);
   ///
@@ -260,7 +260,7 @@ impl<S, M, F> Outcome<S, M, F> {
   /// # Examples
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let x: Outcome<i32, f32, &str> = Failure("some failure message");
   /// assert_eq!(x.is_error(), true);
   ///
@@ -282,7 +282,7 @@ impl<S, M, F> Outcome<S, M, F> {
   /// the mistake or failure, if any.
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let outcome: Outcome<i32, f32, &str> = Success(4);
   /// assert_eq!(outcome.success(), Some(4));
   ///
@@ -301,7 +301,7 @@ impl<S, M, F> Outcome<S, M, F> {
   /// the success or failure, if any
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let outcome: Outcome<f32, i32, &str> = Mistake(47);
   /// assert_eq!(outcome.mistake(), Some(47));
   ///
@@ -320,7 +320,7 @@ impl<S, M, F> Outcome<S, M, F> {
   /// the success or mistake, if any.
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let outcome: Outcome<f32, (), i32> = Failure(-1);
   /// assert_eq!(outcome.failure(), Some(-1));
   ///
@@ -341,7 +341,7 @@ impl<S, M, F> Outcome<S, M, F> {
   /// # Examples
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   ///
   /// fn square(x: u32) -> Outcome<u32, u32, u32> { Success(x * x) }
   /// fn mistake(x: u32) -> Outcome<u32, u32, u32> { Mistake(x) }
@@ -467,7 +467,7 @@ impl<S: Deref, M, F> Outcome<S, M, F> {
   /// # Examples
   ///
   /// ```
-  /// use outcome::*;
+  /// # use outcome::prelude::*;
   /// let x: Outcome<String, u32, u32> = Success("hello".to_string());
   /// let y: Outcome<&str, &u32, &u32> = Success("hello");
   /// assert_eq!(x.as_deref(), y);
@@ -489,7 +489,7 @@ impl<S: DerefMut, M, F> Outcome<S, M, F> {
   /// # Examples
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let mut s = "HELLO".to_string();
   /// let mut x: Outcome<String, u32, u32> = Success("hello".to_string());
   /// let y: Outcome<&mut str, &mut u32, &mut u32> = Success(&mut s);
@@ -554,13 +554,13 @@ impl<S, M: Debug, F: Debug> Outcome<S, M, F> {
   /// # Examples
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let x: Outcome<u32, &str, &str> = Success(2);
   /// assert_eq!(x.unwrap(), 2);
   /// ```
   ///
   /// ```should_panic
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let x: Outcome<u32, &str, &str> = Failure("emergency failure");
   /// x.unwrap(); // panics with "emergency failure"
   /// ```
@@ -615,13 +615,13 @@ impl<S: Debug, M, F: Debug> Outcome<S, M, F> {
   /// # Examples
   ///
   /// ```should_panic
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let x: Outcome<u32, &str, &str> = Success(47);
   /// x.unwrap_mistake(); // panics with '47'
   /// ```
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let x: Outcome<u32, &str, f32> = Mistake("try again!");
   /// assert_eq!(x.unwrap_mistake(), "try again!");
   /// ```
@@ -647,13 +647,13 @@ impl<S: Debug, M: Debug, F> Outcome<S, M, F> {
   /// # Examples
   ///
   /// ```should_panic
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let x: Outcome<u32, &str, &str> = Success(47);
   /// x.unwrap_failure(); // panics with 47
   /// ```
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let x: Outcome<u32, f32, &str> = Failure("failure!");
   /// assert_eq!(x.unwrap_failure(), "failure!");
   /// ```
@@ -680,13 +680,13 @@ impl<S: Debug, M, F> Outcome<S, M, F> {
   /// # Examples
   ///
   /// ```should_panic
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let x: Outcome<u32, &str, &str> = Success(47);
   /// x.unwrap_error(); // panics with '47'
   /// ```
   ///
   /// ```
-  /// # use outcome::*;
+  /// # use outcome::prelude::*;
   /// let x: Outcome<u32, &str, &str> = Failure("failure!");
   /// let ab = x.unwrap_error();
   /// match ab {
@@ -718,6 +718,23 @@ impl<S: Default, M, F> Outcome<S, M, F> {
       return success;
     }
     S::default()
+  }
+}
+
+impl<S, M, F> Outcome<Option<S>, M, F> {
+  /// Transposes an `Outcome` of an `Option` into an `Option` of an `Outcome`.
+  ///
+  /// - `Success(None)` will be mapped to `None`.
+  /// - `Success(Some(_))`, `Mistake(_)`, and `Failure(_)` will be mapped to
+  ///     `Some(Success(_))`, `Some(Mistake(_))`, and `Some(Failure(_))`.
+  ///
+  pub fn transpose(self) -> Option<Outcome<S, M, F>> {
+    match self {
+      Success(Some(s)) => Some(Success(s)),
+      Success(None) => None,
+      Mistake(m) => Some(Mistake(m)),
+      Failure(f) => Some(Failure(f)),
+    }
   }
 }
 

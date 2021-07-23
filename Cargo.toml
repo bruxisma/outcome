@@ -10,6 +10,7 @@ keywords = ["outcome", "result", "failure", "eyre"]
 categories = ["no-std", "rust-patterns"]
 resolver = "2"
 include = ["src", "Cargo.toml", "LICENSE.md"]
+build = "build.rs"
 
 [lib]
 name = "outcome"
@@ -17,11 +18,13 @@ path = "src/lib.rs"
 
 [dependencies]
 eyre = { version = "0.6.5", optional = true }
-rustversion = { version = "1.0.5", optional = true }
+
+[build-dependencies]
+rustversion = "1.0.5"
 
 [features]
 default = ["std"]
-nightly = ["rustversion", "unstable"]
+nightly = ["unstable"]
 report = ["eyre", "std"]
 std = []
 unstable = []

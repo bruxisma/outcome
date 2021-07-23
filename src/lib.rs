@@ -25,8 +25,7 @@
 //! resources (e.g., attempting to lock an audio, video, or database resource).
 //!
 //! ```
-//! # use outcome::*;
-//!
+//! # use outcome::prelude::*;
 //! #[derive(Debug, PartialEq)]
 //! enum Version { V1, V2 }
 //!
@@ -87,7 +86,7 @@
 //!      found in [`Result`]. Unlike [`Result`], however, a nightly compiler is
 //!      not required.)
 //!  - `nightly` (Enable features that require the nightly rust compiler to be
-//!      used, such as [`TryV2`])
+//!      used, such as [`Try`])
 //!  - `report` (Enable conversion from [`Aberration`] to an
 //!      [`eyre::Report`])
 //!
@@ -97,7 +96,15 @@
 //!  - `nightly` will enable `unstable`.
 //!  - `report` will enable `std`.
 //!
-//! ### `no_std` support
+//! ### `unstable`
+//!
+//! TODO
+//!
+//! ### `nightly`
+//!
+//! TODO
+//!
+//! ### `no_std`
 //!
 //! Nearly every single feature in `outcome` supports working with `#![no_std]`
 //! support, however currently `eyre` *does* require `std` support (Attempts
@@ -174,13 +181,13 @@
 //!
 //!  - An explicit call to extract an inner `Result<T, E>` must be made
 //!  - The call of an easily greppable/searchable function before using the
-//!      "WTF" (`??`) operator is permitted.
-//!  - The [`Try`] or [`TryV2`] trait returns a type that *must* be decomposed
-//!      explicitly and *does not support* the try `?` operator itself.
+//!     "WTF" (`??`) operator is permitted.
+//!  - The [`Try`] trait returns a type that *must* be decomposed explicitly
+//!     and *does not support* the try `?` operator itself.
 //!
 //! Thanks to [clippy](https://github.com/rust-lang/rust-clippy)'s
 //! `disallowed_method` lint, users can rely on the first two options until
-//! [`TryV2`] has been stabilized.
+//! [`Try`] has been stabilized.
 //!
 //! # State Escalation
 //!
@@ -195,7 +202,6 @@
 //! [`WouldBlock`]: std::sync::TryLockError::WouldBlock
 //!
 //! [`UnixDatagram::take_error`]: https://doc.rust-lang.org/nightly/std/os/unix/net/struct.UnixDatagram.html#method.take_error
-//! [`TryV2`]: core::ops::TryV2
 //! [`Try`]: core::ops::Try
 //!
 //! [crates.io]: https://crates.io
@@ -225,6 +231,17 @@
 #![warn(clippy::missing_safety_doc)]
 #![warn(missing_docs)]
 #![warn(unsafe_code)]
+#![cfg_attr(
+  all(nightly, feature = "nightly", feature = "std"),
+  feature(process_exitcode_placeholder),
+  feature(termination_trait_lib)
+)]
+#![cfg_attr(
+  all(nightly, feature = "nightly"),
+  feature(try_trait_v2),
+  feature(never_type),
+  feature(exhaustive_patterns)
+)]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![no_std]
 
@@ -240,7 +257,7 @@ mod report;
 mod unstable;
 
 #[cfg_attr(docsrs, doc(cfg(feature = "nightly")))]
-#[cfg(feature = "nightly")]
+#[cfg(all(nightly, feature = "nightly"))]
 mod nightly;
 
 mod aberration;
@@ -250,7 +267,9 @@ mod convert;
 mod iter;
 mod outcome;
 
-#[doc(inline)]
+pub mod prelude;
+
+#[cfg_attr(doc, doc(inline))]
 pub use crate::{aberration::*, concern::*, convert::*, iter::*, outcome::*};
 
 #[doc(hidden)]

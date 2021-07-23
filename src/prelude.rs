@@ -1,0 +1,11 @@
+//! The Outcome Prelude
+//!
+//! The `outcome` library comes with several types and traits. However, several
+//! of these are the *most important*, while others are optional to be
+//! imported. For this reason, the `prelude` module is provided for quick
+//! imports. While it can't be automatically imported, it does contain the
+//! *stable* interface available for each support Rust edition.
+pub use crate::{aberration::Aberration, concern::Concern, outcome::Outcome};
+
+#[doc(hidden)]
+pub use Outcome::{Failure, Mistake, Success};
