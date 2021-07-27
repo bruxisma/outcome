@@ -6,8 +6,7 @@ use core::{
 
 /// `Concern` is a type that can represent a [`Success`], or [`Mistake`].
 ///
-/// This type is *currently* planned to be returned from the unstable [`Try`]
-/// trait.
+/// **NOTE**: This type will become a type alias once `!` is stabilized.
 ///
 /// See the [module documentation](crate) for more usage details.
 ///

@@ -21,7 +21,20 @@ impl<S, M: Into<!>, F: Into<!>> Outcome<S, M, F> {
   /// types it is implemented for. Therefore, it can be used instead of
   /// `unwrap` as a maintainability safeguard that will fail to compile if the
   /// mistake or failure type of the `Outcome` is later changed to mistake or
-  /// failure that can actuall occur.
+  /// failure that can actually occur.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # #![feature(never_type)]
+  /// # use outcome::prelude::*;
+  /// fn only_success() -> Outcome<String, !, !> {
+  ///   Success("This is fine 🐶☕🔥".into())
+  /// }
+  ///
+  /// let s: String = only_success().into_success();
+  /// assert!(s.contains("This is fine"));
+  /// ```
   ///
   /// [`unwrap`]: crate::Outcome::unwrap
   pub fn into_success(self) -> S {
@@ -35,6 +48,27 @@ impl<S, M: Into<!>, F: Into<!>> Outcome<S, M, F> {
 
 impl<S: Into<!>, M, F: Into<!>> Outcome<S, M, F> {
   /// Returns the contained [`Mistake`] value, but never panics.
+  ///
+  /// Unlike [`unwrap_mistake`], this method is known to never panic on the
+  /// outcome types it is implemented for. Therefore it can be used instead of
+  /// `unwrap_mistake` as a maintainibility safeguard that will fail to compile
+  /// if the success or failure type of the `Outcome` is later changed to a
+  /// success or failure that can actually occur.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # #![feature(never_type)]
+  /// # use outcome::prelude::*;
+  /// fn only_mistake() -> Outcome<!, String, !> {
+  ///   Mistake("Try another! 🍾🔫🤠".into())
+  /// }
+  ///
+  /// let s: String = only_mistake().into_mistake();
+  /// assert!(s.contains("Try another!"));
+  /// ```
+  ///
+  /// [`unwrap_mistake`]: crate::Outcome::unwrap_mistake
   pub fn into_mistake(self) -> M {
     match self {
       Success(s) => s.into(),
@@ -46,6 +80,25 @@ impl<S: Into<!>, M, F: Into<!>> Outcome<S, M, F> {
 
 impl<S: Into<!>, M: Into<!>, F> Outcome<S, M, F> {
   /// Returns the contained [`Failure`] value, but never panics.
+  ///
+  /// Unlike [`unwrap_failure`], this method is known to enver panic on the
+  /// outcome types it is implemented for. Therefore, it can be used instead of
+  /// `unwrap_failure` as a maintainibility safeguard that will fail to compile
+  /// if the success or mistake type of the `Outcome is later changed to a
+  /// success or mistake that can actually occur.
+  ///
+  /// ```
+  /// # #![feature(never_type)]
+  /// # use outcome::prelude::*;
+  /// fn only_failure() -> Outcome<!, !, String> {
+  ///   Failure("Catarina! 👦🤚🪑👧".into())
+  /// }
+  ///
+  /// let s: String = only_failure().into_failure();
+  /// assert!(s.contains("Catarina!"));
+  /// ```
+  ///
+  /// [`unwrap_failure`]: crate::Outcome::unwrap_failure
   pub fn into_failure(self) -> F {
     match self {
       Success(s) => s.into(),

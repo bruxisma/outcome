@@ -3,6 +3,8 @@ use core::fmt::Debug;
 
 /// `Aberration` is a type that can represet a [`Mistake`], or [`Failure`].
 ///
+/// **NOTE**: This type will become a type alias once `!` is stabilized.
+///
 /// See the [module documentation](crate) for details.
 ///
 /// [`Mistake`]: Aberration::Mistake

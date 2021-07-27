@@ -759,14 +759,3 @@ impl<S: Clone, M: Clone, F: Clone> Clone for Outcome<S, M, F> {
     }
   }
 }
-
-/* stdlib + core integration */
-impl<S, M: Into<F>, F> From<Outcome<S, M, F>> for Result<S, F> {
-  fn from(outcome: Outcome<S, M, F>) -> Self {
-    match outcome {
-      Success(value) => Ok(value),
-      Mistake(value) => Err(value.into()),
-      Failure(value) => Err(value),
-    }
-  }
-}

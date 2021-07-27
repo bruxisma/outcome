@@ -69,7 +69,7 @@
 //! treated the same:
 //!
 //! ```rust
-//! use outcome::Outcome;
+//! use outcome::prelude::*;
 //! ```
 //!
 //! Is this solution friendly to users? No, but neither is the lack of
@@ -96,14 +96,6 @@
 //!  - `nightly` will enable `unstable`.
 //!  - `report` will enable `std`.
 //!
-//! ### `unstable`
-//!
-//! TODO
-//!
-//! ### `nightly`
-//!
-//! TODO
-//!
 //! ### `no_std`
 //!
 //! Nearly every single feature in `outcome` supports working with `#![no_std]`
@@ -116,6 +108,38 @@
 //! [dependencies]
 //! outcome-46f94afc-026f-5511-9d7e-7d1fd495fb5c = { version = "...", features = ["nightly"] }
 //! ```
+//!
+//! ### `unstable`
+//!
+//! When enabled, the `unstable` feature provides several associated methods
+//! for [`Outcome`] that mirror unstable APIs found in [`Result<T, E>`]. If the
+//! methods mirrored are changed in any future releases of stable rust, these
+//! will as well. Additionally, if any of the APIs are stabilized, they will be
+//! moved out of this feature and into the default feature set. Unlike the
+//! `nightly` feature, these APIs can be implemented in *stable* rust.
+//!
+//! ### `nightly`
+//!
+//! The `nightly` feature set also requires a nightly toolchain. This is detected
+//! in outcome's `build.rs` script via the
+//! [rustversion](https://crates.io/crates/rustversion) crate. While users can
+//! enable the nightly feature on a stable toolchain, nothing additional will
+//! be compiled.
+//!
+//! Once available, users will have to enable specific nightly features for
+//! each API set mentioned. These are listed below.
+//!
+//!  - `#![feature(try_trait_v2)]` &mdash; operator `?` support
+//!    - [`Outcome`] may be used with operator `?`, including from functions
+//!        that return a [`Result<T, E>`], as long as `E: From<F>`.
+//!  - `#![feature(never_type)]` - APIs that return `!`
+//!    - [`Outcome`] will have several functions where the `!` type is used in
+//!        the function signature. These include `into_success`, and others.
+//!  - `#![feature(termination_trait_lib)]` - Exit process with an [`Outcome`]
+//!    - **NOTE**: This requires the `std` feature to be enabled as well.
+//!    - In addition to being usable with `fn main()`, *any unit test* may
+//!        return an [`Outcome`] directly. This works in the same way as
+//!        returning a [`Result<T, E>`]
 //!
 //! # Why Augment `Result<T, E>`?
 //!
@@ -189,9 +213,7 @@
 //! `disallowed_method` lint, users can rely on the first two options until
 //! [`Try`] has been stabilized.
 //!
-//! # State Escalation
-//!
-//! // TODO: ...
+//! # State Escalation (TODO)
 //!
 //! [`Success(S)`]: Success
 //! [`Mistake(M)`]: Mistake
