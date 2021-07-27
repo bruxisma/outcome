@@ -7,5 +7,9 @@
 //! *stable* interface available for each support Rust edition.
 pub use crate::{aberration::Aberration, concern::Concern, outcome::Outcome};
 
+// TODO: Change this to be an edition setting
+#[cfg(nightly)]
+pub use crate::convert::{AttemptFrom, AttemptInto};
+
 #[doc(hidden)]
 pub use Outcome::{Failure, Mistake, Success};

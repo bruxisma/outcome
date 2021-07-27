@@ -1,4 +1,26 @@
-use crate::{Failure, Outcome, Success};
+//! Traits for conversion between types.
+//!
+//! Much like the rust standard library, the traits in this module provide a
+//! way to convert from one type to another type, albeit with a focus on using
+//! the [`Outcome`](crate::prelude::Outcome). In `outcome`'s case, only two
+//! traits are provided, [`AttemptFrom`] and [`AttemptInto`], which mirror
+//! [`TryFrom`] and [`TryInto`] respectively.
+//!
+//! As a library author, you should always prefer implementing [`AttemptFrom`]
+//! over [`AttemptInto`], as [`AttemptFrom`] offers greater flexibility and
+//! offers an equivalent [`AttemptInto`] implementation for free, thanks to a
+//! blanket implementation in the `outcome` crate.
+//!
+//! # Generic Implementations
+//!
+//!  - [`AttemptFrom`]`<U> for T` implies [`AttemptInto`]`<T> for U`
+//!
+//! [`AttemptFrom`]: crate::convert::AttemptFrom
+//! [`AttemptInto`]: crate::convert::AttemptInto
+//! [`TryFrom`]: core::convert::TryFrom
+//! [`TryInto`]: core::convert::TryInto
+
+use crate::prelude::{Failure, Outcome, Success};
 
 use core::convert::{Infallible, TryInto};
 
@@ -19,7 +41,8 @@ use core::convert::{Infallible, TryInto};
 /// # Examples
 ///
 /// ```
-/// use outcome::{Outcome, Success, Failure, Mistake, AttemptFrom};
+/// use outcome::prelude::*;
+/// use outcome::convert::*;
 ///
 /// #[derive(Debug, PartialOrd, PartialEq, Ord, Eq, Hash)]
 /// enum Version { V1, V2 }
@@ -86,7 +109,8 @@ pub trait AttemptFrom<T>: Sized {
 /// free, thanks to the blanket implementation provided by the `outcome` crate.
 ///
 /// Unlike [`TryInto`], users are free to return a *retryable* error, which
-/// *should* return the data consumed.
+/// *should* return the data consumed (however this cannot be enforced in
+/// practice).
 ///
 /// For more information on this, see the documentation for [`Into`].
 ///
@@ -96,7 +120,8 @@ pub trait AttemptFrom<T>: Sized {
 /// `attempt_into` on each object instead.
 ///
 /// ```
-/// use outcome::{Outcome, Success, Failure, Mistake, AttemptFrom, AttemptInto};
+/// use outcome::prelude::*;
+/// use outcome::convert::*;
 ///
 /// #[derive(Debug, PartialOrd, PartialEq, Ord, Eq, Hash)]
 /// enum Version { V1, V2 }
@@ -172,32 +197,44 @@ where
   }
 }
 
-/// Reflexive implementation for all [`TryInto`] implementations.
-///
-/// # Notes
-///
-/// If a [`TryInto`] implementation exists because of an [`Into`]
-/// implementation, the type returned by [`AttemptFrom`] will be an `Outcome<T,
-/// !, !>`. If the [`unstable` feature](crate#features) is enabled, users can
-/// then call [`Outcome::into_success`], which will never panic.
-///
-/// ```compile_fail
-/// # use outcome::prelude::*;
-/// # use core::convert::Infallible;
-/// let x: Outcome<u16, Infallible, Infallible> = 1u8.attempt_into();
-/// assert_eq!(x.into_success(), 1);
-/// ```
 impl<T, U> AttemptFrom<U> for T
 where
-  U: TryInto<Self>,
+  U: Into<Self>,
 {
   type Mistake = Infallible;
-  type Failure = <U as TryInto<Self>>::Error;
+  type Failure = Infallible;
 
   fn attempt_from(value: U) -> Outcome<Self, Self::Mistake, Self::Failure> {
-    match value.try_into() {
-      Ok(s) => Success(s),
-      Err(f) => Failure(f),
-    }
+    Success(value.into())
   }
 }
+
+// Reflexive implementation for all [`TryInto`] implementations.
+//
+// # Notes
+//
+// If a [`TryInto`] implementation exists because of an [`Into`]
+// implementation, the type returned by [`AttemptFrom`] will be an `Outcome<T,
+// !, !>`. If the [`unstable` feature](crate#features) is enabled, users can
+// then call [`Outcome::into_success`], which will never panic.
+//
+// ```compile_fail
+// # use outcome::prelude::*;
+// # use core::convert::Infallible;
+// let x: Outcome<u16, Infallible, Infallible> = 1u8.attempt_into();
+// assert_eq!(x.into_success(), 1);
+// ```
+//impl<T, U> AttemptFrom<U> for T
+//where
+//  U: TryInto<Self>,
+//{
+//  type Mistake = Infallible;
+//  type Failure = <U as TryInto<Self>>::Error;
+//
+//  fn attempt_from(value: U) -> Outcome<Self, Self::Mistake, Self::Failure> {
+//    match value.try_into() {
+//      Ok(s) => Success(s),
+//      Err(f) => Failure(f),
+//    }
+//  }
+//}

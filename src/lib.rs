@@ -285,10 +285,10 @@ mod nightly;
 mod aberration;
 mod common;
 mod concern;
-mod convert;
 mod iter;
 mod outcome;
 
+pub mod convert;
 pub mod prelude;
 
 #[cfg_attr(doc, doc(inline))]
