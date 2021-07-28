@@ -36,7 +36,7 @@ impl<S, M: Into<!>, F: Into<!>> Outcome<S, M, F> {
   /// assert!(s.contains("This is fine"));
   /// ```
   ///
-  /// [`unwrap`]: crate::Outcome::unwrap
+  /// [`unwrap`]: crate::prelude::Outcome::unwrap
   pub fn into_success(self) -> S {
     match self {
       Success(s) => s,
@@ -68,7 +68,7 @@ impl<S: Into<!>, M, F: Into<!>> Outcome<S, M, F> {
   /// assert!(s.contains("Try another!"));
   /// ```
   ///
-  /// [`unwrap_mistake`]: crate::Outcome::unwrap_mistake
+  /// [`unwrap_mistake`]: crate::prelude::Outcome::unwrap_mistake
   pub fn into_mistake(self) -> M {
     match self {
       Success(s) => s.into(),
@@ -84,7 +84,7 @@ impl<S: Into<!>, M: Into<!>, F> Outcome<S, M, F> {
   /// Unlike [`unwrap_failure`], this method is known to enver panic on the
   /// outcome types it is implemented for. Therefore, it can be used instead of
   /// `unwrap_failure` as a maintainibility safeguard that will fail to compile
-  /// if the success or mistake type of the `Outcome is later changed to a
+  /// if the success or mistake type of the `Outcome` is later changed to a
   /// success or mistake that can actually occur.
   ///
   /// ```
@@ -98,7 +98,7 @@ impl<S: Into<!>, M: Into<!>, F> Outcome<S, M, F> {
   /// assert!(s.contains("Catarina!"));
   /// ```
   ///
-  /// [`unwrap_failure`]: crate::Outcome::unwrap_failure
+  /// [`unwrap_failure`]: crate::prelude::Outcome::unwrap_failure
   pub fn into_failure(self) -> F {
     match self {
       Success(s) => s.into(),

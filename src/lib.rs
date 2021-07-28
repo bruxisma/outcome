@@ -72,8 +72,17 @@
 //! use outcome::prelude::*;
 //! ```
 //!
+//! Users can also work around this by using the `package` key in their
+//! dependency declaration:
+//!
+//! ```toml
+//! [dependencies.outcome]
+//! version = "*"
+//! package = "outcome-46f94afc-026f-5511-9d7e-7d1fd495fb5c"
+//! ```
+//!
 //! Is this solution friendly to users? No, but neither is the lack of
-//! namespacing or a squatting policy on [crates.io]. If/when this problem is
+//! namespacing nor a squatting policy on [crates.io]. If/when this problem is
 //! resolved, this crate's documentation (and name!) will be changed and all
 //! versions will be yanked.
 //!
@@ -264,21 +273,21 @@
   feature(never_type),
   feature(exhaustive_patterns)
 )]
-#![cfg_attr(docsrs, feature(doc_cfg))]
+#![cfg_attr(any(docsrs, nightly), feature(doc_cfg))]
 #![no_std]
 
 #[cfg(doc)]
 extern crate std;
 
-#[cfg_attr(docsrs, doc(cfg(feature = "report")))]
+#[cfg_attr(any(docsrs, nightly), doc(cfg(feature = "report")))]
 #[cfg(feature = "report")]
 mod report;
 
-#[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
+#[cfg_attr(any(docsrs, nightly), doc(cfg(feature = "unstable")))]
 #[cfg(feature = "unstable")]
 mod unstable;
 
-#[cfg_attr(docsrs, doc(cfg(feature = "nightly")))]
+#[cfg_attr(any(docsrs, nightly), doc(cfg(feature = "nightly")))]
 #[cfg(all(nightly, feature = "nightly"))]
 mod nightly;
 

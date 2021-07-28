@@ -20,9 +20,8 @@
 //! [`TryFrom`]: core::convert::TryFrom
 //! [`TryInto`]: core::convert::TryInto
 
-use crate::prelude::{Failure, Outcome, Success};
-
-use core::convert::{Infallible, TryInto};
+use crate::prelude::{Outcome, Success};
+use core::convert::Infallible;
 
 /// Outcome's analogue to [`TryFrom`], and the reciprocal of [`TryInto`].
 ///

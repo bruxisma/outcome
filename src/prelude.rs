@@ -7,8 +7,10 @@
 //! *stable* interface available for each support Rust edition.
 pub use crate::{aberration::Aberration, concern::Concern, outcome::Outcome};
 
-// TODO: Change this to be an edition setting
-#[cfg(nightly)]
+// TODO: Change this to be an edition setting?
+#[cfg_attr(any(docsrs, nightly), doc(cfg(feature = "nightly")))]
+#[cfg(all(nightly, feature = "nightly"))]
+#[doc(inline)]
 pub use crate::convert::{AttemptFrom, AttemptInto};
 
 #[doc(hidden)]
