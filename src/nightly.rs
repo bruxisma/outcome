@@ -1,17 +1,17 @@
 #[cfg(feature = "std")]
 extern crate std;
+use core::{
+  convert::Infallible,
+  fmt::Debug,
+  ops::{ControlFlow, FromResidual, Try},
+};
 #[cfg(feature = "std")]
 use std::{
   eprintln,
   process::{ExitCode, Termination},
 };
 
-use crate::{Aberration, Concern, Failure, Mistake, Outcome, Success};
-use core::{
-  convert::Infallible,
-  fmt::Debug,
-  ops::{ControlFlow, FromResidual, Try},
-};
+use crate::prelude::*;
 
 /* feature(never_type) */
 impl<S, M: Into<!>, F: Into<!>> Outcome<S, M, F> {
@@ -244,7 +244,6 @@ impl<M, E, F: From<E>> FromResidual<Result<Infallible, E>>
 #[cfg(test)]
 mod tests {
   use super::*;
-  use crate::prelude::*;
 
   mod try_trait {
     use super::*;

@@ -1,16 +1,17 @@
-use crate::*;
 use core::iter::FusedIterator;
+
+use crate::prelude::*;
 
 /// An iterator over the value in a [`Success`] variant of an [`Outcome`].
 ///
 /// The iterator yields one value if the result is [`Success`], otherwise none.
 ///
-/// This struct is created by the [`into_iter`] method on [`Outcome`] (provided
-/// by the [`IntoIterator`] trait).
+/// This struct is created by the [`into_iter`] method on [`Outcome`] (via the
+/// [`IntoIterator`] trait).
 ///
-/// [`Success`]: crate::Success
-/// [`Outcome`]: crate::Outcome
-/// [`into_iter`]: IntoIterator::into_iter
+/// [`Success`]: crate::prelude::Success
+/// [`Outcome`]: crate::prelude::Outcome
+/// [`into_iter`]: crate::prelude::Outcome::into_iter
 #[derive(Clone, Debug)]
 pub struct IntoIter<T> {
   pub(crate) inner: Option<T>,
@@ -21,9 +22,9 @@ pub struct IntoIter<T> {
 ///
 /// Created by [`Outcome::iter_mut`]
 ///
-/// [`Success`]: crate::Success
-/// [`Outcome`]: crate::Outcome
-/// [`Outcome::iter_mut`]: crate::Outcome::iter_mut
+/// [`Success`]: crate::prelude::Success
+/// [`Outcome`]: crate::prelude::Outcome
+/// [`Outcome::iter_mut`]: crate::prelude::Outcome::iter_mut
 #[derive(Debug)]
 pub struct IterMut<'a, T: 'a> {
   pub(crate) inner: Option<&'a mut T>,
@@ -35,9 +36,9 @@ pub struct IterMut<'a, T: 'a> {
 ///
 /// Created by [`Outcome::iter`].
 ///
-/// [`Success`]: crate::Success
-/// [`Outcome`]: crate::Outcome
-/// [`Outcome::iter`]: crate::Outcome::iter
+/// [`Success`]: crate::prelude::Success
+/// [`Outcome`]: crate::prelude::Outcome
+/// [`Outcome::iter`]: crate::prelude::Outcome::iter
 #[derive(Debug)]
 pub struct Iter<'a, T: 'a> {
   pub(crate) inner: Option<&'a T>,

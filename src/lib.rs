@@ -179,13 +179,13 @@
 //! > operator will accidentally push a local concern into a caller that can’t
 //! > deal with it.
 //!
-//! As the author of this post later shows, the `Sled::compare_and_swap`
+//! As the author of this post later shows, the `sled::Tree::compare_and_swap`
 //! function returns a `Result<Result<(), CompareAndSwapError>, sled::Error>`.
 //! They state this looks "*way less cute*", but will
 //!
 //! > improve chances that users will properly handle their compare and
 //! > swap-related errors properly\[sic]
-//! > ```ignore
+//! > ```ignore,compile_fail,E0425
 //! > // we can actually use try `?` now
 //! > let cas_result = sled.compare_and_swap(
 //! >   "dogs",
@@ -199,10 +199,10 @@
 //! > ```
 //!
 //! The issue with this return type is that there is *technically nothing* to
-//! stop a user from using what the creator of this crate calls the WTF
-//! operator (`??`) to ignore these intermediate errors.
+//! stop a user from using what the creator of the `outcome` crate calls the
+//! WTF operator (`??`) to ignore these intermediate errors.
 //!
-//! ```ignore
+//! ```ignore,compile_fail,E0425
 //! let cas = sled.compare_and_swap("dogs", "pickles", "catfood")??;
 //! ```
 //!
@@ -224,9 +224,9 @@
 //!
 //! # State Escalation (TODO)
 //!
-//! [`Success(S)`]: Success
-//! [`Mistake(M)`]: Mistake
-//! [`Failure(F)`]: Failure
+//! [`Success(S)`]: crate::prelude::Success
+//! [`Mistake(M)`]: crate::prelude::Mistake
+//! [`Failure(F)`]: crate::prelude::Failure
 //!
 //! [`TryLockError<T>`]: std::sync::TryLockError
 //! [`PoisonError<T>`]: std::sync::PoisonError
@@ -260,6 +260,7 @@
 #![warn(clippy::use_self)]
 #![warn(clippy::missing_panics_doc)]
 #![warn(clippy::missing_safety_doc)]
+//#![warn(missing_doc_code_examples)]
 #![warn(missing_docs)]
 #![warn(unsafe_code)]
 #![cfg_attr(
@@ -292,16 +293,14 @@ mod unstable;
 mod nightly;
 
 mod aberration;
-mod common;
 mod concern;
-mod iter;
 mod outcome;
+mod private;
+
+mod iter;
 
 pub mod convert;
 pub mod prelude;
 
 #[cfg_attr(doc, doc(inline))]
 pub use crate::{aberration::*, concern::*, convert::*, iter::*, outcome::*};
-
-#[doc(hidden)]
-pub use Outcome::{Failure, Mistake, Success};

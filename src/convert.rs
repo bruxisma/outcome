@@ -1,4 +1,4 @@
-//! Traits for conversion between types.
+//! Traits for retryuable conversions between types.
 //!
 //! Much like the rust standard library, the traits in this module provide a
 //! way to convert from one type to another type, albeit with a focus on using
@@ -20,8 +20,9 @@
 //! [`TryFrom`]: core::convert::TryFrom
 //! [`TryInto`]: core::convert::TryInto
 
-use crate::prelude::{Outcome, Success};
 use core::convert::Infallible;
+
+use crate::prelude::{Outcome, Success};
 
 /// Outcome's analogue to [`TryFrom`], and the reciprocal of [`TryInto`].
 ///

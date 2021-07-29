@@ -1,8 +1,9 @@
-use crate::{common::panic, iter::*};
 use core::{
   fmt::Debug,
   ops::{Deref, DerefMut},
 };
+
+use crate::{iter::*, private::panic};
 
 /// `Concern` is a type that can represent a [`Success`], or [`Mistake`].
 ///

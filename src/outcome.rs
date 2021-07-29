@@ -1,10 +1,13 @@
-use crate::{aberration::*, common::*, iter::*};
 use core::{
   fmt::Debug,
   ops::{Deref, DerefMut},
 };
 
-/// `Outcome` is a type that can represet a [`Success`], [`Mistake`], or
+#[doc(hidden)]
+pub use crate::iter::*;
+use crate::{aberration::*, private::*};
+
+/// `Outcome` is a type that represents a [`Success`], [`Mistake`], or
 /// [`Failure`].
 ///
 /// See the [module documentation](crate) for more details.
@@ -121,6 +124,31 @@ impl<S, M, F> Outcome<S, M, F> {
 
   /// Converts from `&mut Outcome<S, M, F>` to `Outcome<&mut S, &mut M, &mut
   /// F>`.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// fn mutate(o: &mut Outcome<i32, i32, i32>) {
+  ///   match o.as_mut() {
+  ///     Success(s) => *s = 47,
+  ///     Mistake(m) => *m = 19,
+  ///     Failure(f) => *f = 0,
+  ///   }
+  /// }
+  ///
+  /// let mut x: Outcome<i32, i32, i32> = Success(2);
+  /// mutate(&mut x);
+  /// assert_eq!(x.unwrap(), 47);
+  ///
+  /// let mut x: Outcome<i32, i32, i32> = Mistake(47);
+  /// mutate(&mut x);
+  /// assert_eq!(x.unwrap_mistake(), 19);
+  ///
+  /// let mut x: Outcome<i32, i32, i32> = Failure(47);
+  /// mutate(&mut x);
+  /// assert_eq!(x.unwrap_failure(), 0);
+  /// ```
   #[inline]
   pub fn as_mut(&mut self) -> Outcome<&mut S, &mut M, &mut F> {
     match *self {
@@ -281,11 +309,18 @@ impl<S, M, F> Outcome<S, M, F> {
   /// Converts `self` into an [`Option<S>`], consuming `self`, and discarding
   /// the mistake or failure, if any.
   ///
+  /// # Examples
+  ///
   /// ```
   /// # use outcome::prelude::*;
   /// let outcome: Outcome<i32, f32, &str> = Success(4);
   /// assert_eq!(outcome.success(), Some(4));
   ///
+  /// let outcome: Outcome<i32, f32, &str> = Mistake(0.0);
+  /// assert_eq!(outcome.success(), None);
+  ///
+  /// let outcome: Outcome<i32, f32, &str> = Failure("failure");
+  /// assert_eq!(outcome.success(), None);
   /// ```
   #[inline]
   pub fn success(self) -> Option<S> {
@@ -298,13 +333,20 @@ impl<S, M, F> Outcome<S, M, F> {
   /// Converts from `Outcome<S, M, F>` to [`Option<M>`].
   ///
   /// Converts `self` into an [`Option<M>`], consuming `self`, and discarding
-  /// the success or failure, if any
+  /// the success or failure, if any.
+  ///
+  /// # Examples
   ///
   /// ```
   /// # use outcome::prelude::*;
   /// let outcome: Outcome<f32, i32, &str> = Mistake(47);
   /// assert_eq!(outcome.mistake(), Some(47));
   ///
+  /// let outcome: Outcome<f32, i32, &str> = Success(0.0);
+  /// assert_eq!(outcome.mistake(), None);
+  ///
+  /// let outcome: Outcome<f32, i32, &str> = Failure("failure");
+  /// assert_eq!(outcome.mistake(), None);
   /// ```
   #[inline]
   pub fn mistake(self) -> Option<M> {
@@ -319,11 +361,18 @@ impl<S, M, F> Outcome<S, M, F> {
   /// Converts `self` into an [`Option<F>`], consuming `self`, and discarding
   /// the success or mistake, if any.
   ///
+  /// # Examples
+  ///
   /// ```
   /// # use outcome::prelude::*;
+  /// let outcome: Outcome<f32, (), i32> = Success(0.0);
+  /// assert_eq!(outcome.failure(), None);
+  ///
+  /// let outcome: Outcome<f32, (), i32> = Mistake(());
+  /// assert_eq!(outcome.failure(), None);
+  ///
   /// let outcome: Outcome<f32, (), i32> = Failure(-1);
   /// assert_eq!(outcome.failure(), Some(-1));
-  ///
   /// ```
   #[inline]
   pub fn failure(self) -> Option<F> {

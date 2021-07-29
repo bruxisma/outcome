@@ -1,6 +1,6 @@
-use crate::*;
-
 use core::cmp::PartialEq;
+
+use crate::prelude::*;
 
 impl<S: Copy, M, F> Outcome<&S, M, F> {
   /// Maps an `Outcome<&S, M, F>` to an `Outcome<S, M, F>` by copying the

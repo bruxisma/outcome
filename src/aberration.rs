@@ -1,5 +1,6 @@
-use crate::common::panic;
 use core::fmt::Debug;
+
+use crate::private::panic;
 
 /// `Aberration` is a type that can represet a [`Mistake`], or [`Failure`].
 ///
@@ -13,10 +14,10 @@ use core::fmt::Debug;
 #[derive(Copy, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
 pub enum Aberration<M, F> {
   /// Contains the mistake value. Analagous to
-  /// [`Outcome::Mistake`](crate::Outcome::Mistake)
+  /// [`Outcome::Mistake`](crate::prelude::Outcome::Mistake)
   Mistake(M),
   /// Contains the failure value. Analagous to
-  /// [`Outcome::Failure`](crate::Outcome::Failure)
+  /// [`Outcome::Failure`](crate::prelude::Outcome::Failure)
   Failure(F),
 }
 

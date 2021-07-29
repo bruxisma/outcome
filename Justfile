@@ -24,8 +24,11 @@ fmt:
   @cargo fmt
 
 docs *ARGS:
-  @cargo +nightly rustdoc {{ARGS}} --all-features
+  @cargo +nightly doc {{ARGS}} --all-features
 
 check:
   @cargo +nightly clippy --all-features -- -D warnings
   @cargo clippy --all-features -- -D warnings
+
+commit: fmt check docs test
+  @git commit -v --signoff
