@@ -98,12 +98,14 @@
 //!      used, such as [`Try`])
 //!  - `report` (Enable conversion from [`Aberration`] to an
 //!      [`eyre::Report`])
+//!  - `pretty-report` (Enable support for [`color-eyre`]'s [`Section`] trait.
 //!
 //! Users can also enable `no_std` support by either setting `default-features`
 //! to `false` or simply not listing `std` in the list of features.
 //!
+//!  - `pretty-report` will enable `report` and link against [`color-eyre`]
+//!  - `report` will enable `std`, and link against [`eyre`]
 //!  - `nightly` will enable `unstable`.
-//!  - `report` will enable `std`.
 //!
 //! ### `no_std`
 //!
@@ -112,10 +114,11 @@
 //! were made at making `no_std` work, but this was removed and has not been
 //! available for some time).
 //!
-//!
 //! ```toml
-//! [dependencies]
-//! outcome-46f94afc-026f-5511-9d7e-7d1fd495fb5c = { version = "...", features = ["nightly"] }
+//! [dependencies.outcome]
+//! package = "outcome-46f94afc-026f-5511-9d7e-7d1fd495fb5c"
+//! version = "..."
+//! features = ["nightly"]
 //! ```
 //!
 //! ### `unstable`
@@ -149,6 +152,32 @@
 //!    - In addition to being usable with `fn main()`, *any unit test* may
 //!        return an [`Outcome`] directly. This works in the same way as
 //!        returning a [`Result<T, E>`]
+//!
+//! ### `report`
+//!
+//! The `report` feature adds several additional associated methods to both
+//! [`Outcome`] and [`Aberration`]. These are meant to mimic the [`WrapErr`]
+//! functions found on [`Result<T, E>`]. However to stay in line with
+//! `outcome`'s naming convention, instances of `err` have been replaced with
+//! `failure`.
+//!
+//! Additionally, unlike [`WrapErr`], these functions are not implemented via a
+//! trait, but instead directly on each type. This is because Rust currently
+//! lacks *both* variadic generics *and* generic associated types (aka GATs).
+//! `outcome` requires *either* both of these features to implement an
+//! equivalent trait *or* for the never type (`!`) to be stabilized, as an
+//! [`Aberration`] is simply a type that can represent an `Outcome<!, M, F>`.
+//! Lastly, because [`Outcome`] is defined in this crate, we're able to get
+//! away with implementing these associated methods directly.
+//!
+//! ### `pretty-report`
+//!
+//! The `pretty-report` feature adds a trait wrapper around [`color-eyre`]'s
+//! [`Section`] trait, and several `impl`s to stay compatible with it. These
+//! `impl`s work in the same way as the [`Result<T, E>`] implementation, and
+//! require the use of an `Outcome<S, M, Report>`. To get the full use out of
+//! this `Section` trait, import `outcome::prelude::Section`, instead of
+//! `color_eyre::Section`.
 //!
 //! # Why Augment `Result<T, E>`?
 //!
@@ -224,17 +253,23 @@
 //!
 //! # State Escalation (TODO)
 //!
-//! [`Success(S)`]: crate::prelude::Success
-//! [`Mistake(M)`]: crate::prelude::Mistake
-//! [`Failure(F)`]: crate::prelude::Failure
+//! ---
 //!
+//!
+//! [`Try`]: core::ops::Try
 //! [`TryLockError<T>`]: std::sync::TryLockError
 //! [`PoisonError<T>`]: std::sync::PoisonError
 //! [`WouldBlock`]: std::sync::TryLockError::WouldBlock
 //!
-//! [`UnixDatagram::take_error`]: https://doc.rust-lang.org/nightly/std/os/unix/net/struct.UnixDatagram.html#method.take_error
-//! [`Try`]: core::ops::Try
+//! [`Section`]: color_eyre::Section
+//! [`WrapErr`]: eyre::WrapErr
 //!
+//! [`Success(S)`]: crate::prelude::Success
+//! [`Mistake(M)`]: crate::prelude::Mistake
+//! [`Failure(F)`]: crate::prelude::Failure
+//!
+//! [`UnixDatagram::take_error`]: https://doc.rust-lang.org/nightly/std/os/unix/net/struct.UnixDatagram.html#method.take_error
+//! [`color-eyre`]: https://crates.io/crates/color-eyre
 //! [crates.io]: https://crates.io
 //!
 //! [1]: https://sled.rs/errors.html#making-unhandled-errors-unrepresentable
@@ -280,10 +315,6 @@
 #[cfg(doc)]
 extern crate std;
 
-#[cfg_attr(any(docsrs, nightly), doc(cfg(feature = "report")))]
-#[cfg(feature = "report")]
-mod report;
-
 #[cfg_attr(any(docsrs, nightly), doc(cfg(feature = "unstable")))]
 #[cfg(feature = "unstable")]
 mod unstable;
@@ -291,6 +322,14 @@ mod unstable;
 #[cfg_attr(any(docsrs, nightly), doc(cfg(feature = "nightly")))]
 #[cfg(all(nightly, feature = "nightly"))]
 mod nightly;
+
+#[cfg_attr(any(docsrs, nightly), doc(cfg(feature = "report")))]
+#[cfg(feature = "report")]
+mod report;
+
+#[cfg_attr(any(docsrs, nightly), doc(cfg(feature = "pretty-report")))]
+#[cfg(feature = "pretty-report")]
+mod pretty;
 
 mod aberration;
 mod concern;

@@ -17,3 +17,8 @@ pub use Outcome::{Failure, Mistake, Success};
 #[doc(inline)]
 pub use crate::convert::{AttemptFrom, AttemptInto};
 pub use crate::{aberration::Aberration, concern::Concern, outcome::Outcome};
+
+#[cfg_attr(any(docsrs, nightly), doc(cfg(feature = "pretty-report")))]
+#[cfg(feature = "pretty-report")]
+#[doc(inline)]
+pub use crate::pretty::Section;

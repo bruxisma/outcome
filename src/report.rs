@@ -6,6 +6,9 @@ use eyre::Report;
 
 use crate::prelude::*;
 
+// TODO: Use type Return = T<...Ts, Report>; type Error = Report
+//       use a sealed trait for the same reason.
+
 /// Provides easier interop with [`Report`].
 ///
 /// Each associated method is meant to match the equivalent set of calls found

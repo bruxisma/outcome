@@ -17,6 +17,7 @@ name = "outcome"
 path = "src/lib.rs"
 
 [dependencies]
+color-eyre = { version = "0.5.11", optional = true, features = ["track-caller"] }
 eyre = { version = "0.6.5", optional = true }
 
 [build-dependencies]
@@ -25,6 +26,7 @@ rustversion = "1.0.5"
 [features]
 default = ["std"]
 nightly = ["unstable"]
+pretty-report = ["report", "color-eyre"]
 report = ["eyre", "std"]
 std = []
 unstable = []
