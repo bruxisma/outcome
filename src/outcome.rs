@@ -7,6 +7,12 @@ use core::{
 pub use crate::iter::*;
 use crate::{aberration::*, private::*};
 
+// TODO: Add an 'aggregate' set of functions (aggregate(_(mistake|failure))?)
+// to collect all success, mistake or failure into iterators/partition an
+// iterable of failures, concerns, mistakes, etc.
+//
+// TODO: Add an aggregate_reports function in crate::report
+
 /// `Outcome` is a type that represents a [`Success`], [`Mistake`], or
 /// [`Failure`].
 ///
@@ -806,5 +812,37 @@ impl<S: Clone, M: Clone, F: Clone> Clone for Outcome<S, M, F> {
       (Failure(to), Failure(from)) => to.clone_from(from),
       (to, from) => *to = from.clone(),
     }
+  }
+}
+
+#[cfg(all(test, feature = "std"))]
+mod tests {
+  extern crate std;
+  use super::*;
+  use std::{string::String, vec, vec::Vec};
+
+  #[test]
+  fn filter_map_with() {
+    let failures: Vec<Outcome<(), (), String>> = vec![
+      Failure("There is an error".into()),
+      Mistake(()),
+      Failure("There is a second error".into()),
+      Success(()),
+      Failure("There is a final error".into()),
+      Mistake(()),
+      Success(()),
+    ];
+
+    let filtered: Vec<&str> = failures
+      .iter()
+      .map(Outcome::as_ref)
+      .filter_map(Outcome::failure)
+      .map(String::as_str)
+      .collect();
+
+    assert_eq!(filtered.len(), 3);
+    assert_eq!(failures[0].as_ref().unwrap_failure().as_str(), filtered[0]);
+    assert_eq!(failures[2].as_ref().unwrap_failure().as_str(), filtered[1]);
+    assert_eq!(failures[4].as_ref().unwrap_failure().as_str(), filtered[2]);
   }
 }
