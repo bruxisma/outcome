@@ -114,8 +114,10 @@
 //!
 //!
 //! ```toml
-//! [dependencies]
-//! outcome-46f94afc-026f-5511-9d7e-7d1fd495fb5c = { version = "...", features = ["nightly"] }
+//! [dependencies.outcome]
+//! package = "outcome-46f94afc-026f-5511-9d7e-7d1fd495fb5c"
+//! version = "..."
+//! features = ["nightly"]
 //! ```
 //!
 //! ### `unstable`
@@ -149,6 +151,14 @@
 //!    - In addition to being usable with `fn main()`, *any unit test* may
 //!        return an [`Outcome`] directly. This works in the same way as
 //!        returning a [`Result<T, E>`]
+//!
+//! ### `report`
+//!
+//! The `report` feature adds several additional associated methods to beoth
+//! [`Outcome`] and [`Aberration`]. These are meant to mimic the [`WrapErr`]
+//! functions found on [`Result<T, E>`] that is provided by [`eyre`]. However,
+//! to stay in line with `outcome`'s naming convention, instances of `err` have
+//! been replaced with `failure`.
 //!
 //! # Why Augment `Result<T, E>`?
 //!
@@ -224,18 +234,23 @@
 //!
 //! # State Escalation (TODO)
 //!
-//! [`Success(S)`]: crate::prelude::Success
-//! [`Mistake(M)`]: crate::prelude::Mistake
-//! [`Failure(F)`]: crate::prelude::Failure
+//! ---
+//!
+//! [`Try`]: core::ops::Try
 //!
 //! [`TryLockError<T>`]: std::sync::TryLockError
 //! [`PoisonError<T>`]: std::sync::PoisonError
 //! [`WouldBlock`]: std::sync::TryLockError::WouldBlock
 //!
-//! [`UnixDatagram::take_error`]: https://doc.rust-lang.org/nightly/std/os/unix/net/struct.UnixDatagram.html#method.take_error
-//! [`Try`]: core::ops::Try
+//! [`WrapErr`]: eyre::WrapErr
 //!
+//! [`Success(S)`]: crate::prelude::Success
+//! [`Mistake(M)`]: crate::prelude::Mistake
+//! [`Failure(F)`]: crate::prelude::Failure
+//!
+//! [`UnixDatagram::take_error`]: https://doc.rust-lang.org/nightly/std/os/unix/net/struct.UnixDatagram.html#method.take_error
 //! [crates.io]: https://crates.io
+//! [`eyre`]: https://crates.io/crates/eyre
 //!
 //! [1]: https://sled.rs/errors.html#making-unhandled-errors-unrepresentable
 //! [2]: https://crates.io/crates/nom
@@ -280,10 +295,6 @@
 #[cfg(doc)]
 extern crate std;
 
-#[cfg_attr(any(docsrs, nightly), doc(cfg(feature = "report")))]
-#[cfg(feature = "report")]
-mod report;
-
 #[cfg_attr(any(docsrs, nightly), doc(cfg(feature = "unstable")))]
 #[cfg(feature = "unstable")]
 mod unstable;
@@ -301,6 +312,10 @@ mod iter;
 
 pub mod convert;
 pub mod prelude;
+
+#[cfg_attr(any(docsrs, nightly), doc(cfg(feature = "report")))]
+#[cfg(feature = "report")]
+pub mod report;
 
 #[cfg_attr(doc, doc(inline))]
 pub use crate::{aberration::*, concern::*, convert::*, iter::*, outcome::*};
