@@ -2,12 +2,12 @@
 extern crate std;
 use core::{
   convert::Infallible,
-  fmt::Debug,
   ops::{ControlFlow, FromResidual, Try},
 };
 #[cfg(feature = "std")]
 use std::{
   eprintln,
+  fmt::Debug,
   process::{ExitCode, Termination},
 };
 
