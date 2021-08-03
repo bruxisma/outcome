@@ -1,11 +1,20 @@
-//! Support for the [`eyre`] crate
+//! Support for the [`eyre`] crate.
 //!
+//! This module re-exports [`Report`] as well as [`Result`], and provides a
+//! trait, [`WrapFailure`], as a mirror to the [`WrapErr`] trait. Additionally,
+//! [`WrapFailure`] is also implemented for [`Result<T, E>`]. Lastly, to stay
+//! in line with behavior from [`eyre`], the [`WrapFailure`] trait is *also*
+//! sealed.
+//!
+//! [`WrapErr`]: eyre::WrapErr
+//! [`Result`]: eyre::Result
 //! [`eyre`]: https://crates.io/crates/eyre
 extern crate std;
 
 use std::{error::Error, fmt::Display};
 
-pub use eyre::Report;
+#[doc(no_inline)]
+pub use eyre::{Report, Result};
 
 use crate::prelude::*;
 
@@ -15,14 +24,32 @@ use crate::prelude::*;
 /// `outcome`.
 ///
 /// Additionally, this trait is meant to *mirror* the [`WrapErr`] trait found
-/// in [`eyre`].
+/// in [`eyre`], and therefore any type that implements `WrapErr` will
+/// automatically work with `WrapFailure`.
+///
+/// ```
+/// # use outcome::prelude::*;
+/// use outcome::report::{WrapFailure, Result, Report};
+///
+/// fn execute() -> Result<()> {
+///   # Err(Report::msg("error here"))?;
+///   # const IGNORE: &str = stringify! {
+///   ...
+///   # };
+///   # unreachable!()
+/// }
+///
+/// pub fn invoke() -> Result<Vec<u8>> {
+///   execute().wrap_failure("Failed to execute correctly")?;
+///   Ok(vec![])
+/// }
+/// ```
 ///
 /// [`Outcome`]: crate::prelude::Outcome
 /// [`WrapErr`]: eyre::WrapErr
 ///
 /// [`eyre`]: https://crates.io/crates/eyre
-#[cfg(feature = "report")]
-pub trait WrapFailure: Sized + crate::private::Sealed {
+pub trait WrapFailure: crate::private::Sealed {
   /// The expected return type for an `impl`.
   ///
   /// This will always be the same enumeration type, but with a [`Report`]
@@ -47,15 +74,10 @@ pub trait WrapFailure: Sized + crate::private::Sealed {
   /// [`wrap_failure_with`]: WrapFailure::wrap_failure_with
   /// [`anyhow`]: https://crates.io/crates/anyhow
   /// [`eyre`]: https://crates.io/crates/eyre
-  #[track_caller]
-  #[inline]
   fn with_context<D, F>(self, message: F) -> Self::Return
   where
     D: Display + Send + Sync + 'static,
-    F: FnOnce() -> D,
-  {
-    self.wrap_failure_with(message)
-  }
+    F: FnOnce() -> D;
 
   /// Compatibility re-export of [`wrap_failure`] for interop with
   /// [`anyhow`] and [`eyre`].
@@ -63,14 +85,9 @@ pub trait WrapFailure: Sized + crate::private::Sealed {
   /// [`wrap_failure`]: WrapFailure::wrap_failure
   /// [`anyhow`]: https://crates.io/crates/anyhow
   /// [`eyre`]: https://crates.io/crates/eyre
-  #[track_caller]
-  #[inline]
   fn context<D>(self, message: D) -> Self::Return
   where
-    D: Display + Send + Sync + 'static,
-  {
-    self.wrap_failure(message)
-  }
+    D: Display + Send + Sync + 'static;
 }
 
 impl<S, M, E> WrapFailure for Outcome<S, M, E>
@@ -104,6 +121,25 @@ where
       Mistake(m) => Mistake(m),
       Failure(f) => Failure(Report::new(f).wrap_err(message)),
     }
+  }
+
+  #[track_caller]
+  #[inline]
+  fn with_context<D, F>(self, message: F) -> Self::Return
+  where
+    D: Display + Send + Sync + 'static,
+    F: FnOnce() -> D,
+  {
+    self.wrap_failure_with(message)
+  }
+
+  #[track_caller]
+  #[inline]
+  fn context<D>(self, message: D) -> Self::Return
+  where
+    D: Display + Send + Sync + 'static,
+  {
+    self.wrap_failure(message)
   }
 }
 
@@ -139,11 +175,30 @@ where
       Self::Failure(f) => Aberration::Failure(Report::new(f).wrap_err(message)),
     }
   }
+
+  #[track_caller]
+  #[inline]
+  fn with_context<D, F>(self, message: F) -> Self::Return
+  where
+    D: Display + Send + Sync + 'static,
+    F: FnOnce() -> D,
+  {
+    self.wrap_failure_with(message)
+  }
+
+  #[track_caller]
+  #[inline]
+  fn context<D>(self, message: D) -> Self::Return
+  where
+    D: Display + Send + Sync + 'static,
+  {
+    self.wrap_failure(message)
+  }
 }
 
 impl<T, E> WrapFailure for Result<T, E>
 where
-  E: Error + Send + Sync + 'static,
+  Self: eyre::WrapErr<T, E>,
 {
   type Return = Result<T, Report>;
 
@@ -164,5 +219,24 @@ where
     D: Display + Send + Sync + 'static,
   {
     eyre::WrapErr::wrap_err(self, message)
+  }
+
+  #[track_caller]
+  #[inline]
+  fn with_context<D, F>(self, message: F) -> Self::Return
+  where
+    D: Display + Send + Sync + 'static,
+    F: FnOnce() -> D,
+  {
+    eyre::WrapErr::with_context(self, message)
+  }
+
+  #[track_caller]
+  #[inline]
+  fn context<D>(self, message: D) -> Self::Return
+  where
+    D: Display + Send + Sync + 'static,
+  {
+    eyre::WrapErr::context(self, message)
   }
 }
