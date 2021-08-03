@@ -2,7 +2,7 @@ use core::fmt::Debug;
 
 use crate::private::panic;
 
-/// `Aberration` is a type that can represet a [`Mistake`], or [`Failure`].
+/// `Aberration` is a type that can represent a [`Mistake`], or [`Failure`].
 ///
 /// **NOTE**: This type will become a type alias once `!` is stabilized.
 ///
