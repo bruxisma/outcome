@@ -100,7 +100,6 @@
 #![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/docs/features.md"))]
 #![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/docs/why-augment-result.md"))]
 #![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/docs/state-escalation.md"))]
-
 #![warn(clippy::cargo_common_metadata)]
 #![warn(clippy::default_numeric_fallback)]
 #![warn(clippy::doc_markdown)]
