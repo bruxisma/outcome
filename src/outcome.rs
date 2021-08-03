@@ -119,6 +119,20 @@ impl<S, M, F> Outcome<S, M, F> {
   ///
   /// Produces a new `Outcome`, containing a reference into the original,
   /// leaving the original in place.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Outcome<u32, f32, &str> = Success(2);
+  /// assert_eq!(x.as_ref(), Success(&2));
+  ///
+  /// let x: Outcome<i32, i32, i32> = Mistake(47);
+  /// assert_eq!(x.as_ref(), Mistake(&47));
+  ///
+  /// let x: Outcome<i32, i32, i32> = Failure(42);
+  /// assert_eq!(x.as_ref(), Failure(&42));
+  /// ```
   #[inline]
   pub fn as_ref(&self) -> Outcome<&S, &M, &F> {
     match *self {
