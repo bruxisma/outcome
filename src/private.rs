@@ -14,7 +14,7 @@ pub fn panic(method: &str, variant: &str, error: &dyn Debug) -> ! {
 pub trait Sealed {}
 
 #[cfg(feature = "report")]
-impl<T, E> Sealed for Result<T, E> where E: Into<eyre::Report> {}
+impl<T, E> Sealed for Result<T, E> {}
 
 impl<S, M, F> Sealed for crate::outcome::Outcome<S, M, F> {}
 impl<M, F> Sealed for crate::aberration::Aberration<M, F> {}
