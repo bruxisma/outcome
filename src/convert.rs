@@ -41,8 +41,8 @@ use crate::prelude::{Outcome, Success};
 /// # Examples
 ///
 /// ```
-/// use outcome::prelude::*;
 /// use outcome::convert::*;
+/// use outcome::prelude::*;
 ///
 /// #[derive(Debug, PartialOrd, PartialEq, Ord, Eq, Hash)]
 /// enum Version { V1, V2 }
@@ -120,8 +120,8 @@ pub trait AttemptFrom<T>: Sized {
 /// `attempt_into` on each object instead.
 ///
 /// ```
-/// use outcome::prelude::*;
 /// use outcome::convert::*;
+/// use outcome::prelude::*;
 ///
 /// #[derive(Debug, PartialOrd, PartialEq, Ord, Eq, Hash)]
 /// enum Version { V1, V2 }

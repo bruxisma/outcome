@@ -28,7 +28,6 @@ use crate::prelude::*;
 /// automatically work with `WrapFailure`.
 ///
 /// ```
-/// # use outcome::prelude::*;
 /// use outcome::report::{WrapFailure, Result, Report};
 ///
 /// fn execute() -> Result<()> {
