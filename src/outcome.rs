@@ -178,7 +178,7 @@ impl<S, M, F> Outcome<S, M, F> {
     }
   }
 
-  /// Returns a `Result<Concern<S, M>, F>`, which allows a user to stilly rely
+  /// Returns a `Result<Concern<S, M>, F>`, which allows a user to still rely
   /// on the `?` operator until [`Try`] has been stabilized.
   ///
   /// [`Try`]: core::ops::Try
