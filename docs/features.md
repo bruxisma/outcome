@@ -9,7 +9,7 @@ default. These include:
  - `nightly` (Enable features that require the nightly rust compiler to be
      used, such as [`Try`])
  - `report` (Enable conversion from [`Aberration`] to an
-     [`eyre::Report`])
+     [`eyre::Report`][`eyre::Report`])
 
 Users can also enable `no_std` support by either setting `default-features`
 to `false` or simply not listing `std` in the list of features.
@@ -34,9 +34,9 @@ features = ["nightly"]
 
 ### `unstable`
 
-When enabled, the `unstable` feature provides several associated methods
-for [`Outcome`] that mirror unstable APIs found in [`Result<T, E>`]. If the
-methods mirrored are changed in any future releases of stable rust, these
+When enabled, the `unstable` feature provides several associated methods for
+[`Outcome`] that mirror unstable APIs found in [`Result<T, E>`][`Result`]. If
+the methods mirrored are changed in any future releases of stable rust, these
 will as well. Additionally, if any of the APIs are stabilized, they will be
 moved out of this feature and into the default feature set. Unlike the
 `nightly` feature, these APIs can be implemented in *stable* rust.
@@ -70,10 +70,19 @@ each API set mentioned. These are listed below.
 
 The `report` feature adds the [`WrapFailure`] trait to both [`Outcome`] and
 [`Aberration`]. This trait is meant to mimic the [`WrapErr`] trait found on
-[`Result<T, E>`] that is provided by [`eyre`].  Therefore, a blanket
+[`Result<T, E>`][`Result`] that is provided by [`eyre`].  Therefore, a blanket
 implementation is provided for all types that implement [`WrapErr`].  However,
 to stay in line with `outcome`'s naming convention, instances of `err` have
 been replaced with `failure`.
 
-[`WrapFailure`]: crate::report::WrapFailure
+[`Result`]: core::result::Result
+[`Try`]: core::ops::Try
+
 [`WrapErr`]: eyre::WrapErr
+[`Report`]: eyre::Report
+
+[`WrapFailure`]: crate::report::WrapFailure
+[`Aberration`]: crate::prelude::Aberration
+[`Outcome`]: crate::prelude::Outcome
+
+[`eyre`]: https://crates.io/crates/eyre
