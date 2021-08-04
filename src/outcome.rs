@@ -5,7 +5,7 @@ use core::{
 
 #[doc(hidden)]
 pub use crate::iter::*;
-use crate::{aberration::*, private::*};
+use crate::{aberration::*, concern::*, private::*};
 
 // TODO: Add an 'aggregate' set of functions (aggregate(_(mistake|failure))?)
 // to collect all success, mistake or failure into iterators/partition an
@@ -175,6 +175,19 @@ impl<S, M, F> Outcome<S, M, F> {
       Success(ref mut value) => Success(value),
       Mistake(ref mut value) => Mistake(value),
       Failure(ref mut value) => Failure(value),
+    }
+  }
+
+  /// Returns a `Result<Concern<S, M>, F>`, which allows a user to stilly rely
+  /// on the `?` operator until [`Try`] has been stabilized.
+  ///
+  /// [`Try`]: core::ops::Try
+  #[inline]
+  pub fn acclimate(self) -> Result<Concern<S, M>, F> {
+    match self {
+      Success(value) => Ok(Concern::Success(value)),
+      Mistake(value) => Ok(Concern::Mistake(value)),
+      Failure(value) => Err(value),
     }
   }
 
@@ -410,6 +423,7 @@ impl<S, M, F> Outcome<S, M, F> {
   /// # Examples
   ///
   /// ```
+  /// # #![allow(unused_variables)]
   /// # use outcome::prelude::*;
   ///
   /// fn square(x: u32) -> Outcome<u32, u32, u32> { Success(x * x) }
@@ -749,6 +763,7 @@ impl<S: Debug, M, F> Outcome<S, M, F> {
   /// # Examples
   ///
   /// ```should_panic
+  /// # #![allow(unused_must_use)]
   /// # use outcome::prelude::*;
   /// let x: Outcome<u32, &str, &str> = Success(47);
   /// x.unwrap_error(); // panics with '47'
