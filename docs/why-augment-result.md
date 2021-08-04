@@ -65,7 +65,7 @@ moderately complex pattern matching to extract relevant information.
 
 Luckily, it *is* easier to prevent this issue in the first place if:
 
- - An explicit call to extract an inner `Result<T, E>` must be made
+ - An explicit call to extract an inner `Result<T, E>`-like type must be made
  - The call of an easily greppable/searchable function before using the
     "WTF" (`??`) operator is permitted.
  - The [`Try`] trait returns a type that *must* be decomposed explicitly
@@ -75,7 +75,20 @@ Thanks to [clippy](https://github.com/rust-lang/rust-clippy)'s
 `disallowed_method` lint, users can rely on the first two options until
 [`Try`] has been stabilized.
 
+`outcome` provides this in the form of its [`Concern`] type, whose variants
+match the [`Success`] and [`Failure`] of [`Outcome`], as well as the associated
+function [`Outcome::acclimate`], which returns a `Result<Concern<S, M>, F>`.
+
+**NOTE**: This associated function will be deprecated once [`Try`] has been
+stabilized.
+
 [`Try`]: core::ops::Try
+
+[`Outcome::acclimate`]: crate::prelude::Outcome::acclimate
+[`Concern`]: crate::prelude::Concern
+[`Success`]: crate::prelude::Success
+[`Failure`]: crate::prelude::Failure
+[`Outcome`]: crate::prelude::Outcome
 
 [1]: https://sled.rs/errors.html#making-unhandled-errors-unrepresentable
 [2]: https://crates.io/crates/nom
