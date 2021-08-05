@@ -82,6 +82,7 @@ function [`Outcome::acclimate`], which returns a `Result<Concern<S, M>, F>`.
 **NOTE**: This associated function will be deprecated once [`Try`] has been
 stabilized.
 
+[`Result`]: core::result::Result
 [`Try`]: core::ops::Try
 
 [`Outcome::acclimate`]: crate::prelude::Outcome::acclimate
