@@ -9,7 +9,7 @@ default. These include:
  - `nightly` (Enable features that require the nightly rust compiler to be
      used, such as [`Try`])
  - `report` (Enable conversion from [`Aberration`] to an
-     [`eyre::Report`][`eyre::Report`])
+     [`eyre::Report`][`Report`])
 
 Users can also enable `no_std` support by either setting `default-features`
 to `false` or simply not listing `std` in the list of features.
