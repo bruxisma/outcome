@@ -587,6 +587,7 @@ impl<S: DerefMut, M, F> Outcome<S, M, F> {
 
 #[cfg(not(feature = "nightly"))]
 impl<S, M, F> Outcome<S, M, F> {
+  /// **`TODO`**: Write documentation
   pub fn escalate_with<C, T>(self, closure: C) -> Aberration<M, F>
   where
     T: Into<M>,
