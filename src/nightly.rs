@@ -14,6 +14,49 @@ use std::{
 use crate::prelude::*;
 
 /* feature(never_type) */
+impl<S, M, F> Outcome<S, M, F> {
+  /// **`TODO`**: write documentation
+  pub fn escalate_with<C, T>(self, closure: C) -> Outcome<!, M, F>
+  where
+    T: Into<M>,
+    C: FnOnce(S) -> T,
+  {
+    match self {
+      Success(s) => Mistake(closure(s).into()),
+      Mistake(m) => Mistake(m),
+      Failure(f) => Failure(f),
+    }
+  }
+}
+
+impl<S: Into<!>, M: Into<F>, F> Outcome<S, M, F> {
+  /// Escalates an [`Outcome`] from a [`Mistake`] to a [`Failure`]
+  pub fn escalate_mistake(self) -> Outcome<!, !, F> {
+    match self {
+      Success(s) => s.into(),
+      Mistake(m) => Failure(m.into()),
+      Failure(f) => Failure(f),
+    }
+  }
+}
+
+impl<S: Into<!>, M, F> Outcome<S, M, F> {
+  /// Escalates an [`Outcome`] from a [`Mistake`] to a [`Failure`] using the
+  /// given closure.
+  ///
+  pub fn escalate_mistake_with<C, G>(self, closure: C) -> Outcome<!, !, F>
+  where
+    G: Into<F>,
+    C: FnOnce(M) -> G,
+  {
+    match self {
+      Success(s) => s.into(),
+      Mistake(m) => Failure(closure(m).into()),
+      Failure(f) => Failure(f),
+    }
+  }
+}
+
 impl<S, M: Into<!>, F: Into<!>> Outcome<S, M, F> {
   /// Returns the contained [`Success`] value, but never panics.
   ///

@@ -585,14 +585,30 @@ impl<S: DerefMut, M, F> Outcome<S, M, F> {
   }
 }
 
+#[cfg(not(feature = "nightly"))]
+impl<S, M, F> Outcome<S, M, F> {
+  pub fn escalate_with<C, T>(self, closure: C) -> Aberration<M, F>
+  where
+    T: Into<M>,
+    C: FnOnce(S) -> T,
+  {
+    match self {
+      Success(s) => Aberration::Mistake(closure(s).into()),
+      Mistake(m) => Aberration::Mistake(m),
+      Failure(f) => Aberration::Failure(f),
+    }
+  }
+}
+
 impl<S, M, F> Outcome<S, M, F>
 where
   S: Into<M>,
   M: Into<F>,
 {
   /// Escalates the state of the Outcome from Success, to Mistake, to Failure
-  /// on each call. Once an Outcome is in a failure state, it cannot escalate
-  /// any further.
+  /// on each call.
+  ///
+  /// Once an Outcome is in a failure state, it cannot escalate any further.
   pub fn escalate(self) -> Self {
     match self {
       Success(s) => Mistake(s.into()),
