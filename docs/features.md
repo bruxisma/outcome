@@ -59,6 +59,8 @@ each API set mentioned. These are listed below.
  - `#![feature(never_type)]` &mdash; APIs that return `!`
    - [`Outcome`] will have several functions where the `!` type is used in
        the function signature. These include `into_success`, and others.
+   - Several stable functions that return an [`Aberration`] will instead return
+       an `Outcome<!, M, F>`.
  - `#![feature(termination_trait_lib)]` &mdash; Exit process with an
       [`Outcome`]
    - **NOTE**: This requires the `std` feature to be enabled as well.
