@@ -86,22 +86,28 @@ jobs:
       - name: Authenticate GitHub CLI
         run: echo ${{github.token}} | gh auth login --with-token
       - name: Retrieve Shared Compilation Cache ID
-        id: sccache-id
-        run: |
-          output=$(gh release view --repo mozilla/sccache --json id --jq .id)
-          echo "::set-output name=id::${output}"
+        id: sccache
+        run: bash -c .github/scripts/retrieve-id mozilla/sccache
+      - name: Retrieve Cargo Hack Cache ID
+        id: cargo-hack
+        run: bash -c .github/scripts/retrieve-id taiki-e/cargo-hack
       - name: Restore Shared Compilation Cache Tool
         uses: actions/cache@v2
         id: restore-sccache
         with:
           restore-keys: ${{runner.os}}-sccache-
-          key: ${{runner.os}}-sccache-${{steps.sccache-id.outputs.id}}
+          key: ${{runner.os}}-sccache-${{steps.sccache.outputs.id}}
           path: ~/.cache/downloads
       - name: Setup Shared Compilation Cache
         working-directory: ${{github.workspace}}
         run: bash -c .github/scripts/setup-sccache
         env:
           ACTIONS_CACHE_HIT: ${{steps.restore-sccache.outputs.cache-hit == 'true'}}
+      - name: Setup Cargo Hack Cache
+        working-directory: ${{github.workspace}}
+        run: bash -c .github/scripts/setup-cargo-hack
+        env:
+          ACTIONS_CACHE_HIT: false #${{steps.restore-sccache.outputs.cache-hit == 'true'}}
       - name: Install Toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -127,13 +133,6 @@ jobs:
           restore-keys: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile.name}}-
           key: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile.name}}-${{hashFiles('**/Cargo.lock')}}
           path: ${{env.SCCACHE_DIR}}
-      - name: Install Cargo Hack
-        uses: actions-rs/cargo@v1
-        with:
-          command: install
-          args: hack
-      - name: Start sccache
-        run: sccache --start-server
       - name: Run Tests (${{matrix.profile.name}})
         uses: actions-rs/cargo@v1
         with:

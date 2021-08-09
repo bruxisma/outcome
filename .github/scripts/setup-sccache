@@ -3,7 +3,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/github"
 
 function sccache::acquire {
-  test "${ACTIONS_CACHE_HIT}" = "true"  && return
+  test "${ACTIONS_CACHE_HIT}" = "true" && return
   declare pattern=$(basename "${1}")
   declare dir=$(dirname "${1}")
   echo "Acquiring mozilla/sccache asset matching '${pattern}' into " $(github::path "${dir}")

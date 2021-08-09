@@ -18,7 +18,6 @@ function github::group {
   echo "::endgroup::"
 }
 
-# TODO: Generalize for *other* setup-<tool> scripts
 function github::platform {
   case "${1}" in
     ubuntu | linux | Linux)

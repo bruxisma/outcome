@@ -1,0 +1,6 @@
+#!/bin/bash
+
+source "$(dirname "${BASH_SOURCE[0]}")/github"
+
+declare output=$(gh release view --repo ${1} --json id --jq .id)
+echo "::set-output name=id::${output}"
