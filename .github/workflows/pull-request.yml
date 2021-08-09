@@ -109,11 +109,10 @@ jobs:
           --repo mozilla/sccache
           --dir ${HOME}/.cache/downloads
       - name: Install SCCache Tool
-        working-directory: ~/.cache/downloads
         run: |
           echo "::group::Extract SCCache"
           ls "*.tar.gz"
-          tarball=$(ls -1 sccache-v*x86_64*${{steps.platform.outputs.name}}*.tar.gz | head -1)
+          tarball=$(ls -1 ${HOME}/.cache/downloads/sccache-v*x86_64*${{steps.platform.outputs.name}}*.tar.gz | head -1)
           tar --extract --gunzip --file=${tarball}} --wildcards --strip-components=1 '*/sccache*'
           echo "::endgroup::"
           mkdir --parents ${HOME}/.local/bin
