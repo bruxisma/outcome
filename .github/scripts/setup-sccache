@@ -1,44 +1,12 @@
 #!/bin/bash
 
-set -eu -o pipefail
-
-function github::group {
-  echo "::group::${1}"
-  shift
-  eval "$@"
-  echo "::endgroup::"
-}
-
-function github::platform {
-  case "${1}" in
-    ubuntu | linux | Linux)
-      echo "linux";;
-    macos | apple | macOS)
-      echo "apple";;
-    windows | Windows)
-      echo "windows";;
-    *)
-      echo "::error ::Unknown platform '${1}'"
-      exit 1;;
-  esac
-}
-
-function github::error {
-  echo "::error ::${1}"
-  echo "${1}" 1>&2
-  exit 1
-}
-
-function github::environment {
-  for variable in "${@}"; do
-    test "${!variable:-}" || github::error "Expected '${variable}' environment variable to be set"
-  done
-}
+source "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/github"
 
 function sccache::acquire {
   test "${ACTIONS_CACHE_HIT}" = "true"  && return
   declare pattern=$(basename "${1}")
   declare dir=$(dirname "${1}")
+  echo "Acquiring mozilla/sccache asset matching '${pattern}' into " $(github::path "${dir}")
   gh release download \
     --repo mozilla/sccache \
     --pattern "${pattern}" \
@@ -48,14 +16,18 @@ function sccache::acquire {
 function sccache::extract {
   declare tarball=$(ls -1 "${1}" | head -1)
   declare tar=$(test "${RUNNER_OS}" != "macOS" && echo "tar" || echo "gtar")
-  ${tar} --extract --gunzip --file=${tarball} --wildcards --strip-components=1 "*/sccache*"
+  echo "Extracting sccache from $(github::path ${tarball})"
+  ${tar} --file=${tarball} --strip-components=1 \
+    --extract --gunzip --wildcards --verbose \
+    "*/sccache*"
 }
 
 function sccache::install {
-  install -v -d "${1}"
+  echo "Installing sccache to $(github::path ${1})"
+  install -d "${1}"
   install -v sccache "${1}"
-  echo "${1}" >> ${GITHUB_PATH}
-  which sccache || github::error "sccache was not installed correctly"
+  github::path "${1}" >> ${GITHUB_PATH}
+  test -x "${1}/sccache" || github::error "$(github::path ${1}/sccache) is not executable"
 }
 
 github::environment ACTIONS_CACHE_HIT RUNNER_OS

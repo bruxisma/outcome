@@ -83,13 +83,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Platform Check
-        id: platform
-        run: >-
-          (test "${{matrix.os}}" = "windows" && echo "::set-output name=name::windows")
-          || (test "${{matrix.os}}" = "ubuntu" && echo "::set-output name=name::linux")
-          || (test "${{matrix.os}}" = "macos" && echo "::set-output name=name::apple")
-          || echo "::error file=pull-request.yml::Could not find platform for '${{matrix.os}}'"
       - name: Authenticate GitHub CLI
         run: echo ${{github.token}} | gh auth login --with-token
       - name: Retrieve Shared Compilation Cache ID
@@ -105,7 +98,8 @@ jobs:
           key: ${{runner.os}}-sccache-${{steps.sccache-id.outputs.id}}
           path: ~/.cache/downloads
       - name: Setup Shared Compilation Cache
-        run: bash -c ${{github.workspace}}/.github/scripts/setup-sccache
+        working-directory: ${{github.workspace}}
+        run: bash -c .github/scripts/setup-sccache
         env:
           ACTIONS_CACHE_HIT: ${{steps.restore-sccache.outputs.cache-hit == 'true'}}
       - name: Install Toolchain

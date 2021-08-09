@@ -1,0 +1,68 @@
+#!/bin/bash
+
+declare options=(errtrace errexit functrace pipefail nounset)
+if test "${RUNNER_DEBUG:-}"; then
+  options+=(xtrace)
+fi
+
+for option in ${options[@]}; do
+  set -o ${option}
+done
+
+trap 'github::failure $?' ERR
+
+function github::group {
+  echo "::group::${1}"
+  shift
+  eval "$@"
+  echo "::endgroup::"
+}
+
+# TODO: Generalize for *other* setup-<tool> scripts
+function github::platform {
+  case "${1}" in
+    ubuntu | linux | Linux)
+      echo "linux";;
+    macos | apple | macOS)
+      echo "apple";;
+    windows | Windows)
+      echo "windows";;
+    *)
+      echo "::error ::Unknown platform '${1}'"
+      exit 1;;
+  esac
+}
+
+function github::error {
+  declare input="${1:-}"
+  if test -z "${input}"; then
+    read -r input
+  fi
+  printf "%s%q\n" $(test "${GITHUB_ACTIONS:-}" && echo "::error ::") "${input}"
+  exit 1
+}
+
+function github::failure {
+  printf "::error file=%s,line=%d::%s error executing '%s'\n" \
+    $(realpath --relative-base=${GITHUB_WORKSPACE:-${PWD}} "${BASH_SOURCE[1]}") \
+    "${BASH_LINENO[0]}" \
+    "${FUNCNAME[1]}" \
+    "${BASH_COMMAND}"
+  exit ${1}
+}
+
+function github::path {
+  declare path="${1}"
+  if test "${RUNNER_OS}" = "Windows"; then
+    path=$(cygpath --windows "${path}")
+  fi
+  echo ${path}
+}
+
+function github::environment {
+  for variable in "${@}"; do
+    test "${!variable:-}" || github::error "Expected '${variable}' environment variable to be set"
+  done
+}
+
+
