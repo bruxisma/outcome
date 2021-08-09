@@ -63,6 +63,9 @@ jobs:
     name: Test Suite
     runs-on: ${{matrix.os}}-latest
     needs: [lint, format]
+    defaults:
+      run:
+        shell: bash
     strategy:
       matrix:
         toolchain: [stable, beta, nightly]
@@ -89,30 +92,31 @@ jobs:
           || echo "::error file=pull-request.yml::Could not find platform for '${{matrix.os}}'"
       - name: Authenticate GitHub CLI
         run: echo ${{github.token}} | gh auth login --with-token
-      - name: Retrieve SCCache ID
+      - name: Retrieve sccache ID
         id: sccache-tool
         run: |
           output=$(gh release view --repo mozilla/sccache --json id --jq .id)
           echo "::set-output name=id::${output}"
-      - name: Restore SCCache Tool
+      - name: Restore sccache Tool
         uses: actions/cache@v2
         id: restore-sccache
         with:
           restore-keys: ${{runner.os}}-sccache-
           key: ${{runner.os}}-sccache-${{steps.sccache-tool.outputs.id}}
           path: ~/.cache/downloads
-      - name: Download SCCache Tool
+      - name: Download sccache Tool
         if: steps.restore-sccache.outputs.cache-hit != 'true'
         run: >-
           gh release download
           --pattern 'sccache-v*x86_64*${{steps.platform.outputs.name}}*.tar.gz'
           --repo mozilla/sccache
           --dir ${HOME}/.cache/downloads
-      - name: Install SCCache Tool
+      - name: Install sccache Tool
         run: |
-          echo "::group::Extract SCCache"
+          echo "::group::Extract sccache"
           tarball=$(ls -1 ${HOME}/.cache/downloads/sccache-v*x86_64*${{steps.platform.outputs.name}}*.tar.gz | head -1)
-          tar --extract --gunzip --file=${tarball} --wildcards --strip-components=1 '*/sccache*'
+          tar=$(test "${{matrix.os}}" != "macos" && echo "tar" || echo "gtar")
+          ${tar} --extract --gunzip --file=${tarball} --wildcards --strip-components=1 '*/sccache*'
           echo "::endgroup::"
           echo "::group::Relocate sccache executable"
           mkdir --parents ${HOME}/.local/bin
@@ -138,7 +142,7 @@ jobs:
             ~/.cargo/registry/index
             ~/.cargo/registry/cache
             ~/.cargo/git
-      - name: Restore SCCache Artifacts
+      - name: Restore sccache build artifacts
         uses: actions/cache@v2
         with:
           restore-keys: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile.name}}-
@@ -149,7 +153,7 @@ jobs:
         with:
           command: install
           args: hack
-      - name: Start SCCache Server
+      - name: Start sccache
         run: sccache --start-server
       - name: Run Tests (${{matrix.profile.name}})
         uses: actions-rs/cargo@v1
