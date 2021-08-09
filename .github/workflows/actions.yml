@@ -1,0 +1,38 @@
+name: Lint Actions
+on:
+  pull_request:
+    paths: [.github/workflows/*.yml]
+    types: [synchronize, edited, opened]
+  push:
+    paths: [.github/workflows/*.yml]
+jobs:
+  skip:
+    name: Check Duplicate Actions
+    #continue-on-error: true
+    runs-on: ubuntu-latest
+    outputs:
+      should-skip: ${{ steps.skip-check.outputs.should_skip }}
+    steps:
+      name: Skip Duplicate Actions
+      uses: fkirc/skip-duplicate-actions@v3
+      id: skip-check
+  actions:
+    name: Action Workflows
+    runs-on: ubuntu-latest
+    needs: skip
+    if: needs.skip.output.should-skip != 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Review Dog - actionlint
+        uses: reviewdog/action-actionlint@v1
+  yaml:
+    name: YAML
+    runs-on: ubuntu-latest
+    needs: skip
+    if: needs.skip.output.should-skip != 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Review Dog - yamllint
+        uses: reviewdog/action-yamllint@v1

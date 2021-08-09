@@ -1,0 +1,171 @@
+name: Pull Request
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+    paths-ignore:
+      - .github/workflows/actions.yml
+      - .github/workflows/release.yml
+      - .github/workflows/audit.yml
+      - LICENSE.md
+      - .gitignore
+      - Justfile
+jobs:
+  format:
+    name: Formatting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          components: rustfmt
+          toolchain: stable
+          override: true
+          profile: minimal
+      - name: Check Formatting
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: -- --check
+  lint:
+    name: Lint Source
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        features:
+          - name: Default
+            args: ''
+          - name: No Standard
+            args: --no-default-features
+          - name: All Features
+            args: --all-features
+          - name: Report
+            args: --features report
+          - name: Unstable
+            args: --features unstable
+          - name: Nightly
+            args: --features nightly
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          components: clippy
+          toolchain: stable
+          override: true
+          profile: minimal
+      - name: Clippy
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{github.token}}
+          args: ${{matrix.features.args}} -- -D warnings
+          name: Lint (${{matrix.features.name}})
+  test:
+    name: Test Suite
+    runs-on: ${{matrix.os}}-latest
+    needs: [lint, format]
+    strategy:
+      matrix:
+        toolchain: [stable, beta, nightly]
+        # One day we'll be able to just use `--profile`, but until then we need
+        # to do this workaround to simplify the build steps
+        profile:
+          - name: release
+            args: --release
+          - name: dev
+            args: ''
+        os: [ubuntu, windows, macos]
+    env:
+      SCCACHE_CACHE_SIZE: '5G'
+      SCCACHE_DIR: ${{env.HOME}}/.cache/sccache
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Authenticate GitHub CLI
+        run: echo ${{github.token}} | gh auth login --with-token
+      - name: Retrieve SCCache ID
+        id: sccache-tool
+        run: |
+          output=$(gh release view --repo mozilla/sccache --json id -jq .id)
+          echo "::set-output name=id::${output}"
+      - name: Restore SCCache Tool
+        uses: actions/cache@v2
+        id: restore-sccache
+        with:
+          restore-keys: ${{runner.os}}-sccache-
+          key: ${{runner.os}}-sccache-${{steps.sccache-tool.outputs.id}}
+          path: ~/.cache/downloads
+      - name: Download SCCache Tool
+        if: steps.restore-sccache.outputs.cache-hit != 'true'
+        run: >-
+          gh release download
+          --pattern 'sccache-v*x86_64*${{matrix.os}}*.tar.gz'
+          --repo mozilla/sccache
+          --dir ${HOME}/.cache/downloads
+      - name: Install SCCache Tool
+        working-directory: ${{env.HOME}}/.cache/downloads
+        run: |
+          tarball=$(ls -1 sccache-v*x86_64*${{matrix.os}}*.tar.gz| head -1)
+          tar --extract --gunzip --file=${tarball}} --wildcards --strip-components=1 '*/sccache*'
+          mkdir --parents ${HOME}/.local/bin
+          mv sccache ${HOME}/.local/bin
+          echo "${HOME}/.local/bin" >> ${GITHUB_PATH}
+      - name: Install Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{matrix.toolchain}}
+          override: true
+          profile: minimal
+      # NOTE: This might break on macOS. There is the rust-cache repo which
+      # sets CARGO_INCREMENTAL=0 Additionally for grcov info, we need to set
+      # CARGO_INCREMENTAL=0 for nightly anyhow. Might be worth using.
+      - name: Restore Cargo Cache
+        uses: actions/cache@v2
+        with:
+          restore-keys: ${{runner.os}}-cargo-
+          key: ${{runner.os}}-cargo-${{hashFiles('**/Cargo.lock')}}
+          path: |
+            ${{github.workspace}}/target
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git
+      - name: Restore SCCache Artifacts
+        uses: actions/cache@v2
+        with:
+          restore-keys: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile.name}}-
+          key: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile.name}}-${{hashFiles('**/Cargo.lock')}}
+          path: ${{env.SCCACHE_DIR}}
+      - name: Install Cargo Hack
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: hack
+      - name: Start SCCache Server
+        run: sccache --start-server
+      - name: Run Tests (${{matrix.profile.name}})
+        uses: actions-rs/cargo@v1
+        with:
+          command: hack
+          args: test ${{matrix.profile.args}} --locked --each-feature
+        env:
+          RUSTC_WRAPPER: sccache
+#        env:
+#          CARGO_INCREMENTAL: 0
+#          RUSTDOCFLAGS: >-
+#            -Ccodegen-units=1 -Cinline-threshold=0
+#            -Clink-dead-code -Coverflow-checks=off -Cpanic=abort
+#            -Zprofile -Zpanic_abort_tests
+#          RUSTFLAGS: >- 
+#            -Ccodegen-units=1 -Cinline-threshold=0
+#            -Clink-dead-code -Coverflow-checks=off -Cpanic=abort
+#            -Zprofile -Zpanic_abort_tests
+#      - name: Collect Coverage
+#        uses: actions-rs/grcov@v0.1
+#      - name: Upload Code Coverage
+#        uses: codecov/codecov-action@v2
+#        with:
+#          fail_ci_if_error: true
+#          directory: ${{github.workspace}}
+#          dry_run: true
