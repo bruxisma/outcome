@@ -3,6 +3,7 @@ on:
   pull_request:
     types: [opened, edited, synchronize]
     paths-ignore:
+      - .github/workflows/pull-request.yml
       - .github/workflows/actions.yml
       - .github/workflows/release.yml
       - .github/workflows/audit.yml
