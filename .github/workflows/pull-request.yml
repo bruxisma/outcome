@@ -3,10 +3,6 @@ on:
   pull_request:
     types: [opened, edited, synchronize]
     paths-ignore:
-      - .github/workflows/pull-request.yml
-      - .github/workflows/actions.yml
-      - .github/workflows/release.yml
-      - .github/workflows/audit.yml
       - LICENSE.md
       - .gitignore
       - Justfile
@@ -84,6 +80,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Platform Check
+        id: platform
+        run: |
+          test "${{matrix.os}}" = "windows" && echo "::set-outout name=name::windows"
+          test "${{matrix.os}}" = "ubuntu" && echo "::set-output name=name::linux"
+          test "${{matrix.os}}" = "macos" && echo "::set-output name=name::apple"
       - name: Authenticate GitHub CLI
         run: echo ${{github.token}} | gh auth login --with-token
       - name: Retrieve SCCache ID
@@ -102,13 +104,13 @@ jobs:
         if: steps.restore-sccache.outputs.cache-hit != 'true'
         run: >-
           gh release download
-          --pattern 'sccache-v*x86_64*${{matrix.os}}*.tar.gz'
+          --pattern 'sccache-v*x86_64*${{steps.platform.outputs.name}}*.tar.gz'
           --repo mozilla/sccache
           --dir ${HOME}/.cache/downloads
       - name: Install SCCache Tool
         working-directory: ${{env.HOME}}/.cache/downloads
         run: |
-          tarball=$(ls -1 sccache-v*x86_64*${{matrix.os}}*.tar.gz| head -1)
+          tarball=$(ls -1 sccache-v*x86_64*${{steps.platform.outputs.name}}*.tar.gz| head -1)
           tar --extract --gunzip --file=${tarball}} --wildcards --strip-components=1 '*/sccache*'
           mkdir --parents ${HOME}/.local/bin
           mv sccache ${HOME}/.local/bin
