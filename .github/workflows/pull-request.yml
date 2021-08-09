@@ -111,12 +111,13 @@ jobs:
       - name: Install SCCache Tool
         run: |
           echo "::group::Extract SCCache"
-          ls "*.tar.gz"
           tarball=$(ls -1 ${HOME}/.cache/downloads/sccache-v*x86_64*${{steps.platform.outputs.name}}*.tar.gz | head -1)
           tar --extract --gunzip --file=${tarball}} --wildcards --strip-components=1 '*/sccache*'
           echo "::endgroup::"
+          echo "::group::Relocate sccache executable"
           mkdir --parents ${HOME}/.local/bin
           mv sccache ${HOME}/.local/bin
+          echo "::endgroup"
           echo "${HOME}/.local/bin" >> ${GITHUB_PATH}
       - name: Install Toolchain
         uses: actions-rs/toolchain@v1
