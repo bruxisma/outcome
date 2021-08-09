@@ -3,7 +3,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/github"
 
 function cargo-hack::acquire {
-  compgen "${1}" > /dev/null && return
+  ls "${1}" 1> /dev/null 2>&1 && return
   declare pattern=$(basename "${1}")
   declare dir=$(dirname "${1}")
   echo "Acquiring taiki-e/cargo-hack asset matching '${pattern}' into" $(github::path "${dir}")
