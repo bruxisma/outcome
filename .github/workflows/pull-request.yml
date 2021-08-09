@@ -3,6 +3,7 @@ on:
   pull_request:
     types: [opened, edited, synchronize]
     paths-ignore:
+      - .github/workflows/pull-request.yml
       - .github/workflows/actions.yml
       - .github/workflows/release.yml
       - .github/workflows/audit.yml
@@ -88,7 +89,7 @@ jobs:
       - name: Retrieve SCCache ID
         id: sccache-tool
         run: |
-          output=$(gh release view --repo mozilla/sccache --json id -jq .id)
+          output=$(gh release view --repo mozilla/sccache --json id --jq .id)
           echo "::set-output name=id::${output}"
       - name: Restore SCCache Tool
         uses: actions/cache@v2
