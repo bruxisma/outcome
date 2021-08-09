@@ -54,8 +54,8 @@ function sccache::extract {
 function sccache::install {
   install -v -d "${1}"
   install -v sccache "${1}"
-  which sccache || github::error "sccache was not installed correctly"
   echo "${1}" >> ${GITHUB_PATH}
+  which sccache || github::error "sccache was not installed correctly"
 }
 
 github::environment ACTIONS_CACHE_HIT RUNNER_OS
