@@ -79,7 +79,6 @@ jobs:
         os: [ubuntu, windows, macos]
     env:
       SCCACHE_CACHE_SIZE: '5G'
-      SCCACHE_DIR: $HOME/.cache/sccache
     steps:
       - name: Checkout
         uses: actions/checkout@v2

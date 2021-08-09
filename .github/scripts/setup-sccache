@@ -26,6 +26,8 @@ function sccache::install {
   echo "Installing sccache to $(github::path ${1})"
   install -d "${1}"
   install -v sccache "${1}"
+  echo "SCCACHE_DIR=$(github::path "${HOME}/.cache/sccache")" >> ${GITHUB_ENV}
+  echo "SCCACHE_CACHE_SIZE=5G" >> ${GITHUB_ENV}
   github::path "${1}" >> ${GITHUB_PATH}
   test -x "${1}/sccache" || github::error "$(github::path ${1}/sccache) is not executable"
 }
