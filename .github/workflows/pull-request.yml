@@ -121,6 +121,8 @@ jobs:
           echo "::group::Relocate sccache executable"
           mkdir -p ${HOME}/.local/bin
           mv sccache ${HOME}/.local/bin
+          chmod +x ${HOME}/local/bin/sccache
+          which sccache || echo "::error ::sccache is not executable for some reason"
           echo "::endgroup"
           echo "${HOME}/.local/bin" >> ${GITHUB_PATH}
       - name: Install Toolchain
