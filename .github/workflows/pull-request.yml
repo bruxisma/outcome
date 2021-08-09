@@ -77,8 +77,6 @@ jobs:
           - name: dev
             args: ''
         os: [ubuntu, windows, macos]
-    env:
-      SCCACHE_CACHE_SIZE: '5G'
     steps:
       - name: Checkout
         uses: actions/checkout@v2

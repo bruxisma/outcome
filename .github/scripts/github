@@ -43,7 +43,7 @@ function github::error {
 
 function github::failure {
   printf "::error file=%s,line=%d::%s error executing '%s'\n" \
-    $(realpath --relative-base=${GITHUB_WORKSPACE:-${PWD}} "${BASH_SOURCE[1]}") \
+    "${BASH_SOURCE[1]#${GITHUB_WORKSPACE:-${PWD}}}" \
     "${BASH_LINENO[0]}" \
     "${FUNCNAME[1]}" \
     "${BASH_COMMAND}"
