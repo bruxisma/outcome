@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "$(dirname $(realpath "${BASH_SOURCE[0]}"))/github"
+source "$(dirname "${BASH_SOURCE[0]}")/github"
 
 function sccache::acquire {
   test "${ACTIONS_CACHE_HIT}" = "true"  && return
