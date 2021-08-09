@@ -36,7 +36,7 @@ function github::environment {
 }
 
 function sccache::acquire {
-  test "${ACTIONS_CACHE_HIT}" -eq 1 && return
+  test "${ACTIONS_CACHE_HIT}" = "true"  && return
   declare pattern=$(basename "${1}")
   declare dir=$(dirname "${1}")
   gh release download \
