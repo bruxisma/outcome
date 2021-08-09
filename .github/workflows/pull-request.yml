@@ -107,7 +107,7 @@ jobs:
       - name: Setup Shared Compilation Cache
         run: bash -c ${{github.workspace}}/.github/scripts/setup-sccache
         env:
-          ACTIONS_CACHE_HIT: ${{steps.restore-sccache.outputs.cache-hit}}
+          ACTIONS_CACHE_HIT: ${{steps.restore-sccache.outputs.cache-hit == 'true'}}
       - name: Install Toolchain
         uses: actions-rs/toolchain@v1
         with:
