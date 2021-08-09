@@ -110,6 +110,7 @@ jobs:
           --dir ${HOME}/.cache/downloads
       - name: Install SCCache Tool
         run: |
+          ls -l ${HOME}/.cache/downloads/*
           echo "::group::Extract SCCache"
           tarball=$(ls -1 ${HOME}/.cache/downloads/sccache-v*x86_64*${{steps.platform.outputs.name}}*.tar.gz | head -1)
           tar --extract --gunzip --file=${tarball}} --wildcards --strip-components=1 '*/sccache*'
