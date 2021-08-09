@@ -119,7 +119,7 @@ jobs:
           ${tar} --extract --gunzip --file=${tarball} --wildcards --strip-components=1 '*/sccache*'
           echo "::endgroup::"
           echo "::group::Relocate sccache executable"
-          mkdir --parents ${HOME}/.local/bin
+          mkdir -p ${HOME}/.local/bin
           mv sccache ${HOME}/.local/bin
           echo "::endgroup"
           echo "${HOME}/.local/bin" >> ${GITHUB_PATH}
