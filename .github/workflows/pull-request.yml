@@ -111,8 +111,12 @@ jobs:
       - name: Install SCCache Tool
         working-directory: ${{env.HOME}}/.cache/downloads
         run: |
-          tarball=$(ls -1 sccache-v*x86_64*${{steps.platform.outputs.name}}*.tar.gz| head -1)
+          echo "::group::Extract SCCache"
+          echo "Current Working Directory: ${PWD}"
+          ls "*.tar.gz"
+          tarball=$(ls -1 sccache-v*x86_64*${{steps.platform.outputs.name}}*.tar.gz | head -1)
           tar --extract --gunzip --file=${tarball}} --wildcards --strip-components=1 '*/sccache*'
+          echo "::endgroup::"
           mkdir --parents ${HOME}/.local/bin
           mv sccache ${HOME}/.local/bin
           echo "${HOME}/.local/bin" >> ${GITHUB_PATH}
