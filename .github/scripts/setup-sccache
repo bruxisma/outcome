@@ -32,7 +32,7 @@ function sccache::install {
   test -x "${1}/sccache" || github::error "$(github::path ${1}/sccache) is not executable"
 }
 
-github::environment ACTIONS_CACHE_HIT RUNNER_OS
+github::environment RUNNER_OS
 
 declare tarball="${HOME}/.cache/downloads/sccache-v*x86_64*$(github::platform "${RUNNER_OS}")*.tar.gz"
 github::group "Acquire sccache binary" sccache::acquire "${tarball}"
