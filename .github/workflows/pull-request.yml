@@ -92,39 +92,22 @@ jobs:
           || echo "::error file=pull-request.yml::Could not find platform for '${{matrix.os}}'"
       - name: Authenticate GitHub CLI
         run: echo ${{github.token}} | gh auth login --with-token
-      - name: Retrieve sccache ID
-        id: sccache-tool
+      - name: Retrieve Shared Compilation Cache ID
+        id: sccache-id
         run: |
           output=$(gh release view --repo mozilla/sccache --json id --jq .id)
           echo "::set-output name=id::${output}"
-      - name: Restore sccache Tool
+      - name: Restore Shared Compilation Cache Tool
         uses: actions/cache@v2
         id: restore-sccache
         with:
           restore-keys: ${{runner.os}}-sccache-
-          key: ${{runner.os}}-sccache-${{steps.sccache-tool.outputs.id}}
+          key: ${{runner.os}}-sccache-${{steps.sccache-id.outputs.id}}
           path: ~/.cache/downloads
-      - name: Download sccache Tool
-        if: steps.restore-sccache.outputs.cache-hit != 'true'
-        run: >-
-          gh release download
-          --pattern 'sccache-v*x86_64*${{steps.platform.outputs.name}}*.tar.gz'
-          --repo mozilla/sccache
-          --dir ${HOME}/.cache/downloads
-      - name: Install sccache Tool
-        run: |
-          echo "::group::Extract sccache"
-          tarball=$(ls -1 ${HOME}/.cache/downloads/sccache-v*x86_64*${{steps.platform.outputs.name}}*.tar.gz | head -1)
-          tar=$(test "${{matrix.os}}" != "macos" && echo "tar" || echo "gtar")
-          ${tar} --extract --gunzip --file=${tarball} --wildcards --strip-components=1 '*/sccache*'
-          echo "::endgroup::"
-          echo "::group::Relocate sccache executable"
-          mkdir -p ${HOME}/.local/bin
-          mv sccache ${HOME}/.local/bin
-          chmod +x ${HOME}/.local/bin/sccache
-          which sccache || echo "::error ::sccache is not executable for some reason"
-          echo "::endgroup"
-          echo "${HOME}/.local/bin" >> ${GITHUB_PATH}
+      - name: Setup Shared Compilation Cache
+        run: bash -c ${{github.workspace}}/.github/scripts/setup-sccache
+        env:
+          ACTIONS_CACHE_HIT: ${{steps.restore-sccache.outputs.cache-hit}}
       - name: Install Toolchain
         uses: actions-rs/toolchain@v1
         with:

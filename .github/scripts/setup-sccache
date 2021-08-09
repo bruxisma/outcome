@@ -1,0 +1,66 @@
+#!/bin/bash
+
+set -eu -o pipefail
+
+function github::group {
+  echo "::group::${1}"
+  shift
+  eval "$@"
+  echo "::endgroup::"
+}
+
+function github::platform {
+  case "${1}" in
+    ubuntu | linux | Linux)
+      echo "linux";;
+    macos | apple | macOS)
+      echo "apple";;
+    windows | Windows)
+      echo "windows";;
+    *)
+      echo "::error ::Unknown platform '${1}'"
+      exit 1;;
+  esac
+}
+
+function github::error {
+  echo "::error ::${1}"
+  echo "${1}" 1>&2
+  exit 1
+}
+
+function github::environment {
+  for variable in "${@}"; do
+    test "${!variable:-}" || github::error "Expected '${variable}' environment variable to be set"
+  done
+}
+
+function sccache::acquire {
+  test "${ACTIONS_CACHE_HIT}" = "true" && return
+  declare pattern=$(basename "${1}")
+  declare dir=$(dirname "${1}")
+  gh release download \
+    --repo mozilla/sccache \
+    --pattern "${pattern}" \
+    --dir "${dir}"
+}
+
+function sccache::extract {
+  declare tarball=$(ls -1 "${1}" | head -1)
+  declare tar=$(test "${RUNNER_OS}" != "macOS" && echo "tar" || echo "gtar")
+  ${tar} --extract --gunzip --file=${tarball} --wildcards --strip-components=1 "*/sccache*"
+}
+
+function sccache::install {
+  echo install -v -d "${1}"
+  echo install -v sccache "${1}"
+  which sccache || github::error "sccache was not installed correctly"
+  echo 'echo "${1}" >> ${GITHUB_PATH}'
+}
+
+github::environment ACTIONS_CACHE_HIT RUNNER_OS
+
+declare tarball="${HOME}/.cache/downloads/sccache-v*x86_64*$(github::platform "${RUNNER_OS}")*.tar.gz"
+github::group "Acquire sccache binary" sccache::acquire "${tarball}"
+github::group "Extract sccache binary" sccache::extract "${tarball}"
+github::group "Install sccache binary" sccache::install "${HOME}/.local/bin"
