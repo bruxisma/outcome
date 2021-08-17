@@ -3,10 +3,6 @@ on:
   pull_request:
     types: [opened, edited, synchronize]
     paths-ignore:
-      - .github/workflows/pull-request.yml
-      - .github/workflows/actions.yml
-      - .github/workflows/release.yml
-      - .github/workflows/audit.yml
       - LICENSE.md
       - .gitignore
       - Justfile
@@ -67,6 +63,9 @@ jobs:
     name: Test Suite
     runs-on: ${{matrix.os}}-latest
     needs: [lint, format]
+    defaults:
+      run:
+        shell: bash
     strategy:
       matrix:
         toolchain: [stable, beta, nightly]
@@ -78,41 +77,17 @@ jobs:
           - name: dev
             args: ''
         os: [ubuntu, windows, macos]
-    env:
-      SCCACHE_CACHE_SIZE: '5G'
-      SCCACHE_DIR: $HOME/.cache/sccache
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Authenticate GitHub CLI
         run: echo ${{github.token}} | gh auth login --with-token
-      - name: Retrieve SCCache ID
-        id: sccache-tool
-        run: |
-          output=$(gh release view --repo mozilla/sccache --json id --jq .id)
-          echo "::set-output name=id::${output}"
-      - name: Restore SCCache Tool
-        uses: actions/cache@v2
-        id: restore-sccache
-        with:
-          restore-keys: ${{runner.os}}-sccache-
-          key: ${{runner.os}}-sccache-${{steps.sccache-tool.outputs.id}}
-          path: ~/.cache/downloads
-      - name: Download SCCache Tool
-        if: steps.restore-sccache.outputs.cache-hit != 'true'
-        run: >-
-          gh release download
-          --pattern 'sccache-v*x86_64*${{matrix.os}}*.tar.gz'
-          --repo mozilla/sccache
-          --dir ${HOME}/.cache/downloads
-      - name: Install SCCache Tool
-        working-directory: ${{env.HOME}}/.cache/downloads
-        run: |
-          tarball=$(ls -1 sccache-v*x86_64*${{matrix.os}}*.tar.gz| head -1)
-          tar --extract --gunzip --file=${tarball}} --wildcards --strip-components=1 '*/sccache*'
-          mkdir --parents ${HOME}/.local/bin
-          mv sccache ${HOME}/.local/bin
-          echo "${HOME}/.local/bin" >> ${GITHUB_PATH}
+      - name: Setup Shared Compilation Cache
+        working-directory: ${{github.workspace}}
+        run: bash -c .github/scripts/setup-sccache
+      - name: Setup Cargo Hack
+        working-directory: ${{github.workspace}}
+        run: bash -c .github/scripts/setup-cargo-hack
       - name: Install Toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -132,19 +107,12 @@ jobs:
             ~/.cargo/registry/index
             ~/.cargo/registry/cache
             ~/.cargo/git
-      - name: Restore SCCache Artifacts
+      - name: Restore sccache build artifacts
         uses: actions/cache@v2
         with:
           restore-keys: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile.name}}-
           key: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile.name}}-${{hashFiles('**/Cargo.lock')}}
           path: ${{env.SCCACHE_DIR}}
-      - name: Install Cargo Hack
-        uses: actions-rs/cargo@v1
-        with:
-          command: install
-          args: hack
-      - name: Start SCCache Server
-        run: sccache --start-server
       - name: Run Tests (${{matrix.profile.name}})
         uses: actions-rs/cargo@v1
         with:

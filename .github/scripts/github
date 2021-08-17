@@ -1,0 +1,75 @@
+#!/bin/bash
+
+declare options=(errtrace errexit functrace pipefail nounset)
+if test "${RUNNER_DEBUG:-}"; then
+  options+=(xtrace)
+fi
+
+for option in ${options[@]}; do
+  set -o ${option}
+done
+
+trap 'github::failure $?' ERR
+
+function github::acquire {
+  ls "${2}" 1> /dev/null 2>&1 && return
+  declare pattern=$(basename "${2}")
+  declare dir=$(dirname "${2}")
+  echo "Acquiring ${1} asset matching '${pattern}' into" $(github::path "${dir}")
+  gh release download --repo "${1}" --pattern "${pattern}" --dir "${dir}"
+}
+
+function github::group {
+  echo "::group::${1}"
+  shift
+  eval "$@"
+  echo "::endgroup::"
+}
+
+function github::platform {
+  case "${1}" in
+    ubuntu | linux | Linux)
+      echo "linux";;
+    macos | apple | macOS)
+      echo "apple";;
+    windows | Windows)
+      echo "windows";;
+    *)
+      echo "::error ::Unknown platform '${1}'"
+      exit 1;;
+  esac
+}
+
+function github::error {
+  declare input="${1:-}"
+  if test -z "${input}"; then
+    read -r input
+  fi
+  printf "%s%q\n" $(test "${GITHUB_ACTIONS:-}" && echo "::error ::") "${input}"
+  exit 1
+}
+
+function github::failure {
+  printf "::error file=%s,line=%d::%s error executing '%s'\n" \
+    "${BASH_SOURCE[1]#${GITHUB_WORKSPACE:-${PWD}}}" \
+    "${BASH_LINENO[0]}" \
+    "${FUNCNAME[1]}" \
+    "${BASH_COMMAND}"
+  exit ${1}
+}
+
+function github::path {
+  declare path="${1}"
+  if test "${RUNNER_OS}" = "Windows"; then
+    path=$(cygpath --windows "${path}")
+  fi
+  echo ${path}
+}
+
+function github::require {
+  for variable in "${@}"; do
+    test "${!variable:-}" || github::error "Expected '${variable}' environment variable to be set"
+  done
+}
+
+github::require RUNNER_OS
