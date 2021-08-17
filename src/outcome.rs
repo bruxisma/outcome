@@ -540,6 +540,41 @@ impl<S, M, F> Outcome<S, M, F> {
 }
 
 /* special interfaces */
+#[cfg(not(feature = "nightly"))]
+impl<S, M, F> Outcome<S, M, F> {
+  /// **`TODO`**: Write documentation
+  pub fn escalate_with<C, T>(self, closure: C) -> Aberration<M, F>
+  where
+    T: Into<M>,
+    C: FnOnce(S) -> T,
+  {
+    match self {
+      Success(s) => Aberration::Mistake(closure(s).into()),
+      Mistake(m) => Aberration::Mistake(m),
+      Failure(f) => Aberration::Failure(f),
+    }
+  }
+}
+
+#[cfg(not(feature = "nightly"))]
+impl<S, M, F> Outcome<S, M, F>
+where
+  S: Into<M>,
+  M: Into<F>,
+{
+  /// Escalates the state of the Outcome from Success, to Mistake, to Failure
+  /// on each call.
+  ///
+  /// Once an Outcome is in a failure state, it cannot escalate any further.
+  pub fn escalate(self) -> Aberration<M, F> {
+    match self {
+      Success(s) => Aberration::Mistake(s.into()),
+      Mistake(m) => Aberration::Failure(m.into()),
+      Failure(f) => Aberration::Failure(f),
+    }
+  }
+}
+
 impl<S: Deref, M, F> Outcome<S, M, F> {
   /// Converts from `Outcome<S, M, F>` (or `&Outcome<S, M, F>`) to `Outcome<&<S
   /// as Deref>::Target, M, F>`.
@@ -582,59 +617,6 @@ impl<S: DerefMut, M, F> Outcome<S, M, F> {
   /// [`DerefMut`]: core::ops::DerefMut
   pub fn as_deref_mut(&mut self) -> Outcome<&mut S::Target, &mut M, &mut F> {
     self.as_mut().map(DerefMut::deref_mut)
-  }
-}
-
-#[cfg(not(feature = "nightly"))]
-impl<S, M, F> Outcome<S, M, F> {
-  /// **`TODO`**: Write documentation
-  pub fn escalate_with<C, T>(self, closure: C) -> Aberration<M, F>
-  where
-    T: Into<M>,
-    C: FnOnce(S) -> T,
-  {
-    match self {
-      Success(s) => Aberration::Mistake(closure(s).into()),
-      Mistake(m) => Aberration::Mistake(m),
-      Failure(f) => Aberration::Failure(f),
-    }
-  }
-}
-
-impl<S, M, F> Outcome<S, M, F>
-where
-  S: Into<M>,
-  M: Into<F>,
-{
-  /// Escalates the state of the Outcome from Success, to Mistake, to Failure
-  /// on each call.
-  ///
-  /// Once an Outcome is in a failure state, it cannot escalate any further.
-  pub fn escalate(self) -> Self {
-    match self {
-      Success(s) => Mistake(s.into()),
-      Mistake(m) => Failure(m.into()),
-      Failure(f) => Failure(f),
-    }
-  }
-
-  /// Escalates the state of the Outcome from Success to Mistake to Failure on
-  /// each call. If the Outcome is in a failure state when this is called, the
-  /// function will panic.
-  ///
-  /// # Panics
-  /// If the outcome is already a [`Failure`], this function will panic.
-  #[cfg(feature = "std")]
-  pub fn escalate_or_panic(self) -> Self
-  where
-    F: Debug,
-  {
-    match self {
-      Failure(f) => {
-        panic!("Escalation has exceeded safety parameters: {:?}", f)
-      }
-      _ => self.escalate(),
-    }
   }
 }
 

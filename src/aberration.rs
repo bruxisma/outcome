@@ -1,5 +1,9 @@
+#[cfg(not(feature = "nightly"))]
+use core::convert::Infallible;
 use core::fmt::Debug;
 
+#[cfg(not(feature = "nightly"))]
+use crate::outcome::Outcome;
 use crate::private::panic;
 
 /// `Aberration` is a type that can represent a [`Mistake`], or [`Failure`].
@@ -116,6 +120,19 @@ impl<M, F> Aberration<M, F> {
     match self {
       Self::Mistake(value) => Aberration::Mistake(value),
       Self::Failure(value) => Aberration::Failure(callable(value)),
+    }
+  }
+}
+
+#[cfg(not(feature = "nightly"))]
+impl<M, F> Aberration<M, F>
+where
+  M: Into<F>,
+{
+  pub fn escalate(self) -> Outcome<Infallible, Infallible, F> {
+    match self {
+      Self::Mistake(m) => Outcome::Failure(m.into()),
+      Self::Failure(f) => Outcome::Failure(f),
     }
   }
 }
