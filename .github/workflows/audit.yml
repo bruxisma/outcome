@@ -13,7 +13,7 @@ jobs:
     outputs:
       should-skip: ${{ steps.skip-check.outputs.should_skip }}
     steps:
-      - name: Skip Duplicate Actions
+      - name: Skip Duplicate Actions (Audit)
         uses: fkirc/skip-duplicate-actions@v3
         id: skip-check
   audit:

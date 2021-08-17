@@ -3,7 +3,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/github"
 
 function cargo-hack::acquire {
-  ls "${1}" 1> /dev/null 2>&1 && return
+  ls "${1}" -1> /dev/null 2>&1 && return
   declare pattern=$(basename "${1}")
   declare dir=$(dirname "${1}")
   echo "Acquiring taiki-e/cargo-hack asset matching '${pattern}' into" $(github::path "${dir}")
@@ -28,9 +28,7 @@ function cargo-hack::install {
   test -x "${1}/cargo-hack" || github::error "$(github::path ${1}/cargo-hack) is not executable"
 }
 
-github::environment RUNNER_OS
-
 declare tarball="${HOME}/.cache/downloads/cargo-hack*$(github::platform "${RUNNER_OS}")*.tar.gz"
-github::group "Acquire cargo-hack binary" cargo-hack::acquire "${tarball}"
+github::group "Acquire cargo-hack binary" gihtub::acquire taiki-e/cargo-hack "${tarball}"
 github::group "Extract cargo-hack binary" cargo-hack::extract "${tarball}"
 github::group "Install cargo-hack binary" cargo-hack::install "${HOME}/.local/bin"

@@ -1,10 +1,10 @@
 name: Lint Actions
 on:
   pull_request:
-    paths: [.github/workflows/*.yml]
+    paths: [.github/**.yml]
     types: [synchronize, edited, opened]
   push:
-    paths: [.github/workflows/*.yml]
+    paths: [.github/**.yml]
 jobs:
   skip:
     name: Check Duplicate Actions
@@ -13,7 +13,7 @@ jobs:
     outputs:
       should-skip: ${{ steps.skip-check.outputs.should_skip }}
     steps:
-      - name: Skip Duplicate Actions
+      - name: Skip Duplicate Actions (Lint Actions)
         uses: fkirc/skip-duplicate-actions@v3
         id: skip-check
   actions:
@@ -36,3 +36,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Review Dog - yamllint
         uses: reviewdog/action-yamllint@v1
+        with:
+          yamllint_flags: >-
+            --config-file ${{github.workspace}}/.github/settings/yamllint.yml
+            ${{github.workspace}}

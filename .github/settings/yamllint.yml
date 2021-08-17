@@ -1,0 +1,10 @@
+extends: default
+rules:
+  comments-indentation: {}
+  document-start:
+    present: false
+  indentation:
+    indent-sequences: true
+    spaces: 2
+  line-length:
+    allow-non-breakable-inline-mappings: true

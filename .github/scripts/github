@@ -11,6 +11,14 @@ done
 
 trap 'github::failure $?' ERR
 
+function github::acquire {
+  ls "${2}" 1> /dev/null 2>&1 && return
+  declare pattern=$(basename "${2}")
+  declare dir=$(dirname "${2}")
+  echo "Acquiring ${1} asset matching '${pattern}' into" $(github::path "${dir}")
+  gh release download --repo "${1}" --pattern "${pattern}" --dir "${dir}"
+}
+
 function github::group {
   echo "::group::${1}"
   shift
@@ -58,10 +66,10 @@ function github::path {
   echo ${path}
 }
 
-function github::environment {
+function github::require {
   for variable in "${@}"; do
     test "${!variable:-}" || github::error "Expected '${variable}' environment variable to be set"
   done
 }
 
-
+github::require RUNNER_OS

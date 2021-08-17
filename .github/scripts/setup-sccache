@@ -3,7 +3,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")/github"
 
 function sccache::acquire {
-  ls "${1}" 1> /dev/null 2>&1 && return
+  ls "${1}" -1> /dev/null 2>&1 && return
   declare pattern=$(basename "${1}")
   declare dir=$(dirname "${1}")
   echo "Acquiring mozilla/sccache asset matching '${pattern}' into " $(github::path "${dir}")
@@ -32,9 +32,7 @@ function sccache::install {
   test -x "${1}/sccache" || github::error "$(github::path ${1}/sccache) is not executable"
 }
 
-github::environment RUNNER_OS
-
 declare tarball="${HOME}/.cache/downloads/sccache-v*x86_64*$(github::platform "${RUNNER_OS}")*.tar.gz"
-github::group "Acquire sccache binary" sccache::acquire "${tarball}"
+github::group "Acquire sccache binary" github::acquire mozilla/sccache "${tarball}"
 github::group "Extract sccache binary" sccache::extract "${tarball}"
 github::group "Install sccache binary" sccache::install "${HOME}/.local/bin"
