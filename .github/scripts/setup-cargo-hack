@@ -29,6 +29,6 @@ function cargo-hack::install {
 }
 
 declare tarball="${HOME}/.cache/downloads/cargo-hack*$(github::platform "${RUNNER_OS}")*.tar.gz"
-github::group "Acquire cargo-hack binary" gihtub::acquire taiki-e/cargo-hack "${tarball}"
+github::group "Acquire cargo-hack binary" github::acquire taiki-e/cargo-hack "${tarball}"
 github::group "Extract cargo-hack binary" cargo-hack::extract "${tarball}"
 github::group "Install cargo-hack binary" cargo-hack::install "${HOME}/.local/bin"
