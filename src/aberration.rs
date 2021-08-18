@@ -129,6 +129,7 @@ impl<M, F> Aberration<M, F>
 where
   M: Into<F>,
 {
+  /// **TODO**: Write documentation
   pub fn escalate(self) -> Outcome<Infallible, Infallible, F> {
     match self {
       Self::Mistake(m) => Outcome::Failure(m.into()),
