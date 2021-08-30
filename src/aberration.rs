@@ -17,10 +17,10 @@ use crate::private::panic;
 #[must_use = "This Aberration might be a `Mistake`, which should be handled"]
 #[derive(Copy, PartialEq, PartialOrd, Eq, Ord, Debug, Hash)]
 pub enum Aberration<M, F> {
-  /// Contains the mistake value. Analagous to
+  /// Contains the mistake value. Analogous to
   /// [`Outcome::Mistake`](crate::prelude::Outcome::Mistake)
   Mistake(M),
-  /// Contains the failure value. Analagous to
+  /// Contains the failure value. Analogous to
   /// [`Outcome::Failure`](crate::prelude::Outcome::Failure)
   Failure(F),
 }

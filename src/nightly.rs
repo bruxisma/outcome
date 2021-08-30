@@ -124,7 +124,7 @@ impl<S: Into<!>, M, F: Into<!>> Outcome<S, M, F> {
 impl<S: Into<!>, M: Into<!>, F> Outcome<S, M, F> {
   /// Returns the contained [`Failure`] value, but never panics.
   ///
-  /// Unlike [`unwrap_failure`], this method is known to enver panic on the
+  /// Unlike [`unwrap_failure`], this method is known to never panic on the
   /// outcome types it is implemented for. Therefore, it can be used instead of
   /// `unwrap_failure` as a maintainibility safeguard that will fail to compile
   /// if the success or mistake type of the `Outcome` is later changed to a
