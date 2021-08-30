@@ -95,7 +95,7 @@ impl<S, M, F> Outcome<S, M, F> {
   /// let x: Outcome<u32, f32, &str> = Mistake(0.0f32);
   /// assert_eq!(x.contains(&47), false);
   ///
-  /// let x: Outcome<u32, f32, &str> = Failure("Some error messsage");
+  /// let x: Outcome<u32, f32, &str> = Failure("Some error message");
   /// assert_eq!(x.contains(&47), false);
   /// ```
   #[must_use]

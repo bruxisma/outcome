@@ -630,7 +630,7 @@ impl<S, M: Debug, F: Debug> Outcome<S, M, F> {
   ///
   /// # Panics
   ///
-  /// Panics if the value is a [`Mistake`] or [`Failure`], wth a panic message
+  /// Panics if the value is a [`Mistake`] or [`Failure`], with a panic message
   /// provided by their value.
   ///
   /// # Examples
