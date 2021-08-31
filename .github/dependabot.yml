@@ -8,6 +8,7 @@ updates:
       time: "12:00"
     commit-message:
       prefix: 👷
+    labels: [github-actions, dependencies]
   - package-ecosystem: cargo
     directory: /
     schedule:
@@ -16,3 +17,4 @@ updates:
       time: "12:00"
     commit-message:
       prefix: ⬆
+    labels: [rust, dependencies]
