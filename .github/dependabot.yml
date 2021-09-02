@@ -12,7 +12,7 @@ updates:
   - package-ecosystem: cargo
     directory: /
     schedule:
-      timzone: America/Los_Angeles
+      timezone: America/Los_Angeles
       interval: daily
       time: "12:00"
     commit-message:
