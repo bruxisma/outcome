@@ -122,7 +122,6 @@ jobs:
         shell: bash
     strategy:
       matrix:
-        profile: nightly
         os: [ubuntu, windows, macos]
     steps:
       - name: Checkout
@@ -146,7 +145,7 @@ jobs:
         uses: actions/cache@v2
         with:
           restore-keys: ${{runner.os}}-cargo-
-          keys: ${{runner.os}}-cargo-${{hashFiles('**/Cargo.lock')}}
+          key: ${{runner.os}}-cargo-${{hashFiles('**/Cargo.lock')}}
           path: |
             ${{github.workspace}}/target
             ~/.cargo/registry/index
