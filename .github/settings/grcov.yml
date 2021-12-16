@@ -4,3 +4,4 @@ llvm: true
 output-type: lcov
 output-path: coverage.info
 ignore: ["/*", "C:/*", "../*"]
+binary-dir: target/coverage
