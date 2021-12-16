@@ -59,7 +59,7 @@ jobs:
           token: ${{github.token}}
           args: ${{matrix.features.args}} -- -D warnings
           name: Lint (${{matrix.features.name}})
- test:
+  test:
     name: Test Suite
     runs-on: ${{matrix.os}}-latest
     needs: [lint, format]
