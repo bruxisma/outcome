@@ -170,7 +170,7 @@ jobs:
       - name: Collect Coverage
         uses: actions-rs/grcov@v0.1
         with:
-          config: ${{github.workspace}}/.github/settings/grcov.yml
+          config: .github/settings/grcov.yml
       - name: Check coverage.info exists
         run: test -f ${{github.workspace}}/coverage.info
 #      - name: Upload Code Coverage
