@@ -169,7 +169,6 @@ jobs:
           RUSTFLAGS: -Zinstrument-coverage
       - name: List all coverage files
         run: |
-          find ${{github.workspace}} -name "*.gc*"
           find ${{github.workspace}} -name "*.profraw"
       - name: Collect Coverage
         uses: actions-rs/grcov@v0.1
