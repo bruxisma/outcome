@@ -69,13 +69,9 @@ jobs:
     strategy:
       matrix:
         toolchain: [stable, beta, nightly]
+        profile: [release, dev]
         # One day we'll be able to just use `--profile`, but until then we need
         # to do this workaround to simplify the build steps
-        profile:
-          - name: release
-            args: --release
-          - name: dev
-            args: ''
         os: [ubuntu, windows, macos]
     steps:
       - name: Checkout
@@ -94,9 +90,6 @@ jobs:
           toolchain: ${{matrix.toolchain}}
           override: true
           profile: minimal
-      # NOTE: This might break on macOS. There is the rust-cache repo which
-      # sets CARGO_INCREMENTAL=0 Additionally for grcov info, we need to set
-      # CARGO_INCREMENTAL=0 for nightly anyhow. Might be worth using.
       - name: Restore Cargo Cache
         uses: actions/cache@v2
         with:
@@ -110,26 +103,21 @@ jobs:
       - name: Restore sccache build artifacts
         uses: actions/cache@v2
         with:
-          restore-keys: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile.name}}-
-          key: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile.name}}-${{hashFiles('**/Cargo.lock')}}
+          restore-keys: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile}}-
+          key: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile}}-${{hashFiles('**/Cargo.lock')}}
           path: ${{env.SCCACHE_DIR}}
-      - name: Run Tests (${{matrix.profile.name}})
+      - name: Run Tests (${{matrix.profile}})
         uses: actions-rs/cargo@v1
         with:
           command: hack
-          args: test ${{matrix.profile.args}} --locked --each-feature
+          args: test --profile ${{matrix.profile}} --locked --each-feature
         env:
+          LLVM_PROFILE_FILE: target/coverage/outcome-%p-%m.profraw
           RUSTC_WRAPPER: sccache
-#        env:
-#          CARGO_INCREMENTAL: 0
-#          RUSTDOCFLAGS: >-
-#            -Ccodegen-units=1 -Cinline-threshold=0
-#            -Clink-dead-code -Coverflow-checks=off -Cpanic=abort
-#            -Zprofile -Zpanic_abort_tests
-#          RUSTFLAGS: >- 
-#            -Ccodegen-units=1 -Cinline-threshold=0
-#            -Clink-dead-code -Coverflow-checks=off -Cpanic=abort
-#            -Zprofile -Zpanic_abort_tests
+          RUSTDOCSFLAGS: -Zinstrument-coverage
+          RUSTFLAGS: -Zinstrument-coverage
+#      - name: Collect Coverage
+#        uses: actions-rs/grcov@v0.1.5
 #      - name: Collect Coverage
 #        uses: actions-rs/grcov@v0.1
 #      - name: Upload Code Coverage

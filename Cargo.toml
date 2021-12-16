@@ -1,16 +1,15 @@
 [package]
 name = "outcome-46f94afc-026f-5511-9d7e-7d1fd495fb5c"
 description = "Augmentations for error propagation"
-repository = "https://github.com/slurps-mad-rips/outcome"
+repository = "https://github.com/bruxisma/outcome"
 version = "0.0.0"
-edition = "2018"
+edition = "2021"
 license = "MIT"
 readme = "README.md"
 categories = ["no-std", "rust-patterns"]
 keywords = ["outcome", "result", "failure", "eyre"]
 exclude = [".github", ".gitignore", "Justfile", "rustfmt.toml"]
 build = "build.rs"
-resolver = "2"
 
 [lib]
 name = "outcome"
@@ -33,3 +32,11 @@ unstable = []
 all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
 rustc-args = ["--cfg", "docsrs"]
+
+[profile.coverage]
+codegen-units = 1
+incremental = false
+inherits = "test"
+opt-level = 0
+overflow-checks = false
+panic = "abort"
