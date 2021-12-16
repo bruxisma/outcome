@@ -1,0 +1,6 @@
+ignore-not-existing: true
+branch: true
+llvm: true
+output-type: lcov
+output-path: coverage.info
+ignore: ["/*", "C:/*", "../*"]

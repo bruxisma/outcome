@@ -167,8 +167,12 @@ jobs:
           RUSTC_WRAPPER: sccache
           RUSTDOCSFLAGS: -Zinstrument-coverage
           RUSTFLAGS: -Zinstrument-coverage
-#      - name: Collect Coverage
-#        uses: actions-rs/grcov@v0.1
+      - name: Collect Coverage
+        uses: actions-rs/grcov@v0.1
+        with:
+          config: ${{github.workspace}}/.github/settings/grcov.yml
+      - name: Check coverage.info exists
+        run: test -f ${{github.workspace}}/coverage.info
 #      - name: Upload Code Coverage
 #        uses: codecov/codecov-action@v2
 #        with:
