@@ -1,9 +1,0 @@
-guess-directory-when-missing: true
-ignore-not-existing: true
-branch: true
-llvm: true
-output-type: lcov
-output-path: coverage.info
-ignore: ["/*", "C:/*", "../*"]
-binary-path: target/coverage
-source-dir: .

@@ -123,6 +123,8 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu, windows, macos]
+    env:
+      RUSTC_WRAPPER: sccache
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -157,6 +159,11 @@ jobs:
           restore-keys: ${{runner.os}}-nightly-coverage-
           key: ${{runner.os}}-nightly-coverage-${{hashFiles('**/Cargo.lock')}}
           path: ${{env.SCCACHE_DIR}}
+      - name: Install grcov (workaround)
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: grcov
       - name: Run Tests (coverage)
         uses: actions-rs/cargo@v1
         with:
@@ -164,16 +171,23 @@ jobs:
           args: test --profile coverage --locked --each-feature
         env:
           LLVM_PROFILE_FILE: target/coverage/outcome-%p-%m.profraw
-          RUSTC_WRAPPER: sccache
           RUSTDOCFLAGS: -Zinstrument-coverage
           RUSTFLAGS: -Zinstrument-coverage
       - name: List all coverage files
         run: |
           find ${{github.workspace}} -name "*.profraw"
       - name: Collect Coverage
-        uses: actions-rs/grcov@v0.1
-        with:
-          config: .github/settings/grcov.yml
+        run: >-
+          grcov ${{github.workspace}}
+          --binary-path ${{github.workspace}}/target/coverage
+          --source-dir ${{github.workspace}}
+          --output-path ${{github.workspace}}/coverage.info
+          --output-type lcov
+          --ignore "/*"
+          --ignore "C:/*"
+          --ignore "../*"
+          --ignore-not-existing
+          --branch
       - name: Check coverage.info exists
         run: test -f ${{github.workspace}}/coverage.info
 #      - name: Upload Code Coverage
