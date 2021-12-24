@@ -173,9 +173,6 @@ jobs:
           LLVM_PROFILE_FILE: target/coverage/outcome-%p-%m.profraw
           RUSTDOCFLAGS: -Zinstrument-coverage
           RUSTFLAGS: -Zinstrument-coverage
-      - name: List all coverage files
-        run: |
-          find ${{github.workspace}} -name "*.profraw"
       - name: Collect Coverage
         run: >-
           grcov ${{github.workspace}}
@@ -190,9 +187,10 @@ jobs:
           --branch
       - name: Check coverage.info exists
         run: test -f ${{github.workspace}}/coverage.info
-#      - name: Upload Code Coverage
-#        uses: codecov/codecov-action@v2
-#        with:
-#          fail_ci_if_error: true
-#          directory: ${{github.workspace}}
-#          dry_run: true 
+      - name: Upload Code Coverage
+        uses: codecov/codecov-action@v2
+        with:
+          fail_ci_if_error: true
+          directory: ${{github.workspace}}
+          files: coverage.info
+          dry_run: true
