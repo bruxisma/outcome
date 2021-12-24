@@ -177,9 +177,9 @@ jobs:
         run: >-
           grcov ${{github.workspace}}
           --binary-path ${{github.workspace}}/target/coverage
-          --source-dir ${{github.workspace}}
           --output-path ${{github.workspace}}/coverage.info
           --output-type lcov
+          --source-dir .
           --ignore "/*"
           --ignore "C:/*"
           --ignore "../*"
@@ -193,4 +193,3 @@ jobs:
           fail_ci_if_error: true
           directory: ${{github.workspace}}
           files: coverage.info
-          dry_run: true
