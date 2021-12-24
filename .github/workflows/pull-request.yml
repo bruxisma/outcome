@@ -117,9 +117,6 @@ jobs:
     name: Code Coverage
     runs-on: ${{matrix.os}}-latest
     needs: [lint, format]
-    defaults:
-      run:
-        shell: bash
     strategy:
       matrix:
         os: [ubuntu, windows, macos]
@@ -179,7 +176,7 @@ jobs:
           --binary-path ${{github.workspace}}/target/coverage
           --output-path ${{github.workspace}}/coverage.info
           --output-type lcov
-          --source-dir .
+          --source-dir ${{github.workspace}}
           --ignore "/*"
           --ignore "C:/*"
           --ignore "../*"
