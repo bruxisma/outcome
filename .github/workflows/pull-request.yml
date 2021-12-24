@@ -165,7 +165,7 @@ jobs:
         env:
           LLVM_PROFILE_FILE: target/coverage/outcome-%p-%m.profraw
           RUSTC_WRAPPER: sccache
-          RUSTDOCSFLAGS: -Zinstrument-coverage
+          RUSTDOCFLAGS: -Zinstrument-coverage
           RUSTFLAGS: -Zinstrument-coverage
       - name: List all coverage files
         run: |
