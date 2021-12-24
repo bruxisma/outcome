@@ -1,5 +1,8 @@
 # Overview
 
+[![Audit][audit-badge-svg]][audit-badge-yml]
+[![Pull Request][pull-request-badge-svg]][pull-request-badge-yml]
+
 [`Outcome<S, M, F>`][`Outcome`] is an augmentation of the [`Result`] type
 found in the Rust standard library.
 
@@ -99,3 +102,8 @@ versions will be yanked.
 
 [crates.io]: https://crates.io
 [`eyre`]: https://crates.io/crates/eyre
+
+[pull-request-badge-svg]: https://github.com/bruxisma/outcome/actions/workflows/pull-request.yml/badge.svg
+[pull-request-badge-yml]: https://github.com/bruxisma/outcome/actions/workflows/pull-request.yml
+[audit-badge-svg]: https://github.com/bruxisma/outcome/actions/workflows/audit.yml/badge.svg
+[audit-badge-yml]: https://github.com/bruxisma/outcome/actions/workflows/audit.yml
