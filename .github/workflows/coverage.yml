@@ -9,7 +9,7 @@ jobs:
     runs-on: ${{matrix.os}}-latest
     strategy:
       matrix:
-        os: [ubuntu, windows, macosx]
+        os: [ubuntu, windows, macos]
     env:
       RUSTC_WRAPPER: sccache
     steps:
