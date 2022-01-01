@@ -58,11 +58,7 @@ jobs:
           args: test --profile coverage --locked --each-feature
         env:
           LLVM_PROFILE_FILE: target/coverage/outcome-%p-%m.profraw
-          RUSTDOCFLAGS: >-
-            -Zinstrument-coverage
-            -Zprofile
-            -Zunstable-options
-            --preserve-doctests ${{github.workspace}}/target/coverage
+          RUSTDOCFLAGS: -Zinstrument-coverage -Zprofile -Z unstable-options --preserve-doctests target/coverage
           RUSTFLAGS: -Zinstrument-coverage -Zprofile
       - name: Collect Coverage
         run: >-
