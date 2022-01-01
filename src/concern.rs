@@ -28,6 +28,17 @@ impl<S, M> Concern<S, M> {
   ///
   /// Produces a new `Concern`, containing a reference into the original,
   /// leaving it in place.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Concern<u32, &str> = Concern::Success(42);
+  /// assert_eq!(x.as_ref(), Concern::Success(&42));
+  ///
+  /// let x: Concern<u32, i32> = Concern::Mistake(47);
+  /// assert_eq!(x.as_ref(), Concern::Mistake(&47));
+  /// ```
   #[inline]
   pub fn as_ref(&self) -> Concern<&S, &M> {
     match *self {
@@ -37,6 +48,26 @@ impl<S, M> Concern<S, M> {
   }
 
   /// Converts from `&mut Concern<S, M>` to `Concern<&mut S, &mut F>`
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// fn mutate(c: &mut Concern<u32, i32>) {
+  ///   match c.as_mut() {
+  ///     Concern::Success(s) => *s = 47,
+  ///     Concern::Mistake(m) => *m = 19,
+  ///   }
+  /// }
+  ///
+  /// let mut x: Concern<u32, i32> = Concern::Success(42);
+  /// mutate(&mut x);
+  /// assert_eq!(x.unwrap(), 47);
+  ///
+  /// let mut x: Concern<u32, i32> = Concern::Mistake(47);
+  /// mutate(&mut x);
+  /// assert_eq!(x.unwrap_mistake(), 19);
+  /// ```
   #[inline]
   pub fn as_mut(&mut self) -> Concern<&mut S, &mut M> {
     match *self {
@@ -85,6 +116,19 @@ impl<S, M> Concern<S, M> {
 
   /// Returns `true` if the concern is a [`Success`]
   ///
+  /// # Examples
+  ///
+  /// Basic usage:
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Concern<u32, &str> = Concern::Success(42);
+  /// assert!(x.is_success());
+  ///
+  /// let x: Concern<u32, &str> = Concern::Mistake("hello");
+  /// assert!(!x.is_success());
+  /// ```
+  ///
   /// [`Success`]: Concern::Success
   #[must_use = "if you intended to assert a success, consider `.unwrap()` instead"]
   #[inline]
@@ -96,6 +140,17 @@ impl<S, M> Concern<S, M> {
   }
 
   /// Returns `true` if the concern is a [`Mistake`]
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Concern<u32, &str> = Concern::Success(42);
+  /// assert!(!x.is_mistake());
+  ///
+  /// let x: Concern<u32, &str> = Concern::Mistake("hello");
+  /// assert!(x.is_mistake());
+  /// ```
   ///
   /// [`Mistake`]: Concern::Mistake
   #[must_use = "if you intended to assert a mistake, consider `.unwrap_mistake()` instead"]
