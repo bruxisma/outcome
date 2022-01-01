@@ -2,6 +2,7 @@
 
 [![Audit][audit-badge-svg]][audit-badge-yml]
 [![Pull Request][pull-request-badge-svg]][pull-request-badge-yml]
+[![codecov][codecov-badge-svg]][codecov-badge-lnk]
 
 [`Outcome<S, M, F>`][`Outcome`] is an augmentation of the [`Result`] type
 found in the Rust standard library.
@@ -105,5 +106,7 @@ versions will be yanked.
 
 [pull-request-badge-svg]: https://github.com/bruxisma/outcome/actions/workflows/pull-request.yml/badge.svg
 [pull-request-badge-yml]: https://github.com/bruxisma/outcome/actions/workflows/pull-request.yml
+[codecov-badge-svg]: https://codecov.io/gh/bruxisma/outcome/branch/main/graph/badge.svg
+[codecov-badge-lnk]: https://codecov.io/gh/bruxisma/outcome
 [audit-badge-svg]: https://github.com/bruxisma/outcome/actions/workflows/audit.yml/badge.svg
 [audit-badge-yml]: https://github.com/bruxisma/outcome/actions/workflows/audit.yml
