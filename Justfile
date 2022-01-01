@@ -3,7 +3,7 @@
 set shell := ["pwsh", "-NoProfile", "-NoLogo", "-Command"]
 
 rustflags := "-Zinstrument-coverage -Zprofile"
-rustdocflags := rustflags + " -Z unstable-options --persist-doctests target/debug/doctest"
+rustdocflags := rustflags + " -Z unstable-options --persist-doctests target/coverage"
 coverage := join(justfile_directory(), "target/coverage/outcome-%p-%m.profraw")
 pwd := justfile_directory()
 
@@ -22,7 +22,7 @@ default: fmt test
     --output-type {{type}} \
     --output-path {{ if type == "lcov" { "coverage.info" } else { "target/collected" } }} \
     --commit-sha $(git rev-parse HEAD) \
-    --binary-path {{pwd}}/target/debug \
+    --binary-path {{pwd}}/target/coverage \
     --prefix-dir {{pwd}} \
     --filter covered \
     --branch \

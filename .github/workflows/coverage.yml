@@ -3,6 +3,7 @@ on:
   pull_request:
     types: [opened, edited, synchronize]
   push:
+    branches: main
 jobs:
   coverage:
     name: Code Coverage
@@ -55,11 +56,15 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: hack
-          args: test --profile coverage --locked --each-feature
+          args: test --profile=coverage --locked --each-feature
         env:
           LLVM_PROFILE_FILE: target/coverage/outcome-%p-%m.profraw
-          RUSTDOCFLAGS: -Zinstrument-coverage
-          RUSTFLAGS: -Zinstrument-coverage
+          RUSTDOCFLAGS: >-
+            -Zinstrument-coverage
+            -Zprofile
+            -Zunstable-options
+            --persist-doctests ${{github.workspace}}/target/coverage
+          RUSTFLAGS: -Zinstrument-coverage -Zprofile
       - name: Collect Coverage
         run: >-
           grcov ${{github.workspace}}
