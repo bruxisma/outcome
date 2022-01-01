@@ -53,13 +53,14 @@ jobs:
           command: install
           args: grcov
       - name: Run Tests (coverage)
-        uses: actions-rs/cargo@v1
-        with:
-          command: hack
-          args: test --profile coverage --locked --each-feature
+        run: cargo +nightly hack test --profile=coverage --locked --each-feature
         env:
           LLVM_PROFILE_FILE: target/coverage/outcome-%p-%m.profraw
-          RUSTDOCFLAGS: -Zinstrument-coverage -Zprofile -Z unstable-options --preserve-doctests target/coverage
+          RUSTDOCFLAGS: >-
+            -Zinstrument-coverage
+            -Zprofile
+            -Zunstable-options
+            --preserve-doctests ${{github.workspace}}/target/coverage
           RUSTFLAGS: -Zinstrument-coverage -Zprofile
       - name: Collect Coverage
         run: >-
