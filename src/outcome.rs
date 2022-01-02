@@ -250,13 +250,13 @@ impl<S, M, F> Outcome<S, M, F> {
   /// ```
   /// # use outcome::prelude::*;
   /// let x: Outcome<i32, (), &str> = Success(-1);
-  /// assert_eq!(x.is_success(), true);
+  /// assert!(x.is_success());
   ///
   /// let x: Outcome<i32, (), &str> = Mistake(());
-  /// assert_eq!(x.is_success(), false);
+  /// assert!(!x.is_success());
   ///
   /// let x: Outcome<i32, (), &str> = Failure("Some failure message");
-  /// assert_eq!(x.is_success(), false);
+  /// assert!(!x.is_success());
   /// ```
   ///
   #[must_use = "if you intended to assert a success, consider `.unwrap()` instead"]
@@ -275,13 +275,13 @@ impl<S, M, F> Outcome<S, M, F> {
   /// ```
   /// # use outcome::prelude::*;
   /// let x: Outcome<(), i32, &str> = Mistake(-1);
-  /// assert_eq!(x.is_mistake(), true);
+  /// assert!(x.is_mistake());
   ///
   /// let x: Outcome<(), i32, &str> = Success(());
-  /// assert_eq!(x.is_mistake(), false);
+  /// assert!(!x.is_mistake());
   ///
   /// let x: Outcome<(), i32, &str> = Failure("Some failure message");
-  /// assert_eq!(x.is_mistake(), false);
+  /// assert!(!x.is_mistake());
   /// ```
   #[must_use = "if you intended to assert a mistake, consider `.unwrap_mistake()` instead"]
   #[inline]
@@ -299,13 +299,13 @@ impl<S, M, F> Outcome<S, M, F> {
   /// ```
   /// # use outcome::prelude::*;
   /// let x: Outcome<i32, f32, &str> = Failure("some failure message");
-  /// assert_eq!(x.is_failure(), true);
+  /// assert!(x.is_failure());
   ///
   /// let x: Outcome<i32, f32, &str> = Mistake(0.0f32);
-  /// assert_eq!(x.is_failure(), false);
+  /// assert!(!x.is_failure());
   ///
   /// let x: Outcome<i32, f32, &str> = Success(-1);
-  /// assert_eq!(x.is_failure(), false);
+  /// assert!(!x.is_failure());
   /// ```
   #[must_use = "if you intended to assert a failure, consider `.unwrap_failure()` instead"]
   #[inline]
@@ -323,13 +323,13 @@ impl<S, M, F> Outcome<S, M, F> {
   /// ```
   /// # use outcome::prelude::*;
   /// let x: Outcome<i32, f32, &str> = Failure("some failure message");
-  /// assert_eq!(x.is_error(), true);
+  /// assert!(x.is_error());
   ///
   /// let x: Outcome<i32, f32, &str> = Mistake(0.0f32);
-  /// assert_eq!(x.is_error(), true);
+  /// assert!(x.is_error());
   ///
   /// let x: Outcome<i32, f32, &str> = Success(-1);
-  /// assert_eq!(x.is_error(), false);
+  /// assert!(!x.is_error());
   /// ```
   #[must_use = "If you intended to assert an error, consider `.unwrap_error()` instead"]
   #[inline]

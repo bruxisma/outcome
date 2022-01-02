@@ -28,6 +28,17 @@ impl<S, M> Concern<S, M> {
   ///
   /// Produces a new `Concern`, containing a reference into the original,
   /// leaving it in place.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Concern<u32, &str> = Concern::Success(42);
+  /// assert_eq!(x.as_ref(), Concern::Success(&42));
+  ///
+  /// let x: Concern<u32, i32> = Concern::Mistake(47);
+  /// assert_eq!(x.as_ref(), Concern::Mistake(&47));
+  /// ```
   #[inline]
   pub fn as_ref(&self) -> Concern<&S, &M> {
     match *self {
@@ -37,6 +48,26 @@ impl<S, M> Concern<S, M> {
   }
 
   /// Converts from `&mut Concern<S, M>` to `Concern<&mut S, &mut F>`
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// fn mutate(c: &mut Concern<u32, i32>) {
+  ///   match c.as_mut() {
+  ///     Concern::Success(s) => *s = 47,
+  ///     Concern::Mistake(m) => *m = 19,
+  ///   }
+  /// }
+  ///
+  /// let mut x: Concern<u32, i32> = Concern::Success(42);
+  /// mutate(&mut x);
+  /// assert_eq!(x.unwrap(), 47);
+  ///
+  /// let mut x: Concern<u32, i32> = Concern::Mistake(47);
+  /// mutate(&mut x);
+  /// assert_eq!(x.unwrap_mistake(), 19);
+  /// ```
   #[inline]
   pub fn as_mut(&mut self) -> Concern<&mut S, &mut M> {
     match *self {
@@ -49,6 +80,19 @@ impl<S, M> Concern<S, M> {
   ///
   /// The iterator yields one value if the outcome is [`Success`], otherwise
   /// none.
+  ///
+  /// # Examples
+  ///
+  /// Basic usage:
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Concern<u32, i32> = Concern::Success(42);
+  /// assert_eq!(x.iter().next(), Some(&42));
+  ///
+  /// let x: Concern<u32, i32> = Concern::Mistake(47);
+  /// assert_eq!(x.iter().next(), None);
+  /// ```
   ///
   /// [`Success`]: Concern::Success
   #[inline]
@@ -85,6 +129,19 @@ impl<S, M> Concern<S, M> {
 
   /// Returns `true` if the concern is a [`Success`]
   ///
+  /// # Examples
+  ///
+  /// Basic usage:
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Concern<u32, &str> = Concern::Success(42);
+  /// assert!(x.is_success());
+  ///
+  /// let x: Concern<u32, &str> = Concern::Mistake("hello");
+  /// assert!(!x.is_success());
+  /// ```
+  ///
   /// [`Success`]: Concern::Success
   #[must_use = "if you intended to assert a success, consider `.unwrap()` instead"]
   #[inline]
@@ -97,6 +154,17 @@ impl<S, M> Concern<S, M> {
 
   /// Returns `true` if the concern is a [`Mistake`]
   ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Concern<u32, &str> = Concern::Success(42);
+  /// assert!(!x.is_mistake());
+  ///
+  /// let x: Concern<u32, &str> = Concern::Mistake("hello");
+  /// assert!(x.is_mistake());
+  /// ```
+  ///
   /// [`Mistake`]: Concern::Mistake
   #[must_use = "if you intended to assert a mistake, consider `.unwrap_mistake()` instead"]
   #[inline]
@@ -108,6 +176,20 @@ impl<S, M> Concern<S, M> {
   }
 
   /// Converts from `Concern<S, M>` to [`Option<S>`]
+  ///
+  /// Converts `self` into an [`Option<S>`], consuming `self`, and discarding
+  /// the mistake, if any.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Concern<u32, &str> = Concern::Success(42);
+  /// assert_eq!(x.success(), Some(42));
+  ///
+  /// let x: Concern<u32, &str> = Concern::Mistake("hello");
+  /// assert_eq!(x.success(), None);
+  /// ```
   #[inline]
   pub fn success(self) -> Option<S> {
     if let Self::Success(value) = self {
@@ -117,6 +199,20 @@ impl<S, M> Concern<S, M> {
   }
 
   /// Converts from `Concern<S, M>` to [`Option<M>`]
+  ///
+  /// Converts `self` into an [`Option<M>`], consuming `self`, and discarding
+  /// the success, if any.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Concern<u32, &str> = Concern::Success(42);
+  /// assert_eq!(x.mistake(), None);
+  ///
+  /// let x: Concern<u32, &str> = Concern::Mistake("hello");
+  /// assert_eq!(x.mistake(), Some("hello"));
+  /// ```
   #[inline]
   pub fn mistake(self) -> Option<M> {
     if let Self::Mistake(value) = self {
@@ -163,7 +259,22 @@ impl<S, M: Debug> Concern<S, M> {
   ///
   /// # Panics
   ///
-  /// TODO
+  /// Panics if the value is a [`Mistake`] with a panic message provided by
+  /// their value.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Concern<u32, &str> = Concern::Success(42);
+  /// assert_eq!(x.unwrap(), 42);
+  /// ```
+  ///
+  /// ```should_panic
+  /// # use outcome::prelude::*;
+  /// let x: Concern<u32, &str> = Concern::Mistake("hello");
+  /// x.unwrap(); // panics with "hello"
+  /// ```
   ///
   /// [`Success`]: Concern::Success
   #[track_caller]
@@ -181,8 +292,24 @@ impl<S: Debug, M> Concern<S, M> {
   ///
   /// # Panics
   ///
-  /// TODO
+  /// Panics if the value is a [`Success`] with a panic message provided by
+  /// their value.
   ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Concern<u32, &str> = Concern::Mistake("hello");
+  /// assert_eq!(x.unwrap_mistake(), "hello");
+  /// ```
+  ///
+  /// ```should_panic
+  /// # use outcome::prelude::*;
+  /// let x: Concern<u32, &str> = Concern::Success(42);
+  /// x.unwrap_mistake(); // panics with "42"
+  /// ```
+  ///
+  /// [`Success`]: Concern::Success
   /// [`Mistake`]: Concern::Mistake
   #[track_caller]
   #[inline]
