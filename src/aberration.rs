@@ -30,6 +30,15 @@ impl<M, F> Aberration<M, F> {
   ///
   /// Produces a new `Aberration`, containing a reference into the original,
   /// leaving it in place.
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Aberration<u32, &str> = Aberration::Mistake(42);
+  /// assert_eq!(x.as_ref(), Aberration::Mistake(&42));
+  ///
+  /// let x: Aberration<&str, u32> = Aberration::Failure(47);
+  /// assert_eq!(x.as_ref(), Aberration::Failure(&47));
   #[inline]
   pub fn as_ref(&self) -> Aberration<&M, &F> {
     match *self {
@@ -39,6 +48,26 @@ impl<M, F> Aberration<M, F> {
   }
 
   /// Converts from `&mut Aberration<M, F>` to `Aberration<&mut M, &mut F>`
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// fn mutate(x: &mut Aberration<u32, i32>) {
+  ///   match x.as_mut() {
+  ///     Aberration::Mistake(m) => *m = 42,
+  ///     Aberration::Failure(f) => *f = 47,
+  ///   }
+  /// }
+  ///
+  /// let mut x: Aberration<u32, i32> = Aberration::Mistake(1);
+  /// mutate(&mut x);
+  /// assert_eq!(x.unwrap_mistake(), 42);
+  ///
+  /// let mut x: Aberration<u32, i32> = Aberration::Failure(1);
+  /// mutate(&mut x);
+  /// assert_eq!(x.unwrap_failure(), 47);
+  /// ```
   #[inline]
   pub fn as_mut(&mut self) -> Aberration<&mut M, &mut F> {
     match *self {
@@ -72,6 +101,20 @@ impl<M, F> Aberration<M, F> {
   }
 
   /// Converts from `Aberration<M, F>` to [`Option<M>`]
+  ///
+  /// Converts `self` into an [`Option<M>`], consuming `self`, and discarding
+  /// the failure value if any.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Aberration<u32, i32> = Aberration::Failure(42);
+  /// assert_eq!(x.mistake(), None);
+  ///
+  /// let x: Aberration<u32, i32> = Aberration::Mistake(42);
+  /// assert_eq!(x.mistake(), Some(42));
+  /// ```
   #[inline]
   pub fn mistake(self) -> Option<M> {
     if let Self::Mistake(value) = self {
@@ -81,6 +124,20 @@ impl<M, F> Aberration<M, F> {
   }
 
   /// Converts from `Aberration<M, F>` to [`Option<F>`]
+  ///
+  /// Converts `self` into an [`Option<F>`], consuming `self`, and discarding the
+  /// mistake value if any.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Aberration<u32, i32> = Aberration::Failure(42);
+  /// assert_eq!(x.failure(), Some(42));
+  ///
+  /// let x: Aberration<u32, i32> = Aberration::Mistake(42);
+  /// assert_eq!(x.failure(), None);
+  /// ```
   #[inline]
   pub fn failure(self) -> Option<F> {
     if let Self::Failure(value) = self {
