@@ -8,7 +8,7 @@ use crate::private::panic;
 
 /// `Aberration` is a type that can represent a [`Mistake`], or [`Failure`].
 ///
-/// **NOTE**: This type will become a type alias once `!` is stabilized.
+/// **NOTE**: This type will become a alias once `!` is stabilized.
 ///
 /// See the [module documentation](crate) for details.
 ///
@@ -78,6 +78,19 @@ impl<M, F> Aberration<M, F> {
 
   /// Returns `true` if the aberration is a [`Mistake`]
   ///
+  /// # Examples
+  ///
+  /// # Basic usage:
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Aberration<u32, i32> = Aberration::Mistake(42);
+  /// assert!(x.is_mistake());
+  ///
+  /// let x: Aberration<u32, i32> = Aberration::Failure(47);
+  /// assert!(!x.is_mistake());
+  /// ```
+  ///
   /// [`Mistake`]: Aberration::Mistake
   #[must_use = "if you intended to assert a mistake, consider `.unwrap_mistake()` instead"]
   #[inline]
@@ -90,6 +103,18 @@ impl<M, F> Aberration<M, F> {
 
   /// Returns `true` if the aberration is a [`Failure`]
   ///
+  /// # Examples
+  ///
+  /// # Basic usage:
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Aberration<u32, i32> = Aberration::Failure(1);
+  /// assert!(x.is_failure());
+  ///
+  /// let x: Aberration<u32, i32> = Aberration::Mistake(1);
+  /// assert!(!x.is_failure());
+  /// ```
   /// [`Failure`]: Aberration::Failure
   #[must_use = "if you intended to assert a failure, consider `.unwrap_failure()` instead"]
   #[inline]
