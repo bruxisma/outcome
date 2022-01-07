@@ -224,6 +224,17 @@ impl<S, M> Concern<S, M> {
   /// Maps a `Concern<S, M>` to `Concern<T, F>` by applying a function to a
   /// contained [`Success`] value, leaving any [`Mistake`] value untouched.
   ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Concern<u32, &str> = Concern::Success(42);
+  /// assert_eq!(x.map(|x| x + 1), Concern::Success(43));
+  ///
+  /// let x: Concern<u32, &str> = Concern::Mistake("hello");
+  /// assert_eq!(x.map(|x| x + 1), Concern::Mistake("hello"));
+  /// ```
+  ///
   /// [`Success`]: Concern::Success
   /// [`Mistake`]: Concern::Mistake
   #[inline]
@@ -239,6 +250,18 @@ impl<S, M> Concern<S, M> {
 
   /// Maps a `Concern<S, M>` to `Concern<S, N>` by applying a function to a
   /// contained [`Mistake`] value, leaving any [`Success`] value untouched.
+  ///
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Concern<u32, i32> = Concern::Success(42);
+  /// assert_eq!(x.map_mistake(|x| x + 1), Concern::Success(42));
+  ///
+  /// let x: Concern<u32, i32> = Concern::Mistake(46);
+  /// assert_eq!(x.map_mistake(|x| x + 1), Concern::Mistake(47));
+  /// ```
   ///
   /// [`Success`]: Concern::Success
   /// [`Mistake`]: Concern::Mistake
