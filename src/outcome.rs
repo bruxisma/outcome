@@ -695,6 +695,21 @@ impl<S, M: Debug, F: Debug> Outcome<S, M, F> {
   /// the result of a function call, it is recommended to use
   /// [`unwrap_or_else`], which is lazily evaluated.
   ///
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Outcome<u32, &str, &str> = Success(2);
+  /// assert_eq!(x.unwrap_or(3), 2);
+  ///
+  /// let x: Outcome<u32, &str, &str> = Mistake("mistaken");
+  /// assert_eq!(x.unwrap_or(3), 3);
+  ///
+  /// let x: Outcome<u32, &str, &str> = Failure("emergency failure");
+  /// assert_eq!(x.unwrap_or(3), 3);
+  /// ```
+  ///
   /// [`unwrap_or_else`]: Outcome::unwrap_or_else
   #[track_caller]
   #[inline]
@@ -706,6 +721,20 @@ impl<S, M: Debug, F: Debug> Outcome<S, M, F> {
   }
 
   /// Returns the contained [`Success`] value or computes it from the closure.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Outcome<u32, &str, &str> = Success(2);
+  /// assert_eq!(x.unwrap_or_else(|_| 3), 2);
+  ///
+  /// let x: Outcome<u32, &str, &str> = Mistake("mistaken");
+  /// assert_eq!(x.unwrap_or_else(|_| 3), 3);
+  ///
+  /// let x: Outcome<u32, &str, &str> = Failure("emergency failure");
+  /// assert_eq!(x.unwrap_or_else(|_| 3), 3);
+  /// ```
   pub fn unwrap_or_else(self, op: impl FnOnce(Aberration<M, F>) -> S) -> S {
     match self {
       Success(value) => value,
@@ -839,6 +868,16 @@ impl<S, M, F> Outcome<Option<S>, M, F> {
   /// - `Success(None)` will be mapped to `None`.
   /// - `Success(Some(_))`, `Mistake(_)`, and `Failure(_)` will be mapped to
   ///     `Some(Success(_))`, `Some(Mistake(_))`, and `Some(Failure(_))`.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Outcome<Option<u32>, &str, &str> = Success(Some(5));
+  /// let y: Option<Outcome<u32, &str, &str>> = Some(Success(5));
+  /// assert_eq!(x.transpose(), y);
+  /// ```
+  ///
   ///
   pub fn transpose(self) -> Option<Outcome<S, M, F>> {
     match self {
