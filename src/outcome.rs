@@ -471,6 +471,20 @@ impl<S, M, F> Outcome<S, M, F> {
   /// the result of a function call, it is recommended to use [`map_or_else`],
   /// which is lazily evaluated.
   ///
+  /// # Examples
+  ///
+  ///```
+  /// # use outcome::prelude::*;
+  /// let x: Outcome<_, &str, &str> = Success("foo");
+  /// assert_eq!(x.map_or(47, |v| v.len()), 3);
+  ///
+  /// let x: Outcome<&str, _, &str> = Mistake("bar");
+  /// assert_eq!(x.map_or(47, |v| v.len()), 47);
+  ///
+  /// let x: Outcome<&str, &str, _> = Failure("baz");
+  /// assert_eq!(x.map_or(47, |v| v.len()), 47);
+  ///```
+  ///
   /// [`map_or_else`]: Outcome::map_or_else
   #[inline]
   pub fn map_or<T, C>(self, default: T, callable: C) -> T
@@ -507,7 +521,22 @@ impl<S, M, F> Outcome<S, M, F> {
   /// untouched.
   ///
   /// This function can be used to pass through a successful outcome while
-  /// handling an error.
+  /// handling a mistake.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Outcome<&str, _, &str> = Mistake("foo");
+  /// assert_eq!(x.map_mistake(|v| v.len()), Mistake(3));
+  ///
+  /// let x: Outcome<&str, &str, _> = Failure("bar");
+  /// assert_eq!(x.map_mistake(|v| v.len()), Failure("bar"));
+  ///
+  /// let x: Outcome<_, &str, &str> = Success("baz");
+  /// assert_eq!(x.map_mistake(|v| v.len()), Success("baz"));
+  /// ```
+  ///
   #[inline]
   pub fn map_mistake<N, C>(self, callable: C) -> Outcome<S, N, F>
   where
@@ -524,8 +553,8 @@ impl<S, M, F> Outcome<S, M, F> {
   /// to a contained [`Failure`] value, leaving a [`Success`] or [`Failure`]
   /// value untouched.
   ///
-  /// This function can be used to pass through a successful outcome while
-  /// handling an error.
+  /// This function can be used to pass through a successful or mistaken
+  /// outcome while handling a failure.
   #[inline]
   pub fn map_failure<G, C>(self, callable: C) -> Outcome<S, M, G>
   where
