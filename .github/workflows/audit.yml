@@ -25,6 +25,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2
       - name: Audit Check
-        uses: actions-rs/audit-check@v1
+        uses: actions-rs/audit-check@35b7b53b1e25b55642157ac01b4adceb5b9ebef3 # renovate: tag=v1
         with:
           token: ${{github.token}}

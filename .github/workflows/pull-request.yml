@@ -14,14 +14,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2
       - name: Install Toolchain
-        uses: actions-rs/toolchain@v1
+        uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # renovate: tag=v1
         with:
           components: rustfmt
           toolchain: stable
           override: true
           profile: minimal
       - name: Check Formatting
-        uses: actions-rs/cargo@v1
+        uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # renovate: tag=v1
         with:
           command: fmt
           args: -- --check
@@ -47,14 +47,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2
       - name: Install Toolchain
-        uses: actions-rs/toolchain@v1
+        uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # renovate: tag=v1
         with:
           components: clippy
           toolchain: stable
           override: true
           profile: minimal
       - name: Clippy
-        uses: actions-rs/clippy-check@v1
+        uses: actions-rs/clippy-check@b5b5f21f4797c02da247df37026fcd0a5024aa4d # renovate: tag=v1
         with:
           token: ${{github.token}}
           args: ${{matrix.features.args}} -- -D warnings
@@ -85,7 +85,7 @@ jobs:
         working-directory: ${{github.workspace}}
         run: bash -c .github/scripts/setup-cargo-hack
       - name: Install Toolchain
-        uses: actions-rs/toolchain@v1
+        uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # renovate: tag=v1
         with:
           toolchain: ${{matrix.toolchain}}
           override: true
@@ -107,7 +107,7 @@ jobs:
           key: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile}}-${{hashFiles('**/Cargo.lock')}}
           path: ${{env.SCCACHE_DIR}}
       - name: Run Tests (${{matrix.profile}})
-        uses: actions-rs/cargo@v1
+        uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # renovate: tag=v1
         with:
           command: hack
           args: test --profile ${{matrix.profile}} --locked --each-feature
