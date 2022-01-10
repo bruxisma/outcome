@@ -15,12 +15,6 @@
     "commitMessageAction": "Pin",
     "commitMessagePrefix": "📌"
   },
-  "packageRules": [
-    {
-      "automerge": true,
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"]
-    }
-  ],
   "vulnerabilityAlerts": {
     "addLabels": ["renovate:security"]
   },
@@ -43,6 +37,10 @@
     "commitMessageTopic": "🦀 Rust Crate {{{depName}}}"
   },
   "packageRules": [
+    {
+      "automerge": true,
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"]
+    },
     {
       "groupName": "Review Dog Actions",
       "matchManagers": ["github-actions"],
