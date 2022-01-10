@@ -22,7 +22,7 @@ use crate::{aberration::*, concern::*, private::*};
 ///
 /// The following example shows using Outcome to wrap [`Mutex<T>`] to create a
 /// spin lock with [exponential backoff][1], that will not block and is adapted
-/// from the C++ code in the blost post [*Using locks in real-time audio
+/// from the C++ code in the blog post [*Using locks in real-time audio
 /// processing, safely*][2].
 ///
 /// This is *not* meant to be an example of good API design, but to show how
@@ -180,6 +180,22 @@ impl<S, M, F> Outcome<S, M, F> {
 
   /// Returns a `Result<Concern<S, M>, F>`, which allows a user to still rely
   /// on the `?` operator until [`Try`] has been stabilized.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  ///
+  /// pub fn invoke() -> Result<u32, &'static str> {
+  ///   let x: Outcome<u32, f32, &str> = Success(2);
+  ///   let c = x.acclimate()?;
+  ///   Ok(match c {
+  ///     Concern::Success(s) => s,
+  ///     Concern::Mistake(m) => m as u32,
+  ///   })
+  /// }
+  /// ```
+  ///
   ///
   /// [`Try`]: core::ops::Try
   #[inline]
@@ -672,6 +688,12 @@ impl<S, M: Debug, F: Debug> Outcome<S, M, F> {
   ///
   /// ```should_panic
   /// # use outcome::prelude::*;
+  /// let x: Outcome<u32, &str, &str> = Mistake("mistake");
+  /// x.unwrap(); // panics with `"mistake"`
+  /// ```
+  ///
+  /// ```should_panic
+  /// # use outcome::prelude::*;
   /// let x: Outcome<u32, &str, &str> = Failure("emergency failure");
   /// x.unwrap(); // panics with "emergency failure"
   /// ```
@@ -765,6 +787,12 @@ impl<S: Debug, M, F: Debug> Outcome<S, M, F> {
   /// let x: Outcome<u32, &str, f32> = Mistake("try again!");
   /// assert_eq!(x.unwrap_mistake(), "try again!");
   /// ```
+  ///
+  /// ```should_panic
+  /// # use outcome::prelude::*;
+  /// let x: Outcome<u32, &str, &str> = Failure("emergency failure");
+  /// x.unwrap_mistake(); // panics with 'emergency failure'
+  /// ```
   #[track_caller]
   #[inline]
   pub fn unwrap_mistake(self) -> M {
@@ -790,6 +818,12 @@ impl<S: Debug, M: Debug, F> Outcome<S, M, F> {
   /// # use outcome::prelude::*;
   /// let x: Outcome<u32, &str, &str> = Success(47);
   /// x.unwrap_failure(); // panics with 47
+  /// ```
+  ///
+  /// ```should_panic
+  /// # use outcome::prelude::*;
+  /// let x: Outcome<u32, &str, f32> = Mistake("try again!");
+  /// x.unwrap_failure(); // panics with 'try again!'
   /// ```
   ///
   /// ```

@@ -300,6 +300,7 @@ impl<S, M: Debug> Concern<S, M> {
   /// ```
   ///
   /// [`Success`]: Concern::Success
+  /// [`Mistake`]: Concern::Mistake
   #[track_caller]
   #[inline]
   pub fn unwrap(self) -> S {

@@ -1,0 +1,11 @@
+codecov:
+  branch: main
+coverage:
+  status:
+    project:
+      default:
+        threshold: 10%
+        informational: true
+comment: 
+  layout: diff, flags, files
+  require_changes: true
