@@ -11,12 +11,12 @@
 extern crate std;
 
 use crate::prelude::*;
-use std::fmt::Display;
 use miette::Diagnostic;
+use std::fmt::Display;
 
 #[doc(no_inline)]
 pub use miette::{Report, Result};
 
 crate::wrap::r#trait!(Diagnostic);
 crate::wrap::r#impl!(Diagnostic);
-crate::wrap::r#result!(miette);
+crate::wrap::result!(miette);

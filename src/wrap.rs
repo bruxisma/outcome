@@ -1,3 +1,5 @@
+#![allow(clippy::redundant_pub_crate)]
+
 #[allow(unused_macros)]
 macro_rules! r#trait {
   ($type:ty) => {
@@ -147,11 +149,14 @@ macro_rules! r#impl {
   };
 }
 
-
 #[allow(unused_macros)]
 macro_rules! r#use {
-  (miette) => { "use outcome::diagnostic::{WrapFailure, Result, Report};" };
-  (eyre) => { "use outcome::report::{WrapFailure, Result, Report};" };
+  (miette) => {
+    "use outcome::diagnostic::{WrapFailure, Result, Report};"
+  };
+  (eyre) => {
+    "use outcome::report::{WrapFailure, Result, Report};"
+  };
 }
 
 #[allow(unused_macros)]
@@ -224,6 +229,5 @@ macro_rules! r#result {
   };
 }
 
-#[allow(clippy::redundant_pub_crate)]
 #[allow(unused_imports)]
 pub(crate) use {r#impl, r#result, r#trait, r#use};

@@ -12,11 +12,11 @@
 extern crate std;
 
 use crate::prelude::*;
-use std::{error::Error,fmt::Display};
+use std::{error::Error, fmt::Display};
 
 #[doc(no_inline)]
 pub use eyre::{Report, Result};
 
 crate::wrap::r#trait!(Error);
 crate::wrap::r#impl!(Error);
-crate::wrap::r#result!(eyre);
+crate::wrap::result!(eyre);
