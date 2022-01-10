@@ -1,0 +1,9 @@
+coverage:
+  branch: main
+  status:
+    project:
+      default:
+        informational: true
+comment: 
+  layout: diff, flags, files
+  require_changes: true
