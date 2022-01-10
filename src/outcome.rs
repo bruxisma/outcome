@@ -22,7 +22,7 @@ use crate::{aberration::*, concern::*, private::*};
 ///
 /// The following example shows using Outcome to wrap [`Mutex<T>`] to create a
 /// spin lock with [exponential backoff][1], that will not block and is adapted
-/// from the C++ code in the blost post [*Using locks in real-time audio
+/// from the C++ code in the blog post [*Using locks in real-time audio
 /// processing, safely*][2].
 ///
 /// This is *not* meant to be an example of good API design, but to show how

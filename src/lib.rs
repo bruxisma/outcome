@@ -59,13 +59,26 @@ mod outcome;
 mod private;
 
 mod iter;
+mod wrap;
 
 pub mod convert;
 pub mod prelude;
 
+
+//#[cfg(all(feature = "report", feature = "diagnostic", not(doc), not(test)))]
+//compile_error!("`diagnostic` and `report` features are mutually exclusive");
+
+//#[cfg(any(feature = "diagnostic", feature = "report"))]
+//#[doc(hidden)]
+//pub mod wrap;
+
 #[cfg_attr(any(docsrs, nightly), doc(cfg(feature = "report")))]
 #[cfg(feature = "report")]
 pub mod report;
+
+#[cfg_attr(any(docsrs, nightly), doc(cfg(feature = "diagnostic")))]
+#[cfg(feature = "diagnostic")]
+pub mod diagnostic;
 
 #[cfg_attr(doc, doc(inline))]
 pub use crate::{aberration::*, concern::*, convert::*, iter::*, outcome::*};
