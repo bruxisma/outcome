@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2
       - name: Install Toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -45,7 +45,7 @@ jobs:
             args: --features nightly
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2
       - name: Install Toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -75,7 +75,7 @@ jobs:
         os: [ubuntu, windows, macos]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2
       - name: Authenticate GitHub CLI
         run: echo ${{github.token}} | gh auth login --with-token
       - name: Setup Shared Compilation Cache
@@ -91,7 +91,7 @@ jobs:
           override: true
           profile: minimal
       - name: Restore Cargo Cache
-        uses: actions/cache@v2
+        uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed # renovate: tag=v2
         with:
           restore-keys: ${{runner.os}}-cargo-
           key: ${{runner.os}}-cargo-${{hashFiles('**/Cargo.lock')}}
@@ -101,7 +101,7 @@ jobs:
             ~/.cargo/registry/cache
             ~/.cargo/git
       - name: Restore sccache build artifacts
-        uses: actions/cache@v2
+        uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed # renovate: tag=v2
         with:
           restore-keys: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile}}-
           key: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile}}-${{hashFiles('**/Cargo.lock')}}

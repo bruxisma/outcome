@@ -15,7 +15,7 @@ jobs:
       RUSTC_WRAPPER: sccache
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2
       - name: Authenticate GitHub CLI
         run: echo ${{github.token}} | gh auth login --with-token
       - name: Setup Shared Compilation Cache
@@ -32,7 +32,7 @@ jobs:
           profile: minimal
           components: llvm-tools-preview
       - name: Restore Cargo Cache
-        uses: actions/cache@v2
+        uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed # renovate: tag=v2
         with:
           restore-keys: ${{runner.os}}-cargo-
           key: ${{runner.os}}-cargo-${{hashFiles('**/Cargo.lock')}}
@@ -42,7 +42,7 @@ jobs:
             ~/.cargo/registry/cache
             ~/.cargo/git
       - name: Restore sccache build artifacts
-        uses: actions/cache@v2
+        uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed # renovate: tag=v2
         with:
           restore-keys: ${{runner.os}}-nightly-coverage-
           key: ${{runner.os}}-nightly-coverage-${{hashFiles('**/Cargo.lock')}}
