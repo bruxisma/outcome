@@ -1,6 +1,5 @@
 #![allow(clippy::redundant_pub_crate)]
 
-#[allow(unused_macros)]
 macro_rules! r#trait {
   ($type:ty) => {
     /// This trait is meant to be the `outcome` analogue of *both*
@@ -54,7 +53,6 @@ macro_rules! r#trait {
   };
 }
 
-#[allow(unused_macros)]
 macro_rules! r#impl {
   ($type:ident) => {
     impl<S, M, E> WrapFailure for Outcome<S, M, E>
@@ -149,7 +147,6 @@ macro_rules! r#impl {
   };
 }
 
-#[allow(unused_macros)]
 macro_rules! r#use {
   (miette) => {
     "use outcome::diagnostic::{WrapFailure, Result, Report};"
@@ -159,7 +156,6 @@ macro_rules! r#use {
   };
 }
 
-#[allow(unused_macros)]
 macro_rules! r#result {
   ($module:ident) => {
     /// Implementation of [`WrapFailure`] for `Result<T, E>` for any
@@ -229,5 +225,4 @@ macro_rules! r#result {
   };
 }
 
-#[allow(unused_imports)]
 pub(crate) use {r#impl, r#result, r#trait, r#use};

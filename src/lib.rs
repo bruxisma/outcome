@@ -59,6 +59,8 @@ mod outcome;
 mod private;
 
 mod iter;
+
+#[cfg(any(feature = "report", feature = "diagnostic"))]
 mod wrap;
 
 pub mod convert;
