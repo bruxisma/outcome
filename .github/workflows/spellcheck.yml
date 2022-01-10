@@ -10,7 +10,7 @@ jobs:
       should-skip: ${{steps.skip-check.outputs.should_skip}}
     steps:
       - name: Skip Duplicate Actions (Spellcheck)
-        uses: fkirc/skip-duplicate-actions@v3
+        uses: fkirc/skip-duplicate-actions@f75dd6564bb646f95277dc8c3b80612e46a4a1ea # renovate: tag=v3
         id: skip-check
   spellcheck:
     name: Spellcheck
@@ -21,6 +21,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2
       - name: Checking Spelling
-        uses: crate-ci/typos@v1.3.3
+        uses: crate-ci/typos@71b53cb23ea90eed7bdd0cbcd6645fc0fb883fa7 # renovate: tag=v1.3.3
         with:
           config: ${{github.workspace}}/.github/settings/typos.yml
