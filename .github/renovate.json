@@ -1,0 +1,62 @@
+{
+  "extends": [":gitSignOff"],
+  "labels": ["renovate:dependencies"],
+  "timezone": "America/Los_Angeles",
+  "commitMessagePrefix": "⬆",
+  "commitMessageSuffix": "{{#if isLockfileUpdate}}🔒{{/if}}",
+  "semanticCommits": "disabled",
+  "rangeStrategy": "auto",
+  "rebaseWhen": "behind-base-branch",
+  "rollback": {
+    "commitMessageAction": "Rollback",
+    "commitMessagePrefix": "⏪"
+  },
+  "pin": {
+    "commitMessageAction": "Pin",
+    "commitMessagePrefix": "📌"
+  },
+  "packageRules": [
+    {
+      "automerge": true,
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"]
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "addLabels": ["renovate:security"]
+  },
+  "github-actions": {
+    "addLabels": ["renovate:actions"],
+    "additionalBranchPrefix": "actions/",
+    "commitMessageTopic": "👷 GitHub Action {{{depName}}}",
+    "pin": {
+      "groupName": "GitHub Actions",
+      "group": {
+        "commitMessageTopic": "👷 {{{groupName}}} Workflows",
+      }
+    },
+    "pinDigests": true,
+    "rangeStrategy": "pin"
+  },
+  "cargo": {
+    "addLabels": ["renovate:rust"],
+    "additionalBranchPrefix": "rust/",
+    "commitMessageTopic": "🦀 Rust Crate {{{depName}}}",
+  },
+  "packageRules": [
+    {
+      "groupName": "Review Dog Actions",
+      "matchManagers": ["github-actions"],
+      "matchPackagePrefixes": ["reviewdog/"],
+    },
+    {
+      "groupName": "Common Actions",
+      "matchManagers": ["github-actions"],
+      "matchPackagePrefixes": ["actions/"],
+    },
+    {
+      "groupName": "Setup Actions",
+      "matchManagers": ["github-actions"],
+      "matchPackagePatterns": ["^[^/]+[/]setup-.+$"],
+    }
+  ]
+}
