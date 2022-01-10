@@ -10,12 +10,25 @@ default. These include:
      used, such as [`Try`])
  - `report` (Enable conversion from [`Aberration`] to an
      [`eyre::Report`][`Report`])
+ - `diagnostic` (Enable conversion from [`Aberration`] to a
+     [`miette::Report`])
 
-Users can also enable `no_std` support by either setting `default-features`
-to `false` or simply not listing `std` in the list of features.
+Users can also enable `no_std` support by either setting `default-features` to
+`false` or simply not listing `std` in the list of features. Lastly, the
+`report` and `diagnostic` features should be treated as mutually exclusive as
+they both export a similar interface that is similar enough to cause
+collisions. If the author of `eyre` ever manages to make it `no_std` (there are
+limitations preventing [`Error`] from being `no_std`), these features will be
+redesigned such that `report` + `std` uses `miette`, and `report` + `no_std`
+uses `eyre`.
 
  - `nightly` will enable `unstable`.
  - `report` will enable `std`.
+ - `diagnostic` will enable `std`.
+
+**NOTE**: Due to limitations with cargo features, we cannot actually enforce
+mutual exclusivity, and support building the crate with documentation and tests
+with all features enabled.
 
 ### `no_std`
 
@@ -23,7 +36,6 @@ Nearly every single feature in `outcome` supports working with `#![no_std]`
 support, however currently `eyre` *does* require `std` support (Attempts
 were made at making `no_std` work, but this was removed and has not been
 available for some time).
-
 
 ```toml
 [dependencies.outcome]
@@ -65,8 +77,8 @@ each API set mentioned. These are listed below.
       [`Outcome`]
    - **NOTE**: This requires the `std` feature to be enabled as well.
    - In addition to being usable with `fn main()`, *any unit test* may
-       return an [`Outcome`] directly. This works in the same way as
-       returning a [`Result<T, E>`]
+     return an [`Outcome`] directly. This works in the same way as returning a
+     [`Result<T, E>`]
 
 ### `report`
 
@@ -80,8 +92,12 @@ been replaced with `failure`.
 [`Result`]: core::result::Result
 [`Try`]: core::ops::Try
 
+[`Error`]: std::error::Error
+
 [`WrapErr`]: eyre::WrapErr
 [`Report`]: eyre::Report
+
+[`miette::Report`]: miette::Report
 
 [`WrapFailure`]: crate::report::WrapFailure
 [`Aberration`]: crate::prelude::Aberration

@@ -1,4 +1,4 @@
-//! Traits for retryuable conversions between types.
+//! Traits for retryable conversions between types.
 //!
 //! Much like the rust standard library, the traits in this module provide a
 //! way to convert from one type to another type, albeit with a focus on using

@@ -13,7 +13,7 @@ pub fn panic(method: &str, variant: &str, error: &dyn Debug) -> ! {
 
 pub trait Sealed {}
 
-#[cfg(feature = "report")]
+#[cfg(any(feature = "report", feature = "diagnostic"))]
 impl<T, E> Sealed for Result<T, E> {}
 
 impl<S, M, F> Sealed for crate::outcome::Outcome<S, M, F> {}
