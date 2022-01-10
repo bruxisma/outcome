@@ -31,7 +31,7 @@
     "pin": {
       "groupName": "GitHub Actions",
       "group": {
-        "commitMessageTopic": "👷 {{{groupName}}} Workflows",
+        "commitMessageTopic": "👷 {{{groupName}}} Workflows"
       }
     },
     "pinDigests": true,
@@ -40,23 +40,23 @@
   "cargo": {
     "addLabels": ["renovate:rust"],
     "additionalBranchPrefix": "rust/",
-    "commitMessageTopic": "🦀 Rust Crate {{{depName}}}",
+    "commitMessageTopic": "🦀 Rust Crate {{{depName}}}"
   },
   "packageRules": [
     {
       "groupName": "Review Dog Actions",
       "matchManagers": ["github-actions"],
-      "matchPackagePrefixes": ["reviewdog/"],
+      "matchPackagePrefixes": ["reviewdog/"]
     },
     {
       "groupName": "Common Actions",
       "matchManagers": ["github-actions"],
-      "matchPackagePrefixes": ["actions/"],
+      "matchPackagePrefixes": ["actions/"]
     },
     {
       "groupName": "Setup Actions",
       "matchManagers": ["github-actions"],
-      "matchPackagePatterns": ["^[^/]+[/]setup-.+$"],
+      "matchPackagePatterns": ["^[^/]+[/]setup-.+$"]
     }
   ]
 }
