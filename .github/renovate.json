@@ -52,6 +52,11 @@
       "matchPackagePrefixes": ["actions/"]
     },
     {
+      "groupName": "Rust Actions",
+      "matchManagers": ["github-actions"],
+      "matchPackagePrefixes": ["actions-rs/"]
+    },
+    {
       "groupName": "Setup Actions",
       "matchManagers": ["github-actions"],
       "matchPackagePatterns": ["^[^/]+[/]setup-.+$"]
