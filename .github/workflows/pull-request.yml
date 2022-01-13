@@ -73,6 +73,8 @@ jobs:
         # One day we'll be able to just use `--profile`, but until then we need
         # to do this workaround to simplify the build steps
         os: [ubuntu, windows, macos]
+    env:
+      SCCACHE_CACHE_SIZE: 5G
     steps:
       - name: Checkout
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2
@@ -92,6 +94,13 @@ jobs:
         uses: baptiste0928/cargo-install@v1
         with:
           crate: cargo-hack
+      - name: Setup Shared Cache Directory
+        run: |
+          declare path="${HOME}/.cache/sccache"
+          if test "${RUNNER_OS}" = "Windows"; then
+            path=$(cygpath --windows "${path}")
+          fi
+          echo "SCCACHE_DIR=${path}" >> ${GITHUB_ENV}
       - name: Restore Cargo Cache
         uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed # renovate: tag=v2
         with:
