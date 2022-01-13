@@ -79,11 +79,13 @@ jobs:
       - name: Authenticate GitHub CLI
         run: echo ${{github.token}} | gh auth login --with-token
       - name: Setup Shared Compilation Cache
-        working-directory: ${{github.workspace}}
-        run: bash -c .github/scripts/setup-sccache
+        uses: baptiste0928/cargo-install@v1
+        with:
+          crate: sccache
       - name: Setup Cargo Hack
-        working-directory: ${{github.workspace}}
-        run: bash -c .github/scripts/setup-cargo-hack
+        uses: baptiste0928/cargo-install@v1
+        with:
+          crate: cargo-hack
       - name: Install Toolchain
         uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # renovate: tag=v1
         with:
