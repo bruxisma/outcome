@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2
-      - name: Install Toolchain
+      - name: Setup Rust Toolchain
         uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # renovate: tag=v1
         with:
           components: rustfmt
@@ -46,7 +46,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2
-      - name: Install Toolchain
+      - name: Setup Rust Toolchain
         uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # renovate: tag=v1
         with:
           components: clippy
@@ -78,6 +78,12 @@ jobs:
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2
       - name: Authenticate GitHub CLI
         run: echo ${{github.token}} | gh auth login --with-token
+      - name: Setup Rust Toolchain
+        uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # renovate: tag=v1
+        with:
+          toolchain: ${{matrix.toolchain}}
+          override: true
+          profile: minimal
       - name: Setup Shared Compilation Cache
         uses: baptiste0928/cargo-install@v1
         with:
@@ -86,12 +92,6 @@ jobs:
         uses: baptiste0928/cargo-install@v1
         with:
           crate: cargo-hack
-      - name: Install Toolchain
-        uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # renovate: tag=v1
-        with:
-          toolchain: ${{matrix.toolchain}}
-          override: true
-          profile: minimal
       - name: Restore Cargo Cache
         uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed # renovate: tag=v2
         with:
