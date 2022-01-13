@@ -100,7 +100,7 @@ jobs:
           if test "${RUNNER_OS}" = "Windows"; then
             path=$(cygpath --windows "${path}")
           fi
-          echo "SCCACHE_DIR=${path}" >> ${GITHUB_ENV}
+          echo "SCCACHE_DIR=${path}" >> "${GITHUB_ENV}"
       - name: Restore Cargo Cache
         uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed # renovate: tag=v2
         with:
