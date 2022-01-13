@@ -11,8 +11,6 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu, windows, macos]
-    env:
-      RUSTC_WRAPPER: sccache
     steps:
       - name: Checkout
         uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2
@@ -60,6 +58,7 @@ jobs:
           args: test --profile=coverage --locked --each-feature
         env:
           LLVM_PROFILE_FILE: target/coverage/outcome-%p-%m.profraw
+          RUSTC_WRAPPER: sccache
           RUSTDOCFLAGS: >-
             -Zinstrument-coverage
             -Zprofile
