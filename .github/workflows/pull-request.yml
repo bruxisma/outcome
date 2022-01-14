@@ -91,7 +91,7 @@ jobs:
         with:
           crate: sccache
       - name: Setup Cargo Hack
-        uses: bruxisma/setup-cargo-hack@v1
+        uses: bruxisma/setup-cargo-hack@1d7117a0b3be8457283a783e4065b7ba649c5d54 # renovate: tag=v1
       - name: Setup Shared Cache Directory
         run: |
           declare path="${HOME}/.cache/sccache"
