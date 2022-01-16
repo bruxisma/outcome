@@ -3,6 +3,7 @@
 [![Audit][audit-badge-svg]][audit-badge-yml]
 [![Pull Request][pull-request-badge-svg]][pull-request-badge-yml]
 [![codecov][codecov-badge-svg]][codecov-badge-lnk]
+[![Documentation][documentation-badge-svg]][documentation-badge-lnk]
 
 [`Outcome<S, M, F>`][`Outcome`] is an augmentation of the [`Result`] type
 found in the Rust standard library.
@@ -103,6 +104,9 @@ versions will be yanked.
 
 [crates.io]: https://crates.io
 [`eyre`]: https://crates.io/crates/eyre
+
+[docuemntation-badge-svg](https://img.shields.io/docsrs/outcome-46f94afc-026f-5511-9d7e-7d1fd495fb5c?label=Documentation)
+[documentation-badge-lnk](https://docs.rs/outcome-46f94afc-026f-5511-9d7e-7d1fd495fb5c/latest/outcome/)
 
 [pull-request-badge-svg]: https://github.com/bruxisma/outcome/actions/workflows/pull-request.yml/badge.svg
 [pull-request-badge-yml]: https://github.com/bruxisma/outcome/actions/workflows/pull-request.yml
