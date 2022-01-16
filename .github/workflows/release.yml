@@ -1,0 +1,43 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      level:
+        description: What level of release to increment
+        required: true
+jobs:
+  validate:
+    name: Validate Release
+    matrix:
+      os: [ubuntu, windows, macos]
+    runs-on: ${{matrix.os}}-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Rust Toolchain
+        uses: actions-rs/toolchain
+        with:
+          toolchain: stable
+          profile: minimal
+      - name: Setup Cargo Hack
+        uses: bruxisma/setup-cargo-hack@v1
+      - name: Validate Publish
+        run: cargo hack publish --dry-run --each-feature --locked
+  publish:
+    needs: [validate]
+    name: Publish Crate
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Cargo Release
+        uses: baptiste0928/cargo-install@v1
+        with:
+          crate: cargo-release
+      - name: Publish Crate
+        run: >-
+          cargo release ${{github.events.inputs.level}}
+          --token ${{secrets.CARGO_REGISTRY_TOKEN}}
+          --execute
+          --dev-version
