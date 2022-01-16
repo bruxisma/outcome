@@ -93,5 +93,6 @@ jobs:
           files: coverage.info
       - name: Upload Code Coverage Artifact
         uses: actions/upload-artifact@v2
-        path: coverage.info
-        if-no-files-found: error
+        with:
+          path: coverage.info
+          if-no-files-found: error
