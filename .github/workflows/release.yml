@@ -40,5 +40,6 @@ jobs:
         run: >-
           cargo release ${{github.event.inputs.level}}
           --token ${{secrets.CARGO_REGISTRY_TOKEN}}
-          --execute
           --dev-version
+          --no-verify
+          --execute
