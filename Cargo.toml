@@ -2,7 +2,7 @@
 name = "outcome-46f94afc-026f-5511-9d7e-7d1fd495fb5c"
 description = "Augmentations for error propagation"
 repository = "https://github.com/bruxisma/outcome"
-version = "0.0.2-alpha.2"
+version = "0.0.2-alpha.3"
 edition = "2021"
 license = "MIT"
 readme = "README.md"
