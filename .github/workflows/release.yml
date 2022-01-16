@@ -8,8 +8,9 @@ on:
 jobs:
   validate:
     name: Validate Release
-    matrix:
-      os: [ubuntu, windows, macos]
+    strategy:
+      matrix:
+        os: [ubuntu, windows, macos]
     runs-on: ${{matrix.os}}-latest
     steps:
       - name: Checkout
