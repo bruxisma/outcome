@@ -40,7 +40,7 @@ jobs:
           declare query='.packages[] | select(.name | contains("outcome")).version'
           echo "::set-output name=version::$(cargo metadata --format-version=1 | jq -r "${query}")"
       - name: Verify Version
-        run: test "${{steps.metadata.outputs.version}}" = "${{github.ref_name}}"
+        run: test "v${{steps.metadata.outputs.version}}" = "${{github.ref_name}}"
       - name: Publish Crate
         run: >-
           cargo release
