@@ -460,6 +460,8 @@ impl<S, M, F> Outcome<S, M, F> {
   /// ```
   ///
   /// [undefined behavior]: https://doc.rust-lang.org/reference/behavior-considered-undefined.html
+  #[inline]
+  #[track_caller]
   #[allow(unsafe_code)]
   pub unsafe fn unwrap_unchecked(self) -> S {
     debug_assert!(self.is_success());
@@ -498,6 +500,8 @@ impl<S, M, F> Outcome<S, M, F> {
   /// ```
   ///
   /// [undefined behavior]: https://doc.rust-lang.org/reference/behavior-considered-undefined.html
+  #[inline]
+  #[track_caller]
   #[allow(unsafe_code)]
   pub unsafe fn unwrap_mistake_unchecked(self) -> M {
     debug_assert!(self.is_mistake());
@@ -537,6 +541,8 @@ impl<S, M, F> Outcome<S, M, F> {
   ///
   ///
   /// [undefined behavior]: https://doc.rust-lang.org/reference/behavior-considered-undefined.html
+  #[inline]
+  #[track_caller]
   #[allow(unsafe_code)]
   pub unsafe fn unwrap_failure_unchecked(self) -> F {
     debug_assert!(self.is_failure());
