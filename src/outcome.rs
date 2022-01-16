@@ -431,6 +431,127 @@ impl<S, M, F> Outcome<S, M, F> {
     None
   }
 
+  /// Returns the contained [`Success`] value, consuming the `self` value,
+  /// without checking that the value is not a [`Mistake`] or [`Failure`].
+  ///
+  /// # Safety
+  ///
+  /// Calling this method on a [`Mistake`] or [`Failure`] is *[undefined
+  /// behavior]*
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Outcome<u32, f32, &str> = Success(47);
+  /// assert_eq!(unsafe { x.unwrap_unchecked() }, 47);
+  /// ```
+  ///
+  /// ```no_run
+  /// # use outcome::prelude::*;
+  /// let x: Outcome<u32, f32, &str> = Mistake(0.0f32);
+  /// unsafe { x.unwrap_unchecked(); } // Undefined Behavior!
+  /// ```
+  ///
+  /// ```no_run
+  /// # use outcome::prelude::*;
+  /// let x: Outcome<u32, f32, &str> = Failure("emergency!");
+  /// unsafe { x.unwrap_unchecked(); } // Undefined Behavior!
+  /// ```
+  ///
+  /// [undefined behavior]: https://doc.rust-lang.org/reference/behavior-considered-undefined.html
+  #[inline]
+  #[track_caller]
+  #[allow(unsafe_code)]
+  pub unsafe fn unwrap_unchecked(self) -> S {
+    debug_assert!(self.is_success());
+    if let Success(value) = self {
+      return value;
+    }
+    core::hint::unreachable_unchecked();
+  }
+
+  /// Returns the contained [`Mistake`] value, consuming the `self` value,
+  /// without checking that the value is not a [`Success`] or [`Failure`].
+  ///
+  /// # Safety
+  ///
+  /// Calling this method on a [`Success`] or [`Failure`] is *[undefined
+  /// behavior]*
+  ///
+  /// # Examples
+  ///
+  /// ```no_run
+  /// # use outcome::prelude::*;
+  /// let x: Outcome<u32, f32, &str> = Success(47);
+  /// unsafe { x.unwrap_mistake_unchecked(); } // Undefined Behavior!
+  /// ```
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Outcome<u32, i32, &str> = Mistake(47);
+  /// assert_eq!(unsafe { x.unwrap_mistake_unchecked() }, 47);
+  /// ```
+  ///
+  /// ```no_run
+  /// # use outcome::prelude::*;
+  /// let x: Outcome<u32, f32, &str> = Failure("emergency!");
+  /// unsafe { x.unwrap_mistake_unchecked(); } // Undefined Behavior!!
+  /// ```
+  ///
+  /// [undefined behavior]: https://doc.rust-lang.org/reference/behavior-considered-undefined.html
+  #[inline]
+  #[track_caller]
+  #[allow(unsafe_code)]
+  pub unsafe fn unwrap_mistake_unchecked(self) -> M {
+    debug_assert!(self.is_mistake());
+    if let Mistake(value) = self {
+      return value;
+    }
+    core::hint::unreachable_unchecked();
+  }
+
+  /// Returns the contained [`Failure`] value, consuming the `self` value
+  /// without checking that the value is not a [`Success`] or [`Mistake`].
+  ///
+  /// # Safety
+  ///
+  /// Calling this method on a [`Success`] or [`Mistake`] is *[undefined
+  /// behavior]*
+  ///
+  /// # Examples
+  ///
+  /// ```no_run
+  /// # use outcome::prelude::*;
+  /// let x: Outcome<u32, f32, &str> = Success(47);
+  /// unsafe { x.unwrap_failure_unchecked(); } // Undefined Behavior!
+  /// ```
+  ///
+  /// ```no_run
+  /// # use outcome::prelude::*;
+  /// let x: Outcome<u32, i32, &str> = Mistake(47);
+  /// unsafe { x.unwrap_failure_unchecked() }; // Undefined Behavior!
+  /// ```
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Outcome<u32, f32, &str> = Failure("emergency!");
+  /// assert_eq!(unsafe { x.unwrap_failure_unchecked() }, "emergency!");
+  /// ```
+  ///
+  ///
+  /// [undefined behavior]: https://doc.rust-lang.org/reference/behavior-considered-undefined.html
+  #[inline]
+  #[track_caller]
+  #[allow(unsafe_code)]
+  pub unsafe fn unwrap_failure_unchecked(self) -> F {
+    debug_assert!(self.is_failure());
+    if let Failure(value) = self {
+      return value;
+    }
+    core::hint::unreachable_unchecked();
+  }
+
   /// Calls `op` if the result is [`Success`], otherwise returns the
   /// [`Mistake`] or [`Failure`] value of `self`.
   ///
