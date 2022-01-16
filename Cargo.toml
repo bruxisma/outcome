@@ -35,6 +35,11 @@ all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
 rustc-args = ["--cfg", "docsrs"]
 
+[package.metadata.release]
+allow-branch = ["main"]
+pre-release-commit-message = "🔖 Release {{version}}"
+post-release-commit-message = "⏭ Start {{next_version}} development"
+
 [profile.coverage]
 codegen-units = 1
 incremental = false
