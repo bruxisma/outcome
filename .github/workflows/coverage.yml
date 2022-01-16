@@ -91,3 +91,7 @@ jobs:
           fail_ci_if_error: true
           directory: ${{github.workspace}}
           files: coverage.info
+      - name: Upload Code Coverage Artifact
+        uses: actions/upload-artifact
+        path: coverage.info
+        if-no-files-found: error
