@@ -53,16 +53,16 @@ jobs:
         if: failure()
         id: metadata
         run: |
-          declare query='.packages[] | select(.name | contains("outcome"))'
-          echo "::set-output name=json::$(cargo metadata --format-version=1 | jq -r "${query}")"
+          declare query='.packages[] | select(.name | contains("outcome")).version'
+          echo "::set-output name=version::$(cargo metadata --format-version=1 | jq -r "${query}")"
       - name: Yank On Failure
         shell: bash
         if: failure()
         run: >-
           cargo yank
-          --vers ${{fromJSON(steps.metadata.outputs.json).version}}
+          --vers ${{steps.metadata.outputs.version}}
           --token ${{secrets.CARGO_REGISTRY_TOKEN}}
       - name: Delete Git Tag
         shell: bash
         if: failure()
-        run: git push --delete origin v${{fromJSON(steps.metadata.outputs.json).version}}
+        run: git push --delete origin v${{steps.metadata.outputs.version}}
