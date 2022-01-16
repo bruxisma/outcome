@@ -94,5 +94,6 @@ jobs:
       - name: Upload Code Coverage Artifact
         uses: actions/upload-artifact@v2
         with:
+          name: ${{matrix.os}}-coverage.info
           path: coverage.info
           if-no-files-found: error
