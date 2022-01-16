@@ -43,6 +43,10 @@ jobs:
           echo "::set-output name=version::$(cargo metadata --format-version=1 | jq -r "${query}")"
       - name: Verify Version
         run: test "v${{steps.metadata.outputs.version}}" = "${{github.ref_name}}"
+      - name: Configure Git User
+        run: |
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
       - name: Publish Crate
         run: >-
           cargo release
