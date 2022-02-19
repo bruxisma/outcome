@@ -155,7 +155,7 @@ impl<S: Into<!>, M: Into<!>, F> Outcome<S, M, F> {
 #[cfg(feature = "std")]
 impl<M: Debug, F: Debug> Termination for Outcome<(), M, F> {
   #[inline]
-  fn report(self) -> i32 {
+  fn report(self) -> ExitCode {
     match self {
       Success(()) => ().report(),
       Mistake(m) => Mistake::<!, _, F>(m).report(),
@@ -166,24 +166,24 @@ impl<M: Debug, F: Debug> Termination for Outcome<(), M, F> {
 
 #[cfg(feature = "std")]
 impl<M: Debug, F: Debug> Termination for Outcome<!, M, F> {
-  fn report(self) -> i32 {
+  fn report(self) -> ExitCode {
     match self {
       Mistake(m) => eprintln!("Mistake: {:?}", m),
       Failure(f) => eprintln!("Failure: {:?}", f),
     };
-    ExitCode::FAILURE.report()
+    ExitCode::FAILURE
   }
 }
 
 #[cfg(feature = "std")]
 impl<M: Debug, F: Debug> Termination for Aberration<M, F> {
   #[inline]
-  fn report(self) -> i32 {
+  fn report(self) -> ExitCode {
     match self {
       Aberration::Mistake(m) => eprintln!("Mistake: {:?}", m),
       Aberration::Failure(f) => eprintln!("Failure: {:?}", f),
     };
-    ExitCode::FAILURE.report()
+    ExitCode::FAILURE
   }
 }
 
