@@ -18,7 +18,7 @@ jobs:
           toolchain: stable
           profile: minimal
       - name: Setup Cargo Hack
-        uses: bruxisma/setup-cargo-hack@v1
+        uses: bruxisma/setup-cargo-hack@1d7117a0b3be8457283a783e4065b7ba649c5d54 # tag=v1
       - name: Validate Publish
         run: cargo hack publish --dry-run --each-feature --locked
   publish:
