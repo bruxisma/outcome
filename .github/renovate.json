@@ -1,6 +1,1 @@
-{
-  "extends": ["bruxisma/renovate"],
-  "cargo": {
-    "rangeStrategy": "auto"
-  }
-}
+{ "extends": ["bruxisma/renovate"] }
