@@ -25,7 +25,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3
       - name: Review Dog - actionlint
-        uses: reviewdog/action-actionlint@a0541743e79d2ce4ee65276807ac493a93149b7c # tag=v1
+        uses: reviewdog/action-actionlint@4107d34d940c815398d17b0d35c6ee339b949824 # tag=v1
   yaml:
     name: YAML
     runs-on: ubuntu-latest
@@ -35,7 +35,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3
       - name: Review Dog - yamllint
-        uses: reviewdog/action-yamllint@efeccedfc67c3b74c89e233cd61c8133784b82e0 # tag=v1
+        uses: reviewdog/action-yamllint@c5a0c559f09938e902466526c71441f1de2e603b # tag=v1
         with:
           yamllint_flags: >-
             --config-file ${{github.workspace}}/.github/settings/yamllint.yml
