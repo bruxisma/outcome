@@ -151,37 +151,12 @@ impl<S: Into<!>, M: Into<!>, F> Outcome<S, M, F> {
   }
 }
 
-/* feature(termination_trait_lib) */
-#[cfg(feature = "std")]
-impl<M: Debug, F: Debug> Termination for Outcome<(), M, F> {
-  #[inline]
-  fn report(self) -> ExitCode {
-    match self {
-      Success(()) => ().report(),
-      Mistake(m) => Mistake::<!, _, F>(m).report(),
-      Failure(f) => Failure::<!, M, _>(f).report(),
-    }
-  }
-}
-
 #[cfg(feature = "std")]
 impl<M: Debug, F: Debug> Termination for Outcome<!, M, F> {
   fn report(self) -> ExitCode {
     match self {
       Mistake(m) => eprintln!("Mistake: {:?}", m),
       Failure(f) => eprintln!("Failure: {:?}", f),
-    };
-    ExitCode::FAILURE
-  }
-}
-
-#[cfg(feature = "std")]
-impl<M: Debug, F: Debug> Termination for Aberration<M, F> {
-  #[inline]
-  fn report(self) -> ExitCode {
-    match self {
-      Aberration::Mistake(m) => eprintln!("Mistake: {:?}", m),
-      Aberration::Failure(f) => eprintln!("Failure: {:?}", f),
     };
     ExitCode::FAILURE
   }
@@ -309,7 +284,7 @@ mod tests {
   }
 
   #[cfg(feature = "std")]
-  mod process_termination_trait {
+  mod termination {
     use super::*;
 
     #[test]

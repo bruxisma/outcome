@@ -1,3 +1,6 @@
+#[cfg(feature = "std")]
+extern crate std;
+
 use core::{
   fmt::Debug,
   ops::{Deref, DerefMut},
@@ -6,6 +9,12 @@ use core::{
 #[doc(hidden)]
 pub use crate::iter::*;
 use crate::{aberration::*, concern::*, private::*};
+
+#[cfg(feature = "std")]
+use std::{
+  eprintln,
+  process::{ExitCode, Termination},
+};
 
 // TODO: Add an 'aggregate' set of functions (aggregate(_(mistake|failure))?)
 // to collect all success, mistake or failure into iterators/partition an
@@ -705,6 +714,83 @@ impl<S, M, F> Outcome<S, M, F> {
   }
 }
 
+impl<S: Clone, M, F> Outcome<&S, M, F> {
+  /// Maps an `Outcome<&S, M, F>` to an `Outcome<S, M, F>` by cloning the
+  /// contents of the `Success` value.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let val = 47;
+  /// let x: Outcome<&i32, u32, f32> = Success(&val);
+  /// assert_eq!(x, Success(&47));
+  /// let cloned = x.cloned();
+  /// assert_eq!(cloned, Success(47));
+  /// ```
+  pub fn cloned(self) -> Outcome<S, M, F> {
+    self.map(Clone::clone)
+  }
+}
+
+impl<S: Clone, M, F> Outcome<&mut S, M, F> {
+  /// Maps an `Outcome<&mut S, M, F>` to an `Outcome<S, M, F>` by cloning the
+  /// contents of the `Success` value.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let mut val = 47;
+  /// let x: Outcome<&mut i32, u32, i32> = Success(&mut val);
+  /// assert_eq!(x, Success(&mut 47));
+  /// let cloned = x.cloned();
+  /// assert_eq!(cloned, Success(47));
+  /// ```
+  pub fn cloned(self) -> Outcome<S, M, F> {
+    self.map(|s| s.clone())
+  }
+}
+
+impl<S: Copy, M, F> Outcome<&S, M, F> {
+  /// Maps an `Outcome<&S, M, F>` to an `Outcome<S, M, F>` by copying the
+  /// contents of the `Success` value.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let value = 47;
+  /// let x: Outcome<&i32, i32, i32> = Success(&value);
+  /// assert_eq!(x, Success(&47));
+  /// let copied = x.copied();
+  /// assert_eq!(copied, Success(47));
+  /// ```
+  pub fn copied(self) -> Outcome<S, M, F> {
+    self.map(|&s| s)
+  }
+}
+
+impl<S: Copy, M, F> Outcome<&mut S, M, F> {
+  /// Maps an `Outcome<&mut S, M, F>` to an `Outcome<S, M, F>` by copying the
+  /// contents of the `Success` value.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let mut value = 47;
+  /// let x: Outcome<&mut i32, i32, i32> = Success(&mut value);
+  /// assert_eq!(x, Success(&mut 47));
+  /// let copied = x.copied();
+  /// assert_eq!(copied, Success(47));
+  /// ```
+  pub fn copied(self) -> Outcome<S, M, F> {
+    self.map(|&mut s| s)
+  }
+}
+
+
 /* special interfaces */
 #[cfg(not(feature = "nightly"))]
 impl<S, M, F> Outcome<S, M, F> {
@@ -1066,6 +1152,20 @@ impl<S: Clone, M: Clone, F: Clone> Clone for Outcome<S, M, F> {
   }
 }
 
+#[cfg(feature = "std")]
+impl<M: Debug, F: Debug> Termination for Outcome<(), M, F> {
+  #[inline]
+  fn report(self) -> ExitCode {
+    match self {
+      Success(()) => return ().report(),
+      Mistake(m) => eprintln!("Mistake: {:?}", m),
+      Failure(f) => eprintln!("Failure: {:?}", f),
+    }
+    ExitCode::FAILURE
+  }
+}
+
+
 #[cfg(all(test, feature = "std"))]
 mod tests {
   extern crate std;
@@ -1095,5 +1195,15 @@ mod tests {
     assert_eq!(failures[0].as_ref().unwrap_failure().as_str(), filtered[0]);
     assert_eq!(failures[2].as_ref().unwrap_failure().as_str(), filtered[1]);
     assert_eq!(failures[4].as_ref().unwrap_failure().as_str(), filtered[2]);
+  }
+
+  #[cfg(feature = "std")]
+  mod termination {
+    use super::*;
+
+    #[test]
+    fn outcome() -> Outcome<(), (), &'static str> {
+      Success(())
+    }
   }
 }
