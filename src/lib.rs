@@ -29,11 +29,6 @@
 #![warn(missing_docs)]
 #![warn(unsafe_code)]
 #![cfg_attr(
-  all(nightly, feature = "nightly", feature = "std"),
-  feature(process_exitcode_placeholder),
-  feature(termination_trait_lib)
-)]
-#![cfg_attr(
   all(nightly, feature = "nightly"),
   feature(try_trait_v2),
   feature(never_type),

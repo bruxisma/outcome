@@ -1,3 +1,12 @@
+#[cfg(feature = "std")]
+extern crate std;
+
+#[cfg(feature = "std")]
+use std::{
+  eprintln,
+  process::{ExitCode, Termination},
+};
+
 #[cfg(not(feature = "nightly"))]
 use core::convert::Infallible;
 use core::fmt::Debug;
@@ -304,5 +313,17 @@ impl<M: Clone, F: Clone> Clone for Aberration<M, F> {
       (Self::Failure(to), Self::Failure(from)) => to.clone_from(from),
       (to, from) => *to = from.clone(),
     }
+  }
+}
+
+#[cfg(feature = "std")]
+impl<M: Debug, F: Debug> Termination for Aberration<M, F> {
+  #[inline]
+  fn report(self) -> ExitCode {
+    match self {
+      Aberration::Mistake(m) => eprintln!("Mistake: {:?}", m),
+      Aberration::Failure(f) => eprintln!("Failure: {:?}", f),
+    };
+    ExitCode::FAILURE
   }
 }

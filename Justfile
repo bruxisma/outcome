@@ -1,17 +1,24 @@
-# We can't do conditional setting of the shell. Oh well. Only I get to use this
-# then
+# `set windows-powershell := true` uses powershell, not pwsh so it's basically
+# useless.
+# Every day I am more and more disappointed with Just :(
 set shell := ["pwsh", "-NoProfile", "-NoLogo", "-Command"]
 
-rustflags := "-Zinstrument-coverage -Zprofile"
+rustflags := "-C instrument-coverage"
 rustdocflags := rustflags + " -Z unstable-options --persist-doctests target/coverage"
 coverage := join(justfile_directory(), "target/coverage/outcome-%p-%m.profraw")
 pwd := justfile_directory()
+libdir := `rustc --print target-libdir`
+bindir := join(parent_directory(libdir), "bin")
 
 default: fmt test
 
 @build:
   cargo build --no-default-features
   cargo build --all-features
+
+@bootstrap:
+  rustup component add llvm-tools-preview
+  cargo install cargo-hack cargo-llvm-cov
 
 @clear-reports:
   -Remove-Item -Recurse -Force -ErrorAction SilentlyContinue {{join(justfile_directory(), "target/coverage")}}
