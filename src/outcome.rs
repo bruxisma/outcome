@@ -790,7 +790,6 @@ impl<S: Copy, M, F> Outcome<&mut S, M, F> {
   }
 }
 
-
 /* special interfaces */
 #[cfg(not(feature = "nightly"))]
 impl<S, M, F> Outcome<S, M, F> {
@@ -1164,7 +1163,6 @@ impl<M: Debug, F: Debug> Termination for Outcome<(), M, F> {
     ExitCode::FAILURE
   }
 }
-
 
 #[cfg(all(test, feature = "std"))]
 mod tests {
