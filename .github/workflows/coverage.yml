@@ -24,13 +24,13 @@ jobs:
           profile: minimal
           components: llvm-tools-preview
       - name: Setup Shared Compilation Cache
-        uses: baptiste0928/cargo-install@1883f6c4d045ccc14f3d20548e4f94e39b968e7d # tag=v1
+        uses: baptiste0928/cargo-install@bf6758885262d0e6f61089a9d8c8790d3ac3368f # tag=v1
         with:
           crate: sccache
       - name: Setup Cargo hack
         uses: bruxisma/setup-cargo-hack@1d7117a0b3be8457283a783e4065b7ba649c5d54 # renovate: tag=v1
       - name: Setup grcov
-        uses: baptiste0928/cargo-install@1883f6c4d045ccc14f3d20548e4f94e39b968e7d # tag=v1
+        uses: baptiste0928/cargo-install@bf6758885262d0e6f61089a9d8c8790d3ac3368f # tag=v1
         with:
           crate: grcov
       - name: Setup Shared Cache Directory
