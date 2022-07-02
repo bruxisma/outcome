@@ -17,7 +17,7 @@ path = "src/lib.rs"
 
 [dependencies]
 eyre = { version = "0.6.5", optional = true }
-miette = { version = "4.0.0", optional = true }
+miette = { version = "5.0.0", optional = true }
 
 [build-dependencies]
 rustversion = "1.0.6"
