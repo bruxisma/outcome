@@ -321,8 +321,8 @@ impl<M: Debug, F: Debug> Termination for Aberration<M, F> {
   #[inline]
   fn report(self) -> ExitCode {
     match self {
-      Aberration::Mistake(m) => eprintln!("Mistake: {:?}", m),
-      Aberration::Failure(f) => eprintln!("Failure: {:?}", f),
+      Self::Mistake(m) => eprintln!("Mistake: {:?}", m),
+      Self::Failure(f) => eprintln!("Failure: {:?}", f),
     };
     ExitCode::FAILURE
   }
