@@ -10,7 +10,7 @@ jobs:
       should-skip: ${{steps.skip-check.outputs.should_skip}}
     steps:
       - name: Skip Duplicate Actions (Spellcheck)
-        uses: fkirc/skip-duplicate-actions@9d116fa7e55f295019cfab7e3ab72b478bcf7fdd # tag=v4
+        uses: fkirc/skip-duplicate-actions@b8076051474d234b9bf70d23464609b88d271060 # tag=v5
         id: skip-check
   spellcheck:
     name: Spellcheck
