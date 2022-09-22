@@ -25,7 +25,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3
       - name: Review Dog - actionlint
-        uses: reviewdog/action-actionlint@4b9dc44540c64fb040f1ce1dcbf8131ad4cbeb0c # tag=v1
+        uses: reviewdog/action-actionlint@46bb1b6f2d05d10a2c2851ee235fe36a0ad2daa5 # tag=v1
   yaml:
     name: YAML
     runs-on: ubuntu-latest
