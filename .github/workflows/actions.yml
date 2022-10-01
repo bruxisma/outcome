@@ -14,7 +14,7 @@ jobs:
       should-skip: ${{ steps.skip-check.outputs.should_skip }}
     steps:
       - name: Skip Duplicate Actions (Lint Actions)
-        uses: fkirc/skip-duplicate-actions@b8076051474d234b9bf70d23464609b88d271060 # tag=v5
+        uses: fkirc/skip-duplicate-actions@f11521568414503656a5af807dc3018c012552c4 # tag=v5
         id: skip-check
   actions:
     name: Action Workflows
