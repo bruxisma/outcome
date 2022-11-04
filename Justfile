@@ -1,7 +1,4 @@
-# `set windows-powershell := true` uses powershell, not pwsh so it's basically
-# useless.
-# Every day I am more and more disappointed with Just :(
-set shell := ["pwsh", "-NoProfile", "-NoLogo", "-Command"]
+set windows-shell := ["pwsh", "-NoProfile", "-NoLogo", "-Command"]
 
 rustflags := "-C instrument-coverage"
 rustdocflags := rustflags + " -Z unstable-options --persist-doctests target/coverage"
@@ -9,6 +6,11 @@ coverage := join(justfile_directory(), "target/coverage/outcome-%p-%m.profraw")
 pwd := justfile_directory()
 libdir := `rustc --print target-libdir`
 bindir := join(parent_directory(libdir), "bin")
+rmflags := if os() == "windows" {
+  "-Recurse -Force -ErrorAction SilentlyContinue"
+} else {
+  "-rf"
+}
 
 default: fmt test
 
@@ -21,7 +23,7 @@ default: fmt test
   cargo install cargo-hack cargo-llvm-cov
 
 @clear-reports:
-  -Remove-Item -Recurse -Force -ErrorAction SilentlyContinue {{join(justfile_directory(), "target/coverage")}}
+  rm {{rmflags}} {{join(justfile_directory(), "target/coverage")}}
 
 @collect type="lcov" $RUSTUP_TOOLCHAIN="nightly": clear-reports coverage
   grcov ${PWD}/target/coverage/ \
