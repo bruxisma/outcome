@@ -1155,6 +1155,7 @@ impl<S: Clone, M: Clone, F: Clone> Clone for Outcome<S, M, F> {
 impl<M: Debug, F: Debug> Termination for Outcome<(), M, F> {
   #[inline]
   fn report(self) -> ExitCode {
+    #[allow(clippy::print_stderr)]
     match self {
       Success(()) => return ().report(),
       Mistake(m) => eprintln!("Mistake: {:?}", m),

@@ -154,6 +154,7 @@ impl<S: Into<!>, M: Into<!>, F> Outcome<S, M, F> {
 #[cfg(feature = "std")]
 impl<M: Debug, F: Debug> Termination for Outcome<!, M, F> {
   fn report(self) -> ExitCode {
+    #[allow(clippy::print_stderr)]
     match self {
       Mistake(m) => eprintln!("Mistake: {:?}", m),
       Failure(f) => eprintln!("Failure: {:?}", f),

@@ -106,7 +106,7 @@ impl<T> Iterator for IntoIter<T> {
 
   #[inline]
   fn size_hint(&self) -> (usize, Option<usize>) {
-    let n = if self.inner.is_some() { 1 } else { 0 };
+    let n = usize::from(self.inner.is_some());
     (n, Some(n))
   }
 }
@@ -121,7 +121,7 @@ impl<'a, T> Iterator for IterMut<'a, T> {
 
   #[inline]
   fn size_hint(&self) -> (usize, Option<usize>) {
-    let n = if self.inner.is_some() { 1 } else { 0 };
+    let n = usize::from(self.inner.is_some());
     (n, Some(n))
   }
 }
@@ -136,7 +136,7 @@ impl<'a, T> Iterator for Iter<'a, T> {
 
   #[inline]
   fn size_hint(&self) -> (usize, Option<usize>) {
-    let n = if self.inner.is_some() { 1 } else { 0 };
+    let n = usize::from(self.inner.is_some());
     (n, Some(n))
   }
 }
