@@ -14,7 +14,7 @@ jobs:
       should-skip: ${{ steps.skip-check.outputs.should_skip }}
     steps:
       - name: Skip Duplicate Actions (Lint Actions)
-        uses: fkirc/skip-duplicate-actions@9d116fa7e55f295019cfab7e3ab72b478bcf7fdd # tag=v4
+        uses: fkirc/skip-duplicate-actions@f11521568414503656a5af807dc3018c012552c4 # tag=v5
         id: skip-check
   actions:
     name: Action Workflows
@@ -23,9 +23,9 @@ jobs:
     if: needs.skip.outputs.should-skip != 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3
       - name: Review Dog - actionlint
-        uses: reviewdog/action-actionlint@8c8d2690df01d64638691b59cb1c37d913e6264f # tag=v1
+        uses: reviewdog/action-actionlint@7556c222a14ff4583c0f772caeb7f65bb3816dc1 # tag=v1
   yaml:
     name: YAML
     runs-on: ubuntu-latest
@@ -33,7 +33,7 @@ jobs:
     if: needs.skip.outputs.should-skip != 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3
       - name: Review Dog - yamllint
         uses: reviewdog/action-yamllint@8c429dfe4fc47b1ce1fa99a64e94693880d5dc30 # tag=v1
         with:

@@ -13,7 +13,7 @@ jobs:
         os: [ubuntu, windows, macos]
     steps:
       - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3
       - name: Authenticate GitHub CLI
         run: echo ${{github.token}} | gh auth login --with-token
       - name: Setup Rust Toolchain
@@ -42,7 +42,7 @@ jobs:
           fi
           echo "SCCACHE_DIR=${path}" >> "${GITHUB_ENV}"
       - name: Restore Cargo Cache
-        uses: actions/cache@fd5de65bc895cf536527842281bea11763fefd77 # tag=v3
+        uses: actions/cache@1c73980b09e7aea7201f325a7aa3ad00beddcdda # tag=v3
         with:
           restore-keys: ${{runner.os}}-cargo-
           key: ${{runner.os}}-cargo-${{hashFiles('**/Cargo.lock')}}
@@ -52,7 +52,7 @@ jobs:
             ~/.cargo/registry/cache
             ~/.cargo/git
       - name: Restore sccache build artifacts
-        uses: actions/cache@fd5de65bc895cf536527842281bea11763fefd77 # tag=v3
+        uses: actions/cache@1c73980b09e7aea7201f325a7aa3ad00beddcdda # tag=v3
         with:
           restore-keys: ${{runner.os}}-nightly-coverage-
           key: ${{runner.os}}-nightly-coverage-${{hashFiles('**/Cargo.lock')}}
@@ -85,13 +85,13 @@ jobs:
       - name: Check coverage.info exists
         run: test -f ${{github.workspace}}/coverage.info
       - name: Upload Code Coverage
-        uses: codecov/codecov-action@81cd2dc8148241f03f5839d295e000b8f761e378 # tag=v3
+        uses: codecov/codecov-action@d9f34f8cd5cb3b3eb79b3e4b5dae3a16df499a70 # tag=v3
         with:
           fail_ci_if_error: true
           directory: ${{github.workspace}}
           files: coverage.info
       - name: Upload Code Coverage Artifact
-        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # tag=v3
+        uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb # tag=v3
         with:
           name: ${{matrix.os}}-coverage.info
           path: coverage.info
