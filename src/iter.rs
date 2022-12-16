@@ -48,10 +48,10 @@ pub struct Iter<'a, T: 'a> {
 /// produces [`Outcome::Success`] values.
 ///
 /// If an error is encountered, the iterator stops and the error is stored.
-struct OutcomeShunt<'a, I, M, F> {
-  error: &'a mut Outcome<(), M, F>,
-  iter: I,
-}
+//struct OutcomeShunt<'a, I, M, F> {
+//  error: &'a mut Outcome<(), M, F>,
+//  iter: I,
+//}
 
 impl<'a, S, M, F> IntoIterator for &'a mut Outcome<S, M, F> {
   type IntoIter = IterMut<'a, S>;
@@ -141,25 +141,25 @@ impl<'a, T> Iterator for Iter<'a, T> {
   }
 }
 
-impl<I, S, M, F> Iterator for OutcomeShunt<'_, I, M, F>
-where
-  I: Iterator<Item = Outcome<S, M, F>>,
-{
-  type Item = S;
-
-  fn next(&mut self) -> Option<Self::Item> {
-    self.find(|_| true)
-  }
-
-  fn size_hint(&self) -> (usize, Option<usize>) {
-    if self.error.is_error() {
-      (0, Some(0))
-    } else {
-      let (_, upper) = self.iter.size_hint();
-      (0, upper)
-    }
-  }
-}
+//impl<I, S, M, F> Iterator for OutcomeShunt<'_, I, M, F>
+//where
+//  I: Iterator<Item = Outcome<S, M, F>>,
+//{
+//  type Item = S;
+//
+//  fn next(&mut self) -> Option<Self::Item> {
+//    self.find(|_| true)
+//  }
+//
+//  fn size_hint(&self) -> (usize, Option<usize>) {
+//    if self.error.is_error() {
+//      (0, Some(0))
+//    } else {
+//      let (_, upper) = self.iter.size_hint();
+//      (0, upper)
+//    }
+//  }
+//}
 
 impl<T> DoubleEndedIterator for IntoIter<T> {
   #[inline]
@@ -189,3 +189,56 @@ impl<T> ExactSizeIterator for Iter<'_, T> {}
 impl<T> FusedIterator for IntoIter<T> {}
 impl<T> FusedIterator for IterMut<'_, T> {}
 impl<T> FusedIterator for Iter<'_, T> {}
+
+#[cfg(test)]
+mod tests {
+  #[cfg(feature = "std")]
+  extern crate std;
+  #[cfg(feature = "std")]
+  use std::vec::Vec;
+
+  use super::*;
+
+  #[cfg(feature = "std")]
+  #[test]
+  fn into_iter_with_collect() {
+    let success: Vec<i32> = Success::<i32, (), ()>(1).into_iter().collect();
+    let mistake: Vec<i32> = Mistake::<i32, (), ()>(()).into_iter().collect();
+    let failure: Vec<i32> = Failure::<i32, (), ()>(()).into_iter().collect();
+    assert_eq!(success, [1]);
+    assert_eq!(mistake, []);
+    assert_eq!(failure, []);
+  }
+
+  #[test]
+  fn size_hint() {
+    assert_eq!((1, Some(1)), Success::<i32, (), ()>(1).iter().size_hint());
+    assert_eq!((0, Some(0)), Mistake::<(), i32, ()>(1).iter().size_hint());
+    assert_eq!((0, Some(0)), Failure::<(), (), i32>(1).iter().size_hint());
+    assert_eq!(
+      (1, Some(1)),
+      Success::<i32, (), ()>(1).iter_mut().size_hint()
+    );
+    assert_eq!(
+      (0, Some(0)),
+      Mistake::<(), i32, ()>(1).iter_mut().size_hint()
+    );
+    assert_eq!(
+      (0, Some(0)),
+      Failure::<(), (), i32>(1).iter_mut().size_hint()
+    );
+  }
+
+  #[test]
+  fn next_back() {
+    assert!(Success::<i32, (), ()>(1).iter().next_back().is_some());
+    assert!(Mistake::<(), i32, ()>(1).iter().next_back().is_none());
+    assert!(Failure::<(), (), i32>(1).iter().next_back().is_none());
+    assert!(Success::<i32, (), ()>(1).into_iter().next_back().is_some());
+    assert!(Mistake::<(), i32, ()>(1).into_iter().next_back().is_none());
+    assert!(Failure::<(), (), i32>(1).into_iter().next_back().is_none());
+    assert!(Success::<i32, (), ()>(1).iter_mut().next_back().is_some());
+    assert!(Mistake::<(), i32, ()>(1).iter_mut().next_back().is_none());
+    assert!(Failure::<(), (), i32>(1).iter_mut().next_back().is_none());
+  }
+}
