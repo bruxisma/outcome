@@ -14,7 +14,7 @@ jobs:
       should-skip: ${{ steps.skip-check.outputs.should_skip }}
     steps:
       - name: Skip Duplicate Actions (Audit)
-        uses: fkirc/skip-duplicate-actions@f11521568414503656a5af807dc3018c012552c4 # tag=v5
+        uses: fkirc/skip-duplicate-actions@12aca0a884f6137d619d6a8a09fcc3406ced5281 # v5
         id: skip-check
   audit:
     name: Audit
@@ -23,7 +23,7 @@ jobs:
     if: needs.skip.outputs.should-skip != 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3
       - name: Audit Check
         uses: actions-rs/audit-check@35b7b53b1e25b55642157ac01b4adceb5b9ebef3 # renovate: tag=v1
         with:
