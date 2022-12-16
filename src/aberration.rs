@@ -184,6 +184,17 @@ impl<M, F> Aberration<M, F> {
   /// to a contained [`Mistake`] value, leaving any [`Failure`] value
   /// untouched.
   ///
+  /// # Examples
+  ///
+  /// ```
+  /// # use outcome::prelude::*;
+  /// let x: Aberration<&str, &str> = Aberration::Mistake("foo");
+  /// assert_eq!(x.map_mistake(|v| v.len()), Aberration::Mistake(3));
+  ///
+  /// let x: Aberration<&str, &str> = Aberration::Failure("bar");
+  /// assert_eq!(x.map_mistake(|v| v.len()), Aberration::Failure("bar"));
+  /// ```
+  ///
   /// [`Mistake`]: Aberration::Mistake
   /// [`Failure`]: Aberration::Failure
   #[inline]
