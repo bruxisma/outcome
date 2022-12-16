@@ -199,7 +199,6 @@ mod tests {
 
   use super::*;
 
-
   #[cfg(feature = "std")]
   #[test]
   fn into_iter_with_collect() {
@@ -216,9 +215,18 @@ mod tests {
     assert_eq!((1, Some(1)), Success::<i32, (), ()>(1).iter().size_hint());
     assert_eq!((0, Some(0)), Mistake::<(), i32, ()>(1).iter().size_hint());
     assert_eq!((0, Some(0)), Failure::<(), (), i32>(1).iter().size_hint());
-    assert_eq!((1, Some(1)), Success::<i32, (), ()>(1).iter_mut().size_hint());
-    assert_eq!((0, Some(0)), Mistake::<(), i32, ()>(1).iter_mut().size_hint());
-    assert_eq!((0, Some(0)), Failure::<(), (), i32>(1).iter_mut().size_hint());
+    assert_eq!(
+      (1, Some(1)),
+      Success::<i32, (), ()>(1).iter_mut().size_hint()
+    );
+    assert_eq!(
+      (0, Some(0)),
+      Mistake::<(), i32, ()>(1).iter_mut().size_hint()
+    );
+    assert_eq!(
+      (0, Some(0)),
+      Failure::<(), (), i32>(1).iter_mut().size_hint()
+    );
   }
 
   #[test]
