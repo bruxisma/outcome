@@ -100,7 +100,7 @@ jobs:
           fi
           echo "SCCACHE_DIR=${path}" >> "${GITHUB_ENV}"
       - name: Restore Cargo Cache
-        uses: actions/cache@c1a5de879eb890d062a85ee0252d6036480b1fe2 # v3
+        uses: actions/cache@4723a57e26efda3a62cbde1812113b730952852d # v3
         with:
           restore-keys: ${{runner.os}}-cargo-
           key: ${{runner.os}}-cargo-${{hashFiles('**/Cargo.lock')}}
@@ -110,7 +110,7 @@ jobs:
             ~/.cargo/registry/cache
             ~/.cargo/git
       - name: Restore sccache build artifacts
-        uses: actions/cache@c1a5de879eb890d062a85ee0252d6036480b1fe2 # v3
+        uses: actions/cache@4723a57e26efda3a62cbde1812113b730952852d # v3
         with:
           restore-keys: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile}}-
           key: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile}}-${{hashFiles('**/Cargo.lock')}}
