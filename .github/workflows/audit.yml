@@ -23,7 +23,7 @@ jobs:
     if: needs.skip.outputs.should-skip != 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
       - name: Audit Check
         uses: actions-rs/audit-check@35b7b53b1e25b55642157ac01b4adceb5b9ebef3 # renovate: tag=v1
         with:
