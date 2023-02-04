@@ -1158,8 +1158,8 @@ impl<M: Debug, F: Debug> Termination for Outcome<(), M, F> {
     #[allow(clippy::print_stderr)]
     match self {
       Success(()) => return ().report(),
-      Mistake(m) => eprintln!("Mistake: {:?}", m),
-      Failure(f) => eprintln!("Failure: {:?}", f),
+      Mistake(m) => eprintln!("Mistake: {m:?}"),
+      Failure(f) => eprintln!("Failure: {f:?}"),
     }
     ExitCode::FAILURE
   }
