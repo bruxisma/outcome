@@ -333,8 +333,8 @@ impl<M: Debug, F: Debug> Termination for Aberration<M, F> {
   fn report(self) -> ExitCode {
     #[allow(clippy::print_stderr)]
     match self {
-      Self::Mistake(m) => eprintln!("Mistake: {:?}", m),
-      Self::Failure(f) => eprintln!("Failure: {:?}", f),
+      Self::Mistake(m) => eprintln!("Mistake: {m:?}"),
+      Self::Failure(f) => eprintln!("Failure: {f:?}"),
     };
     ExitCode::FAILURE
   }
