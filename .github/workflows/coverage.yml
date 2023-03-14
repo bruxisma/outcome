@@ -71,6 +71,7 @@ jobs:
             -Zunstable-options
             --persist-doctests ${{github.workspace}}/target/coverage
           RUSTFLAGS: -C instrument-coverage
+          CARGO_LOG: trace
       - name: Collect Coverage
         run: >-
           grcov ${{github.workspace}}
