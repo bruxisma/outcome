@@ -14,17 +14,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
       - name: Setup Rust Toolchain
-        uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # renovate: tag=v1
+        uses: dtolnay/rust-toolchain@master
         with:
           components: rustfmt
           toolchain: stable
           override: true
           profile: minimal
       - name: Check Formatting
-        uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # renovate: tag=v1
-        with:
-          command: fmt
-          args: -- --check
+        run: cargo fmt -- --check
   lint:
     name: Lint Source
     runs-on: ubuntu-latest
@@ -47,18 +44,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
       - name: Setup Rust Toolchain
-        uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # renovate: tag=v1
+        uses: dtolnay/rust-toolchain@master # renovate: tag=v1
         with:
           components: clippy
           toolchain: stable
-          override: true
-          profile: minimal
       - name: Clippy
-        uses: actions-rs/clippy-check@b5b5f21f4797c02da247df37026fcd0a5024aa4d # renovate: tag=v1
-        with:
-          token: ${{github.token}}
-          args: ${{matrix.features.args}} -- -D warnings
-          name: Lint (${{matrix.features.name}})
+        uses: giraffate/clippy-action@v1
   test:
     name: Test Suite
     runs-on: ${{matrix.os}}-latest
@@ -81,7 +72,7 @@ jobs:
       - name: Authenticate GitHub CLI
         run: echo ${{github.token}} | gh auth login --with-token
       - name: Setup Rust Toolchain
-        uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # renovate: tag=v1
+        uses: dtolnay/rust-toolchain@master # renovate: tag=v1
         with:
           toolchain: ${{matrix.toolchain}}
           override: true
@@ -116,9 +107,6 @@ jobs:
           key: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile}}-${{hashFiles('**/Cargo.lock')}}
           path: ${{env.SCCACHE_DIR}}
       - name: Run Tests (${{matrix.profile}})
-        uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # renovate: tag=v1
-        with:
-          command: hack
-          args: test --profile ${{matrix.profile}} --locked --each-feature
+        run: cargo hack test --profile ${{matrix.profile}} --locked --each-feature
         env:
           RUSTC_WRAPPER: sccache
