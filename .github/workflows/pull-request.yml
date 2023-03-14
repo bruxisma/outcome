@@ -49,7 +49,7 @@ jobs:
           components: clippy
           toolchain: stable
       - name: Clippy
-        uses: giraffate/clippy-action@v1
+        uses: giraffate/clippy-action@13b9d32482f25d29ead141b79e7e04e7900281e0 # v1
   test:
     name: Test Suite
     runs-on: ${{matrix.os}}-latest
