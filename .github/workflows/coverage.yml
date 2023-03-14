@@ -57,8 +57,11 @@ jobs:
           path: ${{env.SCCACHE_DIR}}
       - name: Run Tests (coverage)
         run: |
-          echo "${env:PATH}"
           cargo install --list
+          echo "-----------------"
+          cargo --list
+          echo "-----------------"
+          ls "${HOME}/.cargo-install/cargo-hack/bin"
           cargo hack test --profile=coverage --locked --each-feature
         env:
           LLVM_PROFILE_FILE: target/coverage/outcome-%p-%m.profraw
