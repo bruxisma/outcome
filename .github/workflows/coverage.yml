@@ -56,13 +56,7 @@ jobs:
           key: ${{runner.os}}-nightly-coverage-${{hashFiles('**/Cargo.lock')}}
           path: ${{env.SCCACHE_DIR}}
       - name: Run Tests (coverage)
-        run: |
-          cargo install --list
-          echo "-----------------"
-          cargo --list
-          echo "-----------------"
-          ls "${HOME}/.cargo-install/cargo-hack/bin"
-          cargo hack test --profile=coverage --locked --each-feature
+        run: cargo hack test --profile=coverage --locked --each-feature
         env:
           LLVM_PROFILE_FILE: target/coverage/outcome-%p-%m.profraw
           RUSTC_WRAPPER: sccache
@@ -71,7 +65,6 @@ jobs:
             -Zunstable-options
             --persist-doctests ${{github.workspace}}/target/coverage
           RUSTFLAGS: -C instrument-coverage
-          CARGO_LOG: trace
       - name: Collect Coverage
         run: >-
           grcov ${{github.workspace}}
