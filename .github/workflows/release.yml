@@ -13,7 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
       - name: Setup Rust Toolchain
-        uses: dtolnay/rust-toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # renovate: tag=v1
+        uses: dtolnay/rust-toolchain@52e69531e6f69a396bc9d1226284493a5db969ff # v1
         with:
           toolchain: stable
           profile: minimal
