@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
+        uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3
       - name: Setup Rust Toolchain
         uses: dtolnay/rust-toolchain@master
         with:
@@ -42,7 +42,7 @@ jobs:
             args: --features nightly
     steps:
       - name: Checkout
-        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
+        uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3
       - name: Setup Rust Toolchain
         uses: dtolnay/rust-toolchain@master # renovate: tag=v1
         with:
@@ -68,7 +68,7 @@ jobs:
       SCCACHE_CACHE_SIZE: 5G
     steps:
       - name: Checkout
-        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
+        uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3
       - name: Authenticate GitHub CLI
         run: echo ${{github.token}} | gh auth login --with-token
       - name: Setup Rust Toolchain
