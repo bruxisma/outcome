@@ -22,13 +22,13 @@ jobs:
           toolchain: nightly
           components: llvm-tools-preview
       - name: Setup Shared Compilation Cache
-        uses: baptiste0928/cargo-install@2cfb0024938d23011106cbf127b393bc83fddba1 # v1
+        uses: baptiste0928/cargo-install@48c92f3d491efa23daace9891498a14c5aaa1afd # v2
         with:
           crate: sccache
       - name: Setup Cargo hack
         uses: bruxisma/setup-cargo-hack@1d7117a0b3be8457283a783e4065b7ba649c5d54 # renovate: tag=v1
       - name: Setup grcov
-        uses: baptiste0928/cargo-install@2cfb0024938d23011106cbf127b393bc83fddba1 # v1
+        uses: baptiste0928/cargo-install@48c92f3d491efa23daace9891498a14c5aaa1afd # v2
         with:
           crate: grcov
       - name: Setup Shared Cache Directory
