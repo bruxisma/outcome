@@ -21,6 +21,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3
       - name: Checking Spelling
-        uses: crate-ci/typos@2fffb1bb2b8d72fc4f2b1905e573786d7ebbfbee # v1.15.6
+        uses: crate-ci/typos@888116ae2f83a735a1c868897653eff1769382f2 # v1.15.7
         with:
           config: ${{github.workspace}}/.github/settings/typos.yml
