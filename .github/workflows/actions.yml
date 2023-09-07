@@ -35,7 +35,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
       - name: Review Dog - yamllint
-        uses: reviewdog/action-yamllint@49fe172669b506f0c688207a67b4cf93fee52699 # v1
+        uses: reviewdog/action-yamllint@722e651555c5ca6db0edaada08e049825f74e431 # v1
         with:
           yamllint_flags: >-
             --config-file ${{github.workspace}}/.github/settings/yamllint.yml
