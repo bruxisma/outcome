@@ -78,7 +78,7 @@ jobs:
           override: true
           profile: minimal
       - name: Setup Shared Compilation Cache
-        uses: baptiste0928/cargo-install@30f432979e99f3ea66a8fa2eede53c07063995d8 # v2
+        uses: baptiste0928/cargo-install@21a18ba3bf4a184d1804e8b759930d3471b1c941 # v2
         with:
           crate: sccache
       - name: Setup Cargo Hack
