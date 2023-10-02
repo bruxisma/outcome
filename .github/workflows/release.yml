@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{matrix.os}}-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
       - name: Setup Rust Toolchain
         uses: dtolnay/rust-toolchain@1482605bfc5719782e1267fd0c0cc350fe7646b8 # v1
         with:
@@ -28,7 +28,7 @@ jobs:
     environment: release
     steps:
       - name: Checkout
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
       - name: Set Git Branch
         run: git switch -c ${{github.ref_name}}
       - name: Install Cargo Release
