@@ -38,7 +38,7 @@ jobs:
           key: ${{runner.os}}-nightly-coverage-${{hashFiles('**/Cargo.lock')}}
           path: ${{env.SCCACHE_DIR}}
       - name: Run Tests (coverage)
-        run: cargo hack test --profile=coverage --locked --each-feature
+        run: cargo hack test --profile=coverage --feature-powerset
         env:
           LLVM_PROFILE_FILE: target/coverage/outcome-%p-%m.profraw
           RUSTC_WRAPPER: sccache

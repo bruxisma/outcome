@@ -87,6 +87,6 @@ jobs:
           key: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile}}-${{hashFiles('**/Cargo.lock')}}
           path: ${{env.SCCACHE_DIR}}
       - name: Run Tests (${{matrix.profile}})
-        run: cargo hack test --profile ${{matrix.profile}} --locked --each-feature
+        run: cargo hack test --profile ${{matrix.profile}} --feature-powerset
         env:
           RUSTC_WRAPPER: sccache
