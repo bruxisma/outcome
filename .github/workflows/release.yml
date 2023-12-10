@@ -13,10 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
       - name: Setup Rust Toolchain
-        uses: dtolnay/rust-toolchain@1482605bfc5719782e1267fd0c0cc350fe7646b8 # v1
-        with:
-          toolchain: stable
-          profile: minimal
+        uses: moonrepo/setup-rust@v1
       - name: Setup Cargo Hack
         uses: bruxisma/setup-cargo-hack@1d7117a0b3be8457283a783e4065b7ba649c5d54 # tag=v1
       - name: Validate Publish

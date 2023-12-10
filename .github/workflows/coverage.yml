@@ -17,9 +17,9 @@ jobs:
       - name: Authenticate GitHub CLI
         run: echo ${{github.token}} | gh auth login --with-token
       - name: Setup Rust Toolchain
-        uses: dtolnay/rust-toolchain@master # renovate: tag=v1
+        uses: moonrepo/setup-rust@v1
         with:
-          toolchain: nightly
+          channel: nightly
           components: llvm-tools-preview
       - name: Setup Shared Compilation Cache
         uses: baptiste0928/cargo-install@21a18ba3bf4a184d1804e8b759930d3471b1c941 # v2

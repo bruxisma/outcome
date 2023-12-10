@@ -14,12 +14,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
       - name: Setup Rust Toolchain
-        uses: dtolnay/rust-toolchain@master
+        uses: moonrepo/setup-rust@v1
         with:
           components: rustfmt
-          toolchain: stable
-          override: true
-          profile: minimal
       - name: Check Formatting
         run: cargo fmt -- --check
   lint:
@@ -44,10 +41,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
       - name: Setup Rust Toolchain
-        uses: dtolnay/rust-toolchain@master # renovate: tag=v1
+        uses: moonrepo/setup-rust@v1
         with:
           components: clippy
-          toolchain: stable
       - name: Clippy
         uses: giraffate/clippy-action@13b9d32482f25d29ead141b79e7e04e7900281e0 # v1
   test:
@@ -72,11 +68,9 @@ jobs:
       - name: Authenticate GitHub CLI
         run: echo ${{github.token}} | gh auth login --with-token
       - name: Setup Rust Toolchain
-        uses: dtolnay/rust-toolchain@master # renovate: tag=v1
+        uses: moonrepo/setup-rust@v1
         with:
-          toolchain: ${{matrix.toolchain}}
-          override: true
-          profile: minimal
+          channel: ${{matrix.toolchain}}
       - name: Setup Shared Compilation Cache
         uses: baptiste0928/cargo-install@21a18ba3bf4a184d1804e8b759930d3471b1c941 # v2
         with:
