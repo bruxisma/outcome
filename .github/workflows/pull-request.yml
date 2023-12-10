@@ -70,13 +70,9 @@ jobs:
       - name: Setup Rust Toolchain
         uses: moonrepo/setup-rust@v1
         with:
+          bins: sccache, cargo-hack
           channel: ${{matrix.toolchain}}
-      - name: Setup Shared Compilation Cache
-        uses: baptiste0928/cargo-install@21a18ba3bf4a184d1804e8b759930d3471b1c941 # v2
-        with:
-          crate: sccache
-      - name: Setup Cargo Hack
-        uses: bruxisma/setup-cargo-hack@1d7117a0b3be8457283a783e4065b7ba649c5d54 # renovate: tag=v1
+          cache-target: ${{matrix.profile}}
       - name: Setup Shared Cache Directory
         run: |
           declare path="${HOME}/.cache/sccache"
@@ -84,16 +80,6 @@ jobs:
             path=$(cygpath --windows "${path}")
           fi
           echo "SCCACHE_DIR=${path}" >> "${GITHUB_ENV}"
-      - name: Restore Cargo Cache
-        uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84 # v3
-        with:
-          restore-keys: ${{runner.os}}-cargo-
-          key: ${{runner.os}}-cargo-${{hashFiles('**/Cargo.lock')}}
-          path: |
-            ${{github.workspace}}/target
-            ~/.cargo/registry/index
-            ~/.cargo/registry/cache
-            ~/.cargo/git
       - name: Restore sccache build artifacts
         uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84 # v3
         with:

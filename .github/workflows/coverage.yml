@@ -16,21 +16,13 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
       - name: Authenticate GitHub CLI
         run: echo ${{github.token}} | gh auth login --with-token
-      - name: Setup Rust Toolchain
+      - name: Setup Rust Toolchain and Tools
         uses: moonrepo/setup-rust@v1
         with:
+          bins: sccache, grcov, cargo-hack
           channel: nightly
           components: llvm-tools-preview
-      - name: Setup Shared Compilation Cache
-        uses: baptiste0928/cargo-install@21a18ba3bf4a184d1804e8b759930d3471b1c941 # v2
-        with:
-          crate: sccache
-      - name: Setup Cargo hack
-        uses: bruxisma/setup-cargo-hack@1d7117a0b3be8457283a783e4065b7ba649c5d54 # renovate: tag=v1
-      - name: Setup grcov
-        uses: baptiste0928/cargo-install@21a18ba3bf4a184d1804e8b759930d3471b1c941 # v2
-        with:
-          crate: grcov
+          cache-target: coverage
       - name: Setup Shared Cache Directory
         shell: bash
         run: |
@@ -39,16 +31,6 @@ jobs:
             path=$(cygpath --windows "${path}")
           fi
           echo "SCCACHE_DIR=${path}" >> "${GITHUB_ENV}"
-      - name: Restore Cargo Cache
-        uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84 # v3
-        with:
-          restore-keys: ${{runner.os}}-cargo-
-          key: ${{runner.os}}-cargo-${{hashFiles('**/Cargo.lock')}}
-          path: |
-            ${{github.workspace}}/target
-            ~/.cargo/registry/index
-            ~/.cargo/registry/cache
-            ~/.cargo/git
       - name: Restore sccache build artifacts
         uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84 # v3
         with:

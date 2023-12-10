@@ -14,8 +14,8 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
       - name: Setup Rust Toolchain
         uses: moonrepo/setup-rust@v1
-      - name: Setup Cargo Hack
-        uses: bruxisma/setup-cargo-hack@1d7117a0b3be8457283a783e4065b7ba649c5d54 # tag=v1
+        with:
+          bins: cargo-hack
       - name: Validate Publish
         run: cargo hack publish --dry-run --each-feature --locked
   publish:
