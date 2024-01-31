@@ -16,7 +16,7 @@ name = "outcome"
 path = "src/lib.rs"
 
 [dependencies]
-eyre = { version = "0.6.11", optional = true }
+eyre = { version = "0.6.12", optional = true }
 miette = { version = ">=3.0.0", optional = true }
 
 [build-dependencies]
