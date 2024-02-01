@@ -29,7 +29,7 @@ jobs:
       - name: Set Git Branch
         run: git switch -c ${{github.ref_name}}
       - name: Install Cargo Release
-        uses: baptiste0928/cargo-install@21a18ba3bf4a184d1804e8b759930d3471b1c941 # v2
+        uses: baptiste0928/cargo-install@1cd874a5478fdca35d868ccc74640c5aabbb8f1b # v3
         with:
           crate: cargo-release
       - name: Get Crate Version
