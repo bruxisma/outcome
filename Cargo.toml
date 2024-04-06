@@ -20,7 +20,7 @@ eyre = { version = "0.6.12", optional = true }
 miette = { version = ">=3.0.0", optional = true }
 
 [build-dependencies]
-rustversion = "1.0.14"
+rustversion = "1.0.15"
 
 [features]
 default = ["std"]
