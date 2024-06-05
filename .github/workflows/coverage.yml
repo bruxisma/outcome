@@ -65,6 +65,7 @@ jobs:
         uses: codecov/codecov-action@125fc84a9a348dbcf27191600683ec096ec9021c # v4
         with:
           fail_ci_if_error: true
+          use_oidc: true
           directory: ${{github.workspace}}
           files: coverage.info
       - name: Upload Code Coverage Artifact
