@@ -23,7 +23,7 @@ jobs:
     if: needs.skip.outputs.should-skip != 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
       - name: Review Dog - actionlint
         uses: reviewdog/action-actionlint@fd627997c9688c2f39e13917aed23873c031b834 # v1
   yaml:
@@ -33,7 +33,7 @@ jobs:
     if: needs.skip.outputs.should-skip != 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
       - name: Review Dog - yamllint
         uses: reviewdog/action-yamllint@bc37f456f657881f4a007caa6e243cef03ec8a84 # v1
         with:
