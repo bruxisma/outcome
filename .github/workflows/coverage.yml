@@ -20,7 +20,7 @@ jobs:
       - name: Authenticate GitHub CLI
         run: echo ${{github.token}} | gh auth login --with-token
       - name: Setup Rust Toolchain and Tools
-        uses: moonrepo/setup-rust@d8048d4fdff0633123678b093726e6d7c8ad6de5 # v1
+        uses: moonrepo/setup-rust@e013866c4215f77c925f42f60257dec7dd18836e # v1
         with:
           bins: sccache, grcov, cargo-hack
           channel: nightly
