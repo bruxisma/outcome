@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4
       - name: Setup Rust Toolchain
         uses: moonrepo/setup-rust@e013866c4215f77c925f42f60257dec7dd18836e # v1
         with:
@@ -39,7 +39,7 @@ jobs:
             args: --features nightly
     steps:
       - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4
       - name: Setup Rust Toolchain
         uses: moonrepo/setup-rust@e013866c4215f77c925f42f60257dec7dd18836e # v1
         with:
@@ -64,7 +64,7 @@ jobs:
       SCCACHE_CACHE_SIZE: 5G
     steps:
       - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4
       - name: Authenticate GitHub CLI
         run: echo ${{github.token}} | gh auth login --with-token
       - name: Setup Rust Toolchain
@@ -81,7 +81,7 @@ jobs:
           fi
           echo "SCCACHE_DIR=${path}" >> "${GITHUB_ENV}"
       - name: Restore sccache build artifacts
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4
+        uses: actions/cache@2cdf405574d6ef1f33a1d12acccd3ae82f47b3f2 # v4
         with:
           restore-keys: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile}}-
           key: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile}}-${{hashFiles('**/Cargo.lock')}}

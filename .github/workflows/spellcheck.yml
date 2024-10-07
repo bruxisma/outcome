@@ -19,7 +19,7 @@ jobs:
     if: needs.skip.outputs.should-skip != 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4
       - name: Checking Spelling
         uses: crate-ci/typos@f12cee1d8f3c79282a98ecb41d235aef17dfa8fd # v1.25.0
         with:
