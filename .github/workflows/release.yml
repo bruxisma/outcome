@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{matrix.os}}-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - name: Setup Rust Toolchain
         uses: moonrepo/setup-rust@e013866c4215f77c925f42f60257dec7dd18836e # v1
         with:
@@ -25,7 +25,7 @@ jobs:
     environment: release
     steps:
       - name: Checkout
-        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - name: Set Git Branch
         run: git switch -c ${{github.ref_name}}
       - name: Install Cargo Release
