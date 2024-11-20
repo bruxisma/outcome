@@ -65,7 +65,7 @@ jobs:
       - name: Check coverage.info exists
         run: test -f ${{github.workspace}}/coverage.info
       - name: Upload Code Coverage
-        uses: codecov/codecov-action@985343d70564a82044c1b7fcb84c2fa05405c1a2 # v5
+        uses: codecov/codecov-action@288befbd1044bd1756afb0bdae077549e0ddb31f # v5
         with:
           fail_ci_if_error: true
           use_oidc: true
