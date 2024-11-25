@@ -874,7 +874,7 @@ impl<S: DerefMut, M, F> Outcome<S, M, F> {
 impl<S, M: Debug, F: Debug> Outcome<S, M, F> {
   /// Returns the contained [`Success`] value, consuming the `self` value.
   ///
-  /// Because this function may panic, its use is generally discourged.
+  /// Because this function may panic, its use is generally discouraged.
   /// Instead, prefer to use pattern matching and handle the [`Mistake`] or
   /// [`Failure`] case explicitly, or call [`unwrap_or`], [`unwrap_or_else`],
   /// or [`unwrap_or_default`].
