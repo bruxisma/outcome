@@ -14,7 +14,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - name: Setup Rust Toolchain
-        uses: moonrepo/setup-rust@e013866c4215f77c925f42f60257dec7dd18836e # v1
+        uses: moonrepo/setup-rust@ede6de059f8046a5e236c94046823e2af11ca670 # v1
         with:
           components: rustfmt
       - name: Check Formatting
@@ -41,7 +41,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - name: Setup Rust Toolchain
-        uses: moonrepo/setup-rust@e013866c4215f77c925f42f60257dec7dd18836e # v1
+        uses: moonrepo/setup-rust@ede6de059f8046a5e236c94046823e2af11ca670 # v1
         with:
           components: clippy
       - name: Clippy
@@ -68,7 +68,7 @@ jobs:
       - name: Authenticate GitHub CLI
         run: echo ${{github.token}} | gh auth login --with-token
       - name: Setup Rust Toolchain
-        uses: moonrepo/setup-rust@e013866c4215f77c925f42f60257dec7dd18836e # v1
+        uses: moonrepo/setup-rust@ede6de059f8046a5e236c94046823e2af11ca670 # v1
         with:
           bins: sccache, cargo-hack
           channel: ${{matrix.toolchain}}
