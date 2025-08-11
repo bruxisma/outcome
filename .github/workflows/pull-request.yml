@@ -81,7 +81,7 @@ jobs:
           fi
           echo "SCCACHE_DIR=${path}" >> "${GITHUB_ENV}"
       - name: Restore sccache build artifacts
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
         with:
           restore-keys: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile}}-
           key: ${{runner.os}}-${{matrix.toolchain}}-${{matrix.profile}}-${{hashFiles('**/Cargo.lock')}}
