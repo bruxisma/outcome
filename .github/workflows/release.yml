@@ -37,7 +37,7 @@ jobs:
         id: metadata
         run: |
           declare query='.packages[] | select(.name | contains("outcome")).version'
-          echo "::set-output name=version::$(cargo metadata --format-version=1 | jq -r "${query}")"
+          echo "name=version::$(cargo metadata --format-version=1 | jq -r "${query}")" >> "${GITHUB_OUTPUT}"
       - name: Verify Version
         run: test "v${{steps.metadata.outputs.version}}" = "${{github.ref_name}}"
       - name: Configure Git User

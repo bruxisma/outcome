@@ -28,23 +28,23 @@
 #![warn(missing_docs)]
 #![warn(unsafe_code)]
 #![cfg_attr(
-  all(nightly, feature = "nightly"),
+  feature = "nightly",
   feature(try_trait_v2),
   feature(never_type),
   feature(exhaustive_patterns)
 )]
-#![cfg_attr(any(docsrs, nightly), feature(doc_cfg))]
+#![cfg_attr(any(docsrs, feature = "nightly"), feature(doc_cfg))]
 #![no_std]
 
 #[cfg(doc)]
 extern crate std;
 
-#[cfg_attr(any(docsrs, nightly), doc(cfg(feature = "unstable")))]
+#[cfg_attr(any(docsrs, feature = "nightly"), doc(cfg(feature = "unstable")))]
 #[cfg(feature = "unstable")]
 mod unstable;
 
-#[cfg_attr(any(docsrs, nightly), doc(cfg(feature = "nightly")))]
-#[cfg(all(nightly, feature = "nightly"))]
+#[cfg_attr(any(docsrs, feature = "nightly"), doc(cfg(feature = "nightly")))]
+#[cfg(feature = "nightly")]
 mod nightly;
 
 mod aberration;
@@ -60,11 +60,11 @@ mod wrap;
 pub mod convert;
 pub mod prelude;
 
-#[cfg_attr(any(docsrs, nightly), doc(cfg(feature = "report")))]
+#[cfg_attr(any(docsrs, feature = "nightly"), doc(cfg(feature = "report")))]
 #[cfg(feature = "report")]
 pub mod report;
 
-#[cfg_attr(any(docsrs, nightly), doc(cfg(feature = "diagnostic")))]
+#[cfg_attr(any(docsrs, feature = "nightly"), doc(cfg(feature = "diagnostic")))]
 #[cfg(feature = "diagnostic")]
 pub mod diagnostic;
 

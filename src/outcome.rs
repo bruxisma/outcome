@@ -62,7 +62,7 @@ use std::{
 /// >;
 ///
 /// impl<T> SpinMutex<T> {
-///   pub fn try_lock(&self) -> TryLockOutcome<T> {
+///   pub fn try_lock(&self) -> TryLockOutcome<'_, T> {
 ///     match self.inner.try_lock() {
 ///       Err(TryLockError::Poisoned(f)) => Failure(f),
 ///       Err(TryLockError::WouldBlock) => Mistake(WouldBlock),
