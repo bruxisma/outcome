@@ -1,3 +1,15 @@
+# Archived
+
+This project is now archived because I no longer write rust because the orphan
+rule is dumb and bad and there is no argument that will convince me it is
+worth having in a language.
+
+Also I got tired of dealing with Rust build system infrastructure breaking
+everytime there was an update. I would like to have free time, and Rust
+demands too much of it.
+
+Lastly, fuck David Tolnay.
+
 # Overview
 
 [![Audit][audit-badge-svg]][audit-badge-yml]
