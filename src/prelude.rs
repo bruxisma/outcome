@@ -12,7 +12,10 @@
 pub use Outcome::{Failure, Mistake, Success};
 
 // TODO: Change this to be an edition setting?
-#[cfg_attr(any(docsrs, feature = "nightly"), doc(cfg(feature = "nightly")))]
+#[cfg_attr(
+  any(docsrs, feature = "nightly"),
+  doc(cfg(feature = "nightly"))
+)]
 #[cfg(feature = "nightly")]
 #[doc(inline)]
 pub use crate::convert::{AttemptFrom, AttemptInto};
